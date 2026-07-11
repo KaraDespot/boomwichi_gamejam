@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 362baba25c6143e489ec8d3fd80f1f87
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 4890085278179872738
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 223282
+  packageName: Dead-Simple Dialogue
+  packageVersion: 1.0.0
+  assetPath: Assets/Dead-Simple Dialogue/Demo/Scenes/SampleSceneSettings.lighting
+  uploadId: 503227

@@ -1,0 +1,14 @@
+ВАЖНО: Эти файлы нужно создать в Unity Editor!
+
+СЦЕНЫ (создать в Unity Editor):
+1. Bootstrap.unity - сцена инициализации
+2. MainMenu.unity - главное меню
+3. GameScene.unity - игровая сцена
+
+ПРЕФАБЫ (создать в Unity Editor):
+1. Prefabs/Player/Player.prefab
+2. Prefabs/Enemies/Enemy_Base.prefab
+3. Prefabs/NPCs/NPC_Base.prefab
+4. Prefabs/UI/Canvas_HUD.prefab
+
+Подробные инструкции смотрите в файле: Этап_1_Инструкции.md

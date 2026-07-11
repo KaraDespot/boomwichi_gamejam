@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 3c049f9e8a025754d95e4ccdba03ef8e
+TextScriptImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 223282
+  packageName: Dead-Simple Dialogue
+  packageVersion: 1.0.0
+  assetPath: Assets/Dead-Simple Dialogue/Demo/demo_script.txt
+  uploadId: 503227

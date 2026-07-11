@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 7d2a9460aae1c4420a415466d1db880f
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 223282
+  packageName: Dead-Simple Dialogue
+  packageVersion: 1.0.0
+  assetPath: Assets/Dead-Simple Dialogue/Dialogue/Schema/Cutscene.cs
+  uploadId: 503227

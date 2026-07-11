@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 9125f7b9b9e0c1842a546db509a38aca
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 223282
+  packageName: Dead-Simple Dialogue
+  packageVersion: 1.0.0
+  assetPath: Assets/Dead-Simple Dialogue/Demo/Scripts/TriggerMapper2D.cs
+  uploadId: 503227

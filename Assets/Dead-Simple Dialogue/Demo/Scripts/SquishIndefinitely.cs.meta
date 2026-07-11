@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: e510b72b58f6aa742b8013c271b90b7a
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 223282
+  packageName: Dead-Simple Dialogue
+  packageVersion: 1.0.0
+  assetPath: Assets/Dead-Simple Dialogue/Demo/Scripts/SquishIndefinitely.cs
+  uploadId: 503227
