@@ -3,7 +3,7 @@
 /// <summary>
 /// Назначение: отдельный слой связи между игровым кодом игрока и Animator.
 /// Что делает: обновляет параметры движения, запускает атаку и смерть, но не принимает боевых решений.
-/// Связи: читает состояние из PlayerStats и InputManager, анимационные события приходят через PlayerAttackAnimationEvents.
+/// Связи: читает состояние из PlayerStats, анимационные события приходят через PlayerAttackAnimationEvents.
 /// Паттерны: Single Responsibility, Adapter между gameplay и Animator.
 /// </summary>
 public class PlayerAnimationController : MonoBehaviour
@@ -71,14 +71,7 @@ public class PlayerAnimationController : MonoBehaviour
             return;
         }
 
-        if (InputManager.Instance == null)
-            return;
-
-        // Для урока берём самую простую и наблюдаемую метрику:
-        // если игрок двигает стик/клавиши сильнее, MoveSpeed становится больше,
-        // и Animator сам переключает Idle <-> Move по условиям переходов.
-        float moveSpeed = InputManager.Instance.MoveInput.magnitude;
-        animator.SetFloat(moveSpeedParameter, moveSpeed);
+        animator.SetFloat(moveSpeedParameter, 0f);
     }
 
     /// <summary>
