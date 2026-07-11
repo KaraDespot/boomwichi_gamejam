@@ -6,6 +6,7 @@
  * Паттерны: Observer, UI Controller.
  */
 
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -30,6 +31,9 @@ public class GameplayHUDController : MonoBehaviour
     [Tooltip("Опционально: показывает текущий DayFlowState для отладки.")]
     [SerializeField] private TMP_Text dayStateDebugText;
 
+    private Coroutine bindingRoutine;
+    private bool eventBusBound;
+
     private void Awake()
     {
         if (dayTimer == null)
@@ -40,12 +44,7 @@ public class GameplayHUDController : MonoBehaviour
 
     private void OnEnable()
     {
-        if (EventBus.Instance != null)
-        {
-            EventBus.Instance.OnDayTimeUpdated += HandleDayTimeUpdated;
-            EventBus.Instance.OnDayStateChanged += HandleDayStateChanged;
-            EventBus.Instance.OnDayTimeExpired += HandleDayTimeExpired;
-        }
+        bindingRoutine = StartCoroutine(BindEventBusWhenReady());
 
         if (pauseButton != null)
             pauseButton.onClick.AddListener(HandlePauseClicked);
@@ -53,15 +52,62 @@ public class GameplayHUDController : MonoBehaviour
 
     private void OnDisable()
     {
-        if (EventBus.Instance != null)
+        if (bindingRoutine != null)
         {
-            EventBus.Instance.OnDayTimeUpdated -= HandleDayTimeUpdated;
-            EventBus.Instance.OnDayStateChanged -= HandleDayStateChanged;
-            EventBus.Instance.OnDayTimeExpired -= HandleDayTimeExpired;
+            StopCoroutine(bindingRoutine);
+            bindingRoutine = null;
         }
+
+        UnbindEventBus();
 
         if (pauseButton != null)
             pauseButton.onClick.RemoveListener(HandlePauseClicked);
+    }
+
+    private IEnumerator BindEventBusWhenReady()
+    {
+        while (isActiveAndEnabled && !eventBusBound)
+        {
+            if (EventBus.Instance != null)
+            {
+                EventBus.Instance.OnDayTimeUpdated += HandleDayTimeUpdated;
+                EventBus.Instance.OnDayStateChanged += HandleDayStateChanged;
+                EventBus.Instance.OnDayTimeExpired += HandleDayTimeExpired;
+                eventBusBound = true;
+                SyncFromCurrentState();
+            }
+
+            if (!eventBusBound)
+                yield return null;
+        }
+
+        bindingRoutine = null;
+    }
+
+    private void UnbindEventBus()
+    {
+        if (!eventBusBound || EventBus.Instance == null)
+        {
+            eventBusBound = false;
+            return;
+        }
+
+        EventBus.Instance.OnDayTimeUpdated -= HandleDayTimeUpdated;
+        EventBus.Instance.OnDayStateChanged -= HandleDayStateChanged;
+        EventBus.Instance.OnDayTimeExpired -= HandleDayTimeExpired;
+        eventBusBound = false;
+    }
+
+    private void SyncFromCurrentState()
+    {
+        if (dayTimer != null && dayTimer.IsRunning)
+        {
+            HandleDayTimeUpdated(dayTimer.ElapsedDayTime, dayTimer.TotalDayDuration);
+            return;
+        }
+
+        if (GameManager.Instance != null && GameManager.Instance.CurrentDayState == DayFlowState.Tutorial)
+            SetDayTimerLabel(GetStartClockLabel());
     }
 
     private void ValidateReferences()

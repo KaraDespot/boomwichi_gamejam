@@ -47,6 +47,7 @@ public class GameSceneFlowBootstrap : MonoBehaviour
         if (sceneName != SceneNames.GameScene)
             return;
 
+        sceneFlowInitialized = false;
         TryInitializeGameSceneFlow();
     }
 
