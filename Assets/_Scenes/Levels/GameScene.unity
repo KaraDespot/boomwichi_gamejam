@@ -517,8 +517,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   customerTimer: {fileID: 219436332}
   dayOrders:
-  - {fileID: 11400000, guid: 056366d60c0f9984db6d772385ff6cf2, type: 2}
-  - {fileID: 11400000, guid: aaad2bb17725c834bb5f83968b4cd8e9, type: 2}
+  - {fileID: 11400000, guid: f1a2b3c4d5e6478990abcdef00000001, type: 2}
+  - {fileID: 11400000, guid: f1a2b3c4d5e6478990abcdef00000002, type: 2}
   - {fileID: 11400000, guid: f1a2b3c4d5e6478990abcdef00000003, type: 2}
 --- !u!114 &219436332
 MonoBehaviour:
