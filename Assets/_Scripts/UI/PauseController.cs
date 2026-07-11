@@ -166,7 +166,7 @@ public class PauseController : MonoBehaviour
 
     private void HandlePausePressed()
     {
-        if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.Playing)
+        if (GameManager.Instance != null && GameManager.Instance.CanPause())
             GameManager.Instance.Pause();
     }
 

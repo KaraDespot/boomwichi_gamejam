@@ -6,10 +6,10 @@ using UnityEngine;
  * Назначение: единая шина событий между core/UI/gameplay системами.
  * Зачем нужен: снижает связанность - отправитель события не зависит от конкретных получателей.
  * Как используется сейчас:
- *  - GameManager публикует pause/resume.
+ *  - GameManager публикует pause/resume и смену DayFlowState.
  *  - SceneLoader публикует факт загрузки любой сцены.
- *  - EncounterTrigger публикует факт завершения encounter.
- * Подписчики могут свободно добавляться в будущих уроках без правок отправителей.
+ *  - DayTimer публикует прогресс дня.
+ * Подписчики могут свободно добавляться без правок отправителей.
  */
 public class EventBus : MonoBehaviour
 {
@@ -39,6 +39,31 @@ public class EventBus : MonoBehaviour
     public event Action<string> OnEncounterCompleted;
 
     /// <summary>
+    /// Смена состояния игрового дня (Tutorial, PlayingOrder и т.д.).
+    /// </summary>
+    public event Action<DayFlowState> OnDayStateChanged;
+
+    /// <summary>
+    /// Обновление таймера дня: прошло секунд / всего секунд.
+    /// </summary>
+    public event Action<float, float> OnDayTimeUpdated;
+
+    /// <summary>
+    /// Лимит 5 минут исчерпан; текущий заказ можно доделать.
+    /// </summary>
+    public event Action OnDayTimeExpired;
+
+    /// <summary>
+    /// Смена полностью завершена (все заказы обработаны или день закрыт).
+    /// </summary>
+    public event Action OnDayFinished;
+
+    /// <summary>
+    /// Первое действие игрока в заказе (скрыть облако заказа).
+    /// </summary>
+    public event Action OnFirstPlayerAction;
+
+    /// <summary>
     /// Инициализация singleton-экземпляра EventBus.
     /// Объект сохраняется между сценами, чтобы подписчики не теряли источник событий.
     /// </summary>
@@ -59,7 +84,7 @@ public class EventBus : MonoBehaviour
     /// </summary>
     public void RaiseGamePaused()
     {
-        OnGamePaused?.Invoke(); // вызываем событие, если есть подписчики
+        OnGamePaused?.Invoke();
     }
 
     /// <summary>
@@ -84,5 +109,30 @@ public class EventBus : MonoBehaviour
     public void RaiseEncounterCompleted(string encounterId)
     {
         OnEncounterCompleted?.Invoke(encounterId);
+    }
+
+    public void RaiseDayStateChanged(DayFlowState state)
+    {
+        OnDayStateChanged?.Invoke(state);
+    }
+
+    public void RaiseDayTimeUpdated(float elapsed, float total)
+    {
+        OnDayTimeUpdated?.Invoke(elapsed, total);
+    }
+
+    public void RaiseDayTimeExpired()
+    {
+        OnDayTimeExpired?.Invoke();
+    }
+
+    public void RaiseDayFinished()
+    {
+        OnDayFinished?.Invoke();
+    }
+
+    public void RaiseFirstPlayerAction()
+    {
+        OnFirstPlayerAction?.Invoke();
     }
 }
