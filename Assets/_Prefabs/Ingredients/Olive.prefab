@@ -102,6 +102,7 @@ GameObject:
   - component: {fileID: 9132849096302516889}
   - component: {fileID: 8695759967485989332}
   - component: {fileID: 5119895438536736940}
+  - component: {fileID: 620000000000000004}
   m_Layer: 7
   m_Name: Olive
   m_TagString: Untagged
@@ -186,5 +187,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DraggableObject
   dragHeight: 0.18
-  failedDropAction: 0
+  failedDropAction: 1
   disableCollidersWhileDragging: 1
+--- !u!114 &620000000000000004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3520120277094894129}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7a9b1c3d5e64f7081a2b3c4d5e6f709, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IngredientInstance
+  ingredientType: 3
+  breadRole: 0

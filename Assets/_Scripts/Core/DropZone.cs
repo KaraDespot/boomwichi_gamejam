@@ -33,12 +33,30 @@ public class DropZone : MonoBehaviour
     [Tooltip("Дополнительное смещение от snap point.")]
     [SerializeField] private Vector3 snapOffset = Vector3.zero;
 
+    [Tooltip("Правила сборки сендвича для зоны доски. Если пусто, объект просто ставится в snap point.")]
+    [SerializeField] private SandwichBoard sandwichBoard;
+
     public DropZoneType ZoneType => zoneType;
     public DropZoneAction DropAction => GetDropAction();
 
+    private void Awake()
+    {
+        if (sandwichBoard == null)
+            sandwichBoard = GetComponent<SandwichBoard>();
+    }
+
     public bool CanAccept(DraggableObject draggableObject)
     {
-        return draggableObject != null;
+        if (draggableObject == null)
+            return false;
+
+        if (zoneType == DropZoneType.Trash)
+            return true;
+
+        if (sandwichBoard != null)
+            return sandwichBoard.CanAccept(draggableObject);
+
+        return true;
     }
 
     public void Accept(DraggableObject draggableObject)
@@ -49,6 +67,12 @@ public class DropZone : MonoBehaviour
         switch (GetDropAction())
         {
             case DropZoneAction.SnapToZone:
+                if (sandwichBoard != null)
+                {
+                    sandwichBoard.Accept(draggableObject);
+                    break;
+                }
+
                 draggableObject.CompleteDrop(GetSnapPosition());
                 break;
 

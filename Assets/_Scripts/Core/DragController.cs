@@ -34,7 +34,7 @@ public class DragController : MonoBehaviour
             return;
 
         if (InputManager.Instance.PrimaryPressedThisFrame)
-            TryBeginDrag(InputManager.Instance.PointerScreenPosition);
+            TryBeginDragFromPointer(InputManager.Instance.PointerScreenPosition);
 
         if (currentDraggable != null && InputManager.Instance.PrimaryHeld)
             UpdateDrag(InputManager.Instance.PointerScreenPosition);
@@ -43,22 +43,36 @@ public class DragController : MonoBehaviour
             CompleteDrag(InputManager.Instance.PointerScreenPosition);
     }
 
-    private void TryBeginDrag(Vector2 screenPosition)
+    private void TryBeginDragFromPointer(Vector2 screenPosition)
     {
-        if (!inputRaycaster.TryGetDraggable(screenPosition, out DraggableObject draggableObject))
+        if (inputRaycaster.TryGetDraggable(screenPosition, out DraggableObject draggableObject))
+        {
+            BeginDrag(draggableObject, screenPosition, true);
             return;
+        }
 
+        if (inputRaycaster.TryGetIngredientContainer(screenPosition, out IngredientContainer ingredientContainer) &&
+            ingredientContainer.TrySpawnIngredient(out DraggableObject spawnedDraggable))
+        {
+            BeginDrag(spawnedDraggable, screenPosition, false);
+        }
+    }
+
+    private void BeginDrag(DraggableObject draggableObject, Vector2 screenPosition, bool preservePointerOffset)
+    {
         currentDraggable = draggableObject;
         currentDraggable.BeginDrag();
 
         if (!inputRaycaster.TryGetTablePoint(screenPosition, out Vector3 tablePoint))
         {
-            currentDraggable.CancelDrag();
+            currentDraggable.HandleFailedDrop();
             currentDraggable = null;
             return;
         }
 
-        dragOffset = currentDraggable.transform.position - tablePoint;
+        dragOffset = preservePointerOffset
+            ? currentDraggable.transform.position - tablePoint
+            : Vector3.zero;
         dragOffset.y = currentDraggable.DragHeight;
 
         lastValidDragPosition = CreateDragPosition(tablePoint);
@@ -88,10 +102,7 @@ public class DragController : MonoBehaviour
             return;
         }
 
-        if (currentDraggable.ReturnToStartOnFailedDrop)
-            currentDraggable.CancelDrag();
-        else
-            currentDraggable.FinishDrag();
+        currentDraggable.HandleFailedDrop();
 
         currentDraggable = null;
     }

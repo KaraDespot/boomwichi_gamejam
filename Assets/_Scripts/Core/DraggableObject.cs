@@ -8,6 +8,13 @@
 
 using UnityEngine;
 
+public enum DragFailedDropAction
+{
+    ReturnToStart,
+    DeactivateObject,
+    DestroyObject
+}
+
 [DisallowMultipleComponent]
 public class DraggableObject : MonoBehaviour
 {
@@ -15,8 +22,8 @@ public class DraggableObject : MonoBehaviour
     [Tooltip("Высота объекта над точкой стола во время перетаскивания.")]
     [SerializeField] private float dragHeight = 0.18f;
 
-    [Tooltip("Если отпускание произошло не над подходящей зоной, объект вернётся туда, откуда его взяли.")]
-    [SerializeField] private bool returnToStartOnFailedDrop = true;
+    [Tooltip("Что сделать, если объект отпустили не над подходящей зоной.")]
+    [SerializeField] private DragFailedDropAction failedDropAction = DragFailedDropAction.ReturnToStart;
 
     [Tooltip("На время drag коллайдеры объекта отключаются, чтобы raycast попадал в стол и drop zones, а не в сам объект.")]
     [SerializeField] private bool disableCollidersWhileDragging = true;
@@ -26,22 +33,64 @@ public class DraggableObject : MonoBehaviour
     private bool hadRigidbody;
     private bool previousKinematicState;
     private bool previousGravityState;
+    private bool initialKinematicState;
+    private bool initialGravityState;
+    private bool physicsLocked;
     private Vector3 startPosition;
     private Quaternion startRotation;
+    private bool canDrag = true;
 
     public float DragHeight => dragHeight;
-    public bool ReturnToStartOnFailedDrop => returnToStartOnFailedDrop;
+    public bool CanDrag => canDrag && isActiveAndEnabled;
     public bool IsDragging { get; private set; }
 
     private void Awake()
     {
         cachedRigidbody = GetComponent<Rigidbody>();
-        cachedColliders = GetComponentsInChildren<Collider>();
+        RefreshCachedColliders();
         hadRigidbody = cachedRigidbody != null;
+
+        if (!hadRigidbody)
+            return;
+
+        initialKinematicState = cachedRigidbody.isKinematic;
+        initialGravityState = cachedRigidbody.useGravity;
+    }
+
+    public void SetCanDrag(bool isAllowed)
+    {
+        canDrag = isAllowed;
+    }
+
+    public void SetFailedDropAction(DragFailedDropAction action)
+    {
+        failedDropAction = action;
+    }
+
+    public void SetPhysicsLocked(bool isLocked)
+    {
+        physicsLocked = isLocked;
+
+        if (!hadRigidbody)
+            return;
+
+        if (physicsLocked)
+        {
+            cachedRigidbody.isKinematic = true;
+            cachedRigidbody.useGravity = false;
+            return;
+        }
+
+        cachedRigidbody.isKinematic = initialKinematicState;
+        cachedRigidbody.useGravity = initialGravityState;
     }
 
     public void BeginDrag()
     {
+        if (!CanDrag)
+            return;
+
+        RefreshCachedColliders();
         IsDragging = true;
         startPosition = transform.position;
         startRotation = transform.rotation;
@@ -74,6 +123,26 @@ public class DraggableObject : MonoBehaviour
         FinishDrag();
     }
 
+    public void HandleFailedDrop()
+    {
+        switch (failedDropAction)
+        {
+            case DragFailedDropAction.ReturnToStart:
+                CancelDrag();
+                break;
+
+            case DragFailedDropAction.DeactivateObject:
+                FinishDrag();
+                gameObject.SetActive(false);
+                break;
+
+            case DragFailedDropAction.DestroyObject:
+                FinishDrag();
+                Destroy(gameObject);
+                break;
+        }
+    }
+
     public void FinishDrag()
     {
         IsDragging = false;
@@ -82,8 +151,20 @@ public class DraggableObject : MonoBehaviour
         if (!hadRigidbody)
             return;
 
+        if (physicsLocked)
+        {
+            cachedRigidbody.isKinematic = true;
+            cachedRigidbody.useGravity = false;
+            return;
+        }
+
         cachedRigidbody.isKinematic = previousKinematicState;
         cachedRigidbody.useGravity = previousGravityState;
+    }
+
+    private void RefreshCachedColliders()
+    {
+        cachedColliders = GetComponentsInChildren<Collider>();
     }
 
     private void SetCollidersEnabled(bool isEnabled)

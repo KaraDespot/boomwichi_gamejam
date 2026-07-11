@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 3398218181210598525}
   - component: {fileID: 1438588012459526224}
   - component: {fileID: 874404432209162447}
-  - component: {fileID: 7905559699664502354}
   m_Layer: 7
   m_Name: Cheese
   m_TagString: Untagged
@@ -91,21 +90,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &7905559699664502354
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1512616319411357220}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4a7c1e2d3f84b0c9a1e2d3c4b5a6f7e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DraggableObject
-  dragHeight: 0.18
-  failedDropAction: 0
-  disableCollidersWhileDragging: 1
 --- !u!1 &3520120277094894129
 GameObject:
   m_ObjectHideFlags: 0
@@ -118,6 +102,7 @@ GameObject:
   - component: {fileID: 9132849096302516889}
   - component: {fileID: 8695759967485989332}
   - component: {fileID: 5119895438536736940}
+  - component: {fileID: 620000000000000002}
   m_Layer: 7
   m_Name: Cheese
   m_TagString: Untagged
@@ -202,5 +187,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DraggableObject
   dragHeight: 0.18
-  failedDropAction: 0
+  failedDropAction: 1
   disableCollidersWhileDragging: 1
+--- !u!114 &620000000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3520120277094894129}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7a9b1c3d5e64f7081a2b3c4d5e6f709, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IngredientInstance
+  ingredientType: 5
+  breadRole: 0

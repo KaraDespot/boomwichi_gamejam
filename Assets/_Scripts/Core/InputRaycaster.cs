@@ -24,6 +24,9 @@ public class InputRaycaster : MonoBehaviour
     [Tooltip("Слой drop zone: доска, мусорка и будущие зоны.")]
     [SerializeField] private LayerMask dropZoneLayerMask = ~0;
 
+    [Tooltip("Слой контейнеров ингредиентов, из которых создаются новые ингредиенты.")]
+    [SerializeField] private LayerMask ingredientContainerLayerMask = ~0;
+
     [Header("Плоскость стола")]
     [Tooltip("Максимальная дистанция raycast от камеры.")]
     [SerializeField] private float maxRayDistance = 100f;
@@ -77,7 +80,7 @@ public class InputRaycaster : MonoBehaviour
         for (int i = 0; i < hits.Length; i++)
         {
             DraggableObject candidate = hits[i].collider.GetComponentInParent<DraggableObject>();
-            if (candidate == null || hits[i].distance >= closestDistance)
+            if (candidate == null || !candidate.CanDrag || hits[i].distance >= closestDistance)
                 continue;
 
             draggableObject = candidate;
@@ -108,6 +111,29 @@ public class InputRaycaster : MonoBehaviour
         }
 
         return dropZone != null;
+    }
+
+    public bool TryGetIngredientContainer(Vector2 screenPosition, out IngredientContainer ingredientContainer)
+    {
+        ingredientContainer = null;
+
+        if (!TryCreateRay(screenPosition, out Ray ray))
+            return false;
+
+        RaycastHit[] hits = Physics.RaycastAll(ray, maxRayDistance, ingredientContainerLayerMask, QueryTriggerInteraction.Collide);
+        float closestDistance = float.MaxValue;
+
+        for (int i = 0; i < hits.Length; i++)
+        {
+            IngredientContainer candidate = hits[i].collider.GetComponentInParent<IngredientContainer>();
+            if (candidate == null || !candidate.isActiveAndEnabled || hits[i].distance >= closestDistance)
+                continue;
+
+            ingredientContainer = candidate;
+            closestDistance = hits[i].distance;
+        }
+
+        return ingredientContainer != null;
     }
 
     private bool TryCreateRay(Vector2 screenPosition, out Ray ray)
