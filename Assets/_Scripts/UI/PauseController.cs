@@ -14,7 +14,7 @@ using UnityEngine.UI;
  * - Добавить установку фокуса на Resume при открытии паузы.
  * - Добавить анимацию появления/скрытия панели.
  * Практические советы:
- * - Если пауза не открывается с клавиши, проверить InputManager.Instance, EventBus.Instance и action Player/Pause в Console/Inspector.
+ * - Если пауза не открывается с клавиши, проверить InputManager.Instance, EventBus.Instance и action Gameplay/Pause в Console/Inspector.
  * - Если кнопки молчат, проверить назначение buttonResume/buttonMainMenu в Inspector.
  */
 public class PauseController : MonoBehaviour
@@ -94,7 +94,7 @@ public class PauseController : MonoBehaviour
     /// Контракт: ждёт появления EventBus и InputManager, затем один раз подписывает pause UI на runtime-события.
     /// Входные условия: компонент активен, Bootstrap может уже создать singleton'ы или создать их через несколько кадров.
     /// Гарантии: подписки не дублируются, а OnDisable корректно снимает их и сбрасывает флаги.
-    /// Типичные поломки: EventBus/InputManager не созданы Bootstrap-сценой, action Player/Pause не найден или не назначен Input Actions Asset.
+    /// Типичные поломки: EventBus/InputManager не созданы Bootstrap-сценой, action Gameplay/Pause не найден или не назначен Input Actions Asset.
     /// Что проверить: Console на ошибки InputManager, Inspector у BootstrapManager/InputManager и ссылки pausePanel/buttonResume/buttonMainMenu.
     /// </summary>
     private IEnumerator BindDependenciesWhenReady()

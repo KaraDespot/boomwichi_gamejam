@@ -147,6 +147,6 @@ public class GameManager : MonoBehaviour
             SceneManager.LoadScene(sceneName);
 
         if (InputManager.Instance != null)
-            InputManager.Instance.EnablePlayerInput();
+            InputManager.Instance.EnableGameplayInput();
     }
 }

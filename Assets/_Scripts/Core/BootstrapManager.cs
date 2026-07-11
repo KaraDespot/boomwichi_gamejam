@@ -120,9 +120,9 @@ public class BootstrapManager : MonoBehaviour
         InputManager inputManager = go.AddComponent<InputManager>();
 
         // Загружаем из Resources — работает и в редакторе, и в билде
-        inputManager.inputActions = Resources.Load<InputActionAsset>("InputSystem_Actions");
+        inputManager.InputActions = Resources.Load<InputActionAsset>("InputSystem_Actions");
 
-        if (inputManager.inputActions == null)
+        if (inputManager.InputActions == null)
         {
             Debug.LogError("InputManager: Не удалось загрузить InputSystem_Actions! " +
                 "Убедитесь, что файл InputSystem_Actions.inputactions лежит в папке Assets/Resources/");

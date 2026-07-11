@@ -50,26 +50,15 @@ public class PlayerController : MonoBehaviour
 
     /// <summary>
     /// Главный игровой цикл контроллера.
-    /// Каждый кадр обрабатывает движение и прыжок, затем сбрасывает одноразовые флаги ввода в InputManager.
+    /// После перехода проекта на Boomwichi этот RPG-контроллер не читает ввод, чтобы не держать старую схему управления живой.
     /// </summary>
     private void Update()
     {
-        if (InputManager.Instance == null)
-            return;
-
         if (playerStats != null && playerStats.IsDead)
-        {
-            InputManager.Instance.ResetButtonFlags();
             return;
-        }
 
         HandleMovement();
         HandleJump();
-
-        // В КОНЦЕ кадра сбрасываем "одноразовые" флаги кнопок (нажат в этом кадре).
-        // Это важно для действий типа прыжка/атаки: они должны срабатывать один раз,
-        // пока игровой код не успел их прочитать, а затем флаг нужно обнулить.
-        InputManager.Instance.ResetButtonFlags();
     }
 
     /// <summary>
@@ -79,7 +68,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private void HandleMovement()
     {
-        Vector2 moveInput = InputManager.Instance.MoveInput;
+        Vector2 moveInput = Vector2.zero;
         Vector3 moveDirection = Vector3.zero;
 
         // Movement relative to camera:
@@ -106,11 +95,6 @@ public class PlayerController : MonoBehaviour
         {
             speed = playerStats.playerData.moveSpeed;
             rotationSpeed = playerStats.playerData.rotationSpeed;
-        }
-
-        if (InputManager.Instance.IsSprintHeld())
-        {
-            speed *= sprintMultiplier;
         }
 
         Vector3 horizontalVelocity = moveDirection * speed;
@@ -161,16 +145,6 @@ public class PlayerController : MonoBehaviour
         if (!isGrounded)
             return;
 
-        if (InputManager.Instance.IsJumpPressed())
-        {
-            float jumpForce = 5f;
-
-            if (playerStats != null && playerStats.playerData != null)
-            {
-                jumpForce = playerStats.playerData.jumpForce;
-            }
-
-            verticalVelocity.y = Mathf.Sqrt(jumpForce * -2f * gravity);
-        }
+        // В Boomwichi нет прыжка/перемещения персонажа; метод оставлен, чтобы старый prefab не ломал компиляцию.
     }
 }
