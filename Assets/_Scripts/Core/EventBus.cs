@@ -64,6 +64,36 @@ public class EventBus : MonoBehaviour
     public event Action OnFirstPlayerAction;
 
     /// <summary>
+    /// Начался новый заказ: индекс и описание.
+    /// </summary>
+    public event Action<int, OrderDataAsset> OnOrderStarted;
+
+    /// <summary>
+    /// Заказ провален (таймер, грязь и т.д.).
+    /// </summary>
+    public event Action<int> OnOrderFailed;
+
+    /// <summary>
+    /// Заказ успешно сдан: индекс и начисленные чаевые.
+    /// </summary>
+    public event Action<int, int> OnOrderCompleted;
+
+    /// <summary>
+    /// Обновление таймера клиента: осталось / всего секунд.
+    /// </summary>
+    public event Action<float, float> OnCustomerTimeUpdated;
+
+    /// <summary>
+    /// Таймер ожидания клиента истёк.
+    /// </summary>
+    public event Action OnCustomerTimeExpired;
+
+    /// <summary>
+    /// Изменились накопленные чаевые за день.
+    /// </summary>
+    public event Action<int> OnTipsChanged;
+
+    /// <summary>
     /// Инициализация singleton-экземпляра EventBus.
     /// Объект сохраняется между сценами, чтобы подписчики не теряли источник событий.
     /// </summary>
@@ -134,5 +164,35 @@ public class EventBus : MonoBehaviour
     public void RaiseFirstPlayerAction()
     {
         OnFirstPlayerAction?.Invoke();
+    }
+
+    public void RaiseOrderStarted(int orderIndex, OrderDataAsset order)
+    {
+        OnOrderStarted?.Invoke(orderIndex, order);
+    }
+
+    public void RaiseOrderFailed(int orderIndex)
+    {
+        OnOrderFailed?.Invoke(orderIndex);
+    }
+
+    public void RaiseOrderCompleted(int orderIndex, int tipsEarned)
+    {
+        OnOrderCompleted?.Invoke(orderIndex, tipsEarned);
+    }
+
+    public void RaiseCustomerTimeUpdated(float remaining, float total)
+    {
+        OnCustomerTimeUpdated?.Invoke(remaining, total);
+    }
+
+    public void RaiseCustomerTimeExpired()
+    {
+        OnCustomerTimeExpired?.Invoke();
+    }
+
+    public void RaiseTipsChanged(int totalTips)
+    {
+        OnTipsChanged?.Invoke(totalTips);
     }
 }

@@ -1,8 +1,8 @@
 /*
  * GameplayHUDController
- * Назначение: игровой HUD (часы дня, позже — заказ, клиент, чаевые).
- * Что делает: подписывается на EventBus и выводит игровое время (10:00 a.m. → 10:00 p.m.).
- * Связи: EventBus, GameManager, DayTimer.
+ * Назначение: игровой HUD — часы дня, таймер клиента, чаевые.
+ * Что делает: подписывается на EventBus и обновляет назначенные текстовые поля.
+ * Связи: EventBus, GameManager, DayTimer, CustomerTimer, ScoreManager.
  * Паттерны: Observer, UI Controller.
  */
 
@@ -23,6 +23,14 @@ public class GameplayHUDController : MonoBehaviour
     [Tooltip("Источник настроек часов. Если пусто — ищется DayTimer на сцене.")]
     [SerializeField] private DayTimer dayTimer;
 
+    [Header("Таймер клиента")]
+    [Tooltip("Текст оставшегося времени ожидания клиента (секунды).")]
+    [SerializeField] private TMP_Text customerTimerText;
+
+    [Header("Чаевые")]
+    [Tooltip("Текст текущих чаевых за день.")]
+    [SerializeField] private TMP_Text tipsText;
+
     [Header("Пауза")]
     [Tooltip("Кнопка открытия паузы.")]
     [SerializeField] private Button pauseButton;
@@ -31,14 +39,20 @@ public class GameplayHUDController : MonoBehaviour
     [Tooltip("Опционально: показывает текущий DayFlowState для отладки.")]
     [SerializeField] private TMP_Text dayStateDebugText;
 
+    [Header("Цвета таймера клиента")]
+    [SerializeField] private Color customerTimerNormalColor = Color.white;
+    [SerializeField] private Color customerTimerWarningColor = new Color(1f, 0.35f, 0.35f);
+
     private Coroutine bindingRoutine;
     private bool eventBusBound;
+    private CustomerTimer customerTimer;
 
     private void Awake()
     {
         if (dayTimer == null)
             dayTimer = FindFirstObjectByType<DayTimer>();
 
+        customerTimer = FindFirstObjectByType<CustomerTimer>();
         ValidateReferences();
     }
 
@@ -73,6 +87,9 @@ public class GameplayHUDController : MonoBehaviour
                 EventBus.Instance.OnDayTimeUpdated += HandleDayTimeUpdated;
                 EventBus.Instance.OnDayStateChanged += HandleDayStateChanged;
                 EventBus.Instance.OnDayTimeExpired += HandleDayTimeExpired;
+                EventBus.Instance.OnCustomerTimeUpdated += HandleCustomerTimeUpdated;
+                EventBus.Instance.OnOrderStarted += HandleOrderStarted;
+                EventBus.Instance.OnTipsChanged += HandleTipsChanged;
                 eventBusBound = true;
                 SyncFromCurrentState();
             }
@@ -95,19 +112,21 @@ public class GameplayHUDController : MonoBehaviour
         EventBus.Instance.OnDayTimeUpdated -= HandleDayTimeUpdated;
         EventBus.Instance.OnDayStateChanged -= HandleDayStateChanged;
         EventBus.Instance.OnDayTimeExpired -= HandleDayTimeExpired;
+        EventBus.Instance.OnCustomerTimeUpdated -= HandleCustomerTimeUpdated;
+        EventBus.Instance.OnOrderStarted -= HandleOrderStarted;
+        EventBus.Instance.OnTipsChanged -= HandleTipsChanged;
         eventBusBound = false;
     }
 
     private void SyncFromCurrentState()
     {
         if (dayTimer != null && dayTimer.IsRunning)
-        {
             HandleDayTimeUpdated(dayTimer.ElapsedDayTime, dayTimer.TotalDayDuration);
-            return;
-        }
-
-        if (GameManager.Instance != null && GameManager.Instance.CurrentDayState == DayFlowState.Tutorial)
+        else if (GameManager.Instance != null && GameManager.Instance.CurrentDayState == DayFlowState.Tutorial)
             SetDayTimerLabel(GetStartClockLabel());
+
+        if (ScoreManager.Instance != null)
+            HandleTipsChanged(ScoreManager.Instance.TotalTips);
     }
 
     private void ValidateReferences()
@@ -115,8 +134,8 @@ public class GameplayHUDController : MonoBehaviour
         if (dayTimerText == null && dayTimerTextLegacy == null)
         {
             Debug.LogWarning(
-                $"{name}: назначьте dayTimerText (или dayTimerTextLegacy) в Inspector — " +
-                "создай TextMeshPro на Canvas и перетащи сюда.", this);
+                $"{name}: назначьте dayTimerText в Inspector — создай TextMeshPro на Canvas и перетащи сюда.",
+                this);
         }
     }
 
@@ -137,6 +156,33 @@ public class GameplayHUDController : MonoBehaviour
     private void HandleDayTimeExpired()
     {
         SetDayTimerLabel(GetEndClockLabel());
+    }
+
+    private void HandleCustomerTimeUpdated(float remaining, float total)
+    {
+        if (customerTimerText == null)
+            return;
+
+        int seconds = Mathf.CeilToInt(remaining);
+        customerTimerText.text = $"{seconds}";
+
+        bool warning = customerTimer != null
+            ? customerTimer.IsInWarningZone
+            : remaining <= 10f;
+
+        customerTimerText.color = warning ? customerTimerWarningColor : customerTimerNormalColor;
+    }
+
+    private void HandleOrderStarted(int orderIndex, OrderDataAsset order)
+    {
+        if (customerTimerText != null)
+            customerTimerText.color = customerTimerNormalColor;
+    }
+
+    private void HandleTipsChanged(int totalTips)
+    {
+        if (tipsText != null)
+            tipsText.text = $"${totalTips}";
     }
 
     private void HandlePauseClicked()

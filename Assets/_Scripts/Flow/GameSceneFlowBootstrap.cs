@@ -1,8 +1,8 @@
 /*
  * GameSceneFlowBootstrap
  * Назначение: инициализация игрового дня при загрузке GameScene.
- * Что делает: гарантирует наличие DayTimer, запускает flow GameManager, опционально пропускает туториал.
- * Связи: GameManager, DayTimer, EventBus.
+ * Что делает: гарантирует наличие DayTimer, запускает flow GameManager, сбрасывает заказы.
+ * Связи: GameManager, DayTimer, OrderManager, TutorialUI, EventBus.
  * Паттерны: Bootstrap компонент сцены, композиция менеджеров дня.
  */
 
@@ -12,10 +12,11 @@ using UnityEngine;
 public class GameSceneFlowBootstrap : MonoBehaviour
 {
     [Header("Отладка")]
-    [Tooltip("Если включено, день стартует сразу без ожидания TutorialUI (для тестов до готовности туториала).")]
+    [Tooltip("Пропустить туториал и сразу начать день. Игнорируется, если на сцене есть TutorialUI.")]
     [SerializeField] private bool autoStartDayForTesting;
 
     private DayTimer dayTimer;
+    private OrderManager orderManager;
     private bool sceneFlowInitialized;
 
     private void Awake()
@@ -23,6 +24,10 @@ public class GameSceneFlowBootstrap : MonoBehaviour
         dayTimer = GetComponent<DayTimer>();
         if (dayTimer == null)
             dayTimer = gameObject.AddComponent<DayTimer>();
+
+        orderManager = GetComponent<OrderManager>();
+        if (orderManager == null)
+            orderManager = gameObject.AddComponent<OrderManager>();
     }
 
     private void OnEnable()
@@ -67,9 +72,14 @@ public class GameSceneFlowBootstrap : MonoBehaviour
 
         sceneFlowInitialized = true;
         dayTimer.ResetTimer();
+
+        if (orderManager != null)
+            orderManager.ResetDayOrders();
+
         GameManager.Instance.BeginDayFlow();
 
-        if (autoStartDayForTesting)
+        TutorialUI tutorialUi = FindFirstObjectByType<TutorialUI>();
+        if (autoStartDayForTesting && tutorialUi == null)
             StartCoroutine(DeferredStartDay());
     }
 

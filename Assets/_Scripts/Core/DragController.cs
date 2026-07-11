@@ -60,6 +60,9 @@ public class DragController : MonoBehaviour
 
     private void BeginDrag(DraggableObject draggableObject, Vector2 screenPosition, bool preservePointerOffset)
     {
+        if (EventBus.Instance != null)
+            EventBus.Instance.RaiseFirstPlayerAction();
+
         currentDraggable = draggableObject;
         currentDraggable.BeginDrag();
 

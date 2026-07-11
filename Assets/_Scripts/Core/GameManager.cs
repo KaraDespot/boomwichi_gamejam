@@ -204,8 +204,6 @@ public class GameManager : MonoBehaviour
 
         if (dayTimer != null)
             dayTimer.StartDay();
-
-        SetDayState(DayFlowState.ShowingOrder);
     }
 
     /// <summary>
