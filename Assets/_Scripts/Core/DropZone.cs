@@ -61,6 +61,11 @@ public class DropZone : MonoBehaviour
 
     public void Accept(DraggableObject draggableObject)
     {
+        Accept(draggableObject, GetSnapPosition());
+    }
+
+    public void Accept(DraggableObject draggableObject, Vector3 dropWorldPoint)
+    {
         if (!CanAccept(draggableObject))
             return;
 
@@ -69,7 +74,7 @@ public class DropZone : MonoBehaviour
             case DropZoneAction.SnapToZone:
                 if (sandwichBoard != null)
                 {
-                    sandwichBoard.Accept(draggableObject);
+                    sandwichBoard.Accept(draggableObject, dropWorldPoint);
                     break;
                 }
 

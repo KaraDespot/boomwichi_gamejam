@@ -42,6 +42,39 @@ public class SandwichState : MonoBehaviour
         ingredients.Add(ingredient);
     }
 
+    public int GetNextIngredientLayerIndex(IngredientType ingredientType)
+    {
+        if (ingredients.Count == 0)
+            return 1;
+
+        int highestLayerIndex = GetHighestIngredientLayerIndex();
+        IngredientType lastIngredientType = ingredients[ingredients.Count - 1].Type;
+        return lastIngredientType == ingredientType
+            ? highestLayerIndex
+            : highestLayerIndex + 1;
+    }
+
+    public int GetHighestIngredientLayerIndex()
+    {
+        if (ingredients.Count == 0)
+            return 0;
+
+        int layerIndex = 1;
+        IngredientType previousType = ingredients[0].Type;
+
+        for (int i = 1; i < ingredients.Count; i++)
+        {
+            IngredientType currentType = ingredients[i].Type;
+            if (currentType == previousType)
+                continue;
+
+            layerIndex++;
+            previousType = currentType;
+        }
+
+        return layerIndex;
+    }
+
     public void RegisterTopBread(IngredientInstance bread)
     {
         topBread = bread;

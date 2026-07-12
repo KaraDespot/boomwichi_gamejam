@@ -166,7 +166,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: 
 --- !u!1 &192862569
 GameObject:
@@ -455,6 +455,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: OliveContainer
       objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: breadRole
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: ingredientType
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: failedDropAction
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: ingredientPrefab
+      value:
+      objectReference: {fileID: 3520120277094894129, guid: 3bde0d2352db86e4c8e28da1e685b2e7, type: 3}
     - target: {fileID: 3238919183459220959, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.325
@@ -494,22 +510,6 @@ PrefabInstance:
     - target: {fileID: 3238919183459220959, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: ingredientPrefab
-      value:
-      objectReference: {fileID: 3520120277094894129, guid: 3bde0d2352db86e4c8e28da1e685b2e7, type: 3}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: ingredientType
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: breadRole
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: failedDropAction
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -564,7 +564,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d6c9e3f4a5b8472c9d3e4f5a6b7c8d9e, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::InputRaycaster
   rayCamera: {fileID: 1606899758}
   tableLayerMask:
@@ -592,7 +592,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a3f1c2d4e5b647f8a9c0d1e2f3a4b5c6, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::DragController
   inputRaycaster: {fileID: 447840708}
   keepLastValidPosition: 1
@@ -613,6 +613,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: CheeseContainer
       objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: breadRole
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: ingredientType
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: failedDropAction
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: ingredientPrefab
+      value:
+      objectReference: {fileID: 3520120277094894129, guid: 6acd9691a82375340a72e521c56d48cc, type: 3}
     - target: {fileID: 3238919183459220959, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.345
@@ -652,22 +668,6 @@ PrefabInstance:
     - target: {fileID: 3238919183459220959, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: ingredientPrefab
-      value:
-      objectReference: {fileID: 3520120277094894129, guid: 6acd9691a82375340a72e521c56d48cc, type: 3}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: ingredientType
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: breadRole
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: failedDropAction
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -782,27 +782,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5b8d2e3f4a9471b8c2d3e4f5a6b7c8d, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::DropZone
   zoneType: 0
   snapPoint: {fileID: 671526329}
   snapOffset: {x: 0, y: 0.5, z: 0}
   sandwichBoard: {fileID: 671526335}
---- !u!114 &671526335
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 671526328}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b9c1d3e5f708492a8b0c2d4e6f718293, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::SandwichBoard
-  bottomBreadPoint: {fileID: 671526337}
-  layerHeight: 0.08
-  ingredientSpread: {x: 0.18, y: 0.12}
 --- !u!65 &671526334
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -824,6 +809,25 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.0000001, y: 2.0000002, z: 1.0000002}
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+--- !u!114 &671526335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 671526328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9c1d3e5f708492a8b0c2d4e6f718293, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SandwichBoard
+  bottomBreadPoint: {fileID: 671526337}
+  layerHeight: 0.025
+  placementHalfExtents: {x: 0.36, y: 0.36}
+  surfacePadding: 0.01
+  animatePlacement: 1
+  dropAnimationHeight: 0.22
+  dropAnimationDuration: 0.16
 --- !u!1 &671526336
 GameObject:
   m_ObjectHideFlags: 0
@@ -849,7 +853,7 @@ Transform:
   m_GameObject: {fileID: 671526336}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.035, y: 0.62, z: -0.54}
+  m_LocalPosition: {x: -0.035, y: 0.565, z: -0.54}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1076,6 +1080,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: OnionContainer
       objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: breadRole
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: ingredientType
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: failedDropAction
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: ingredientPrefab
+      value:
+      objectReference: {fileID: 3520120277094894129, guid: 51e93119c9aa141489e20bf089b216a9, type: 3}
     - target: {fileID: 3238919183459220959, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.789
@@ -1115,22 +1135,6 @@ PrefabInstance:
     - target: {fileID: 3238919183459220959, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: ingredientPrefab
-      value:
-      objectReference: {fileID: 3520120277094894129, guid: 51e93119c9aa141489e20bf089b216a9, type: 3}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: ingredientType
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: breadRole
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: failedDropAction
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1221,7 +1225,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb9f6b4d327e76140898409b4bb35c68, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: 
   pausePanel: {fileID: 485550451}
   buttonResume: {fileID: 145084646}
@@ -1238,6 +1242,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: PepperoniContainer
       objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: breadRole
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: ingredientType
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: failedDropAction
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: ingredientPrefab
+      value:
+      objectReference: {fileID: 3520120277094894129, guid: 7a4b07f29033b6946b2e5cd26413899c, type: 3}
     - target: {fileID: 3238919183459220959, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.04
@@ -1277,22 +1297,6 @@ PrefabInstance:
     - target: {fileID: 3238919183459220959, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: ingredientPrefab
-      value:
-      objectReference: {fileID: 3520120277094894129, guid: 7a4b07f29033b6946b2e5cd26413899c, type: 3}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: ingredientType
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: breadRole
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: failedDropAction
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1346,7 +1350,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d3e2b7b608f64e0eb8d73ba44f0d8f9d, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: 
   losePanel: {fileID: 0}
   loseRestartButton: {fileID: 0}
@@ -1364,7 +1368,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: 
 --- !u!4 &1353800437 stripped
 Transform:
@@ -1475,7 +1479,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 72ece51f2901e7445ab60da3685d6b5f, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: 
   ShowDebugText: 0
   ShowCameraFrustum: 1
@@ -1507,7 +1511,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
   m_RenderShadows: 1
   m_RequiresDepthTextureOption: 2
@@ -1553,6 +1557,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: CucumberContainer
       objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: breadRole
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: ingredientType
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: failedDropAction
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: ingredientPrefab
+      value:
+      objectReference: {fileID: 3520120277094894129, guid: 02dcfe39318ecc64aabc39c24c256da7, type: 3}
     - target: {fileID: 3238919183459220959, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.005
@@ -1593,22 +1613,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: ingredientPrefab
-      value:
-      objectReference: {fileID: 3520120277094894129, guid: 02dcfe39318ecc64aabc39c24c256da7, type: 3}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: ingredientType
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: breadRole
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: failedDropAction
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1648,7 +1652,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 625c14eee3ad46c99df7c7c891ef668a, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: 
   Damping: {x: 0.1, y: 0.5, z: 0.3}
   ShoulderOffset: {x: 0, y: 0.3, z: -0.5}
@@ -1674,7 +1678,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: 
   Priority:
     Enabled: 0
@@ -1732,7 +1736,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c73e16d164ec0e84cb168ff9eaa32994, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: 
   cmCamera: {fileID: 1642967613}
   minCameraDistance: 2
@@ -1747,7 +1751,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: 
 --- !u!1 &1663446470
 GameObject:
@@ -1777,7 +1781,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: 
   m_SendPointerHoverToParent: 1
   m_MoveRepeatDelay: 0.5
@@ -1808,7 +1812,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: 
   m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
@@ -1840,6 +1844,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: BreadContainer
       objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: breadRole
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: ingredientType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: failedDropAction
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: ingredientPrefab
+      value:
+      objectReference: {fileID: 3520120277094894129, guid: 500d64ca761a80940a2ad0d267b8e826, type: 3}
     - target: {fileID: 3238919183459220959, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.666
@@ -1879,22 +1899,6 @@ PrefabInstance:
     - target: {fileID: 3238919183459220959, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: ingredientPrefab
-      value:
-      objectReference: {fileID: 3520120277094894129, guid: 500d64ca761a80940a2ad0d267b8e826, type: 3}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: ingredientType
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: breadRole
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: failedDropAction
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2034,7 +2038,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c5b8d2e3f4a9471b8c2d3e4f5a6b7c8d, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::DropZone
   zoneType: 1
   snapPoint: {fileID: 1831887398}
@@ -2049,7 +2053,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: 
 --- !u!1001 &2134937087061944992
 PrefabInstance:
@@ -2093,11 +2097,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5664294580028971201, guid: 25ac4f9b09e6eda4ebd6bb12203d7123, type: 3}
       propertyPath: musicSlider
-      value: 
+      value:
       objectReference: {fileID: 2134937087061944993}
     - target: {fileID: 5664294580028971201, guid: 25ac4f9b09e6eda4ebd6bb12203d7123, type: 3}
       propertyPath: soundSlider
-      value: 
+      value:
       objectReference: {fileID: 2134937087061944994}
     - target: {fileID: 5664294580028971201, guid: 25ac4f9b09e6eda4ebd6bb12203d7123, type: 3}
       propertyPath: musicSources.Array.size
@@ -2109,19 +2113,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5664294580028971201, guid: 25ac4f9b09e6eda4ebd6bb12203d7123, type: 3}
       propertyPath: 'musicSources.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 192862570}
     - target: {fileID: 5664294580028971201, guid: 25ac4f9b09e6eda4ebd6bb12203d7123, type: 3}
       propertyPath: 'soundSources.Array.data[0]'
-      value: 
+      value:
       objectReference: {fileID: 0}
     - target: {fileID: 5664294580028971201, guid: 25ac4f9b09e6eda4ebd6bb12203d7123, type: 3}
       propertyPath: 'soundSources.Array.data[1]'
-      value: 
+      value:
       objectReference: {fileID: 0}
     - target: {fileID: 5664294580028971201, guid: 25ac4f9b09e6eda4ebd6bb12203d7123, type: 3}
       propertyPath: 'soundSources.Array.data[2]'
-      value: 
+      value:
       objectReference: {fileID: 0}
     - target: {fileID: 6339709835797667602, guid: 25ac4f9b09e6eda4ebd6bb12203d7123, type: 3}
       propertyPath: m_IsActive
@@ -2146,6 +2150,10 @@ PrefabInstance:
     - target: {fileID: 7283048584335997472, guid: 25ac4f9b09e6eda4ebd6bb12203d7123, type: 3}
       propertyPath: m_AnchorMin.x
       value: 0.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 7656739593321177905, guid: 25ac4f9b09e6eda4ebd6bb12203d7123, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.37890673
       objectReference: {fileID: 0}
     - target: {fileID: 8298863282807960074, guid: 25ac4f9b09e6eda4ebd6bb12203d7123, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -2247,7 +2255,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: 
 --- !u!114 &2134937087061944994 stripped
 MonoBehaviour:
@@ -2258,7 +2266,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: 
 --- !u!1001 &8198107052377450288
 PrefabInstance:
@@ -2272,6 +2280,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: TomatoContainer
       objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: breadRole
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: ingredientType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: failedDropAction
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
+      propertyPath: ingredientPrefab
+      value:
+      objectReference: {fileID: 3520120277094894129, guid: cd656175dbb3c7f438c6aae24021086a, type: 3}
     - target: {fileID: 3238919183459220959, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.666
@@ -2312,22 +2336,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: ingredientPrefab
-      value:
-      objectReference: {fileID: 3520120277094894129, guid: cd656175dbb3c7f438c6aae24021086a, type: 3}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: ingredientType
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: breadRole
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3030440470542057864, guid: cf0f7808a3faebf4eae78abd2e8b31fa, type: 3}
-      propertyPath: failedDropAction
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2343,15 +2351,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 759114883167708310, guid: c37094a239fae814285e7199903e244f, type: 3}
       propertyPath: playerStats
-      value: 
+      value:
       objectReference: {fileID: 0}
     - target: {fileID: 759114883167708310, guid: c37094a239fae814285e7199903e244f, type: 3}
       propertyPath: weaponManager
-      value: 
+      value:
       objectReference: {fileID: 0}
     - target: {fileID: 759114883167708310, guid: c37094a239fae814285e7199903e244f, type: 3}
       propertyPath: playerProgression
-      value: 
+      value:
       objectReference: {fileID: 0}
     - target: {fileID: 7685778451133993768, guid: c37094a239fae814285e7199903e244f, type: 3}
       propertyPath: m_Name

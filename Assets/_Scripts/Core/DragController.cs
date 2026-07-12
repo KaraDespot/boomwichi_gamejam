@@ -94,10 +94,10 @@ public class DragController : MonoBehaviour
 
     private void CompleteDrag(Vector2 screenPosition)
     {
-        if (inputRaycaster.TryGetDropZone(screenPosition, out DropZone dropZone) &&
+        if (inputRaycaster.TryGetDropZone(screenPosition, out DropZone dropZone, out Vector3 dropPoint) &&
             dropZone.CanAccept(currentDraggable))
         {
-            dropZone.Accept(currentDraggable);
+            dropZone.Accept(currentDraggable, dropPoint);
             currentDraggable = null;
             return;
         }

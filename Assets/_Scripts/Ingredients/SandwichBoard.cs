@@ -6,6 +6,7 @@
  * Паттерны: Domain Controller для сборки сендвича.
  */
 
+using System.Collections;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -17,10 +18,23 @@ public class SandwichBoard : MonoBehaviour
 
     [Header("Stack")]
     [Tooltip("Высота между слоями ингредиентов.")]
-    [SerializeField] private float layerHeight = 0.08f;
+    [SerializeField] private float layerHeight = 0.04f;
 
-    [Tooltip("Небольшое смещение ингредиентов по X/Z, чтобы слои не лежали идеально в одной точке.")]
-    [SerializeField] private Vector2 ingredientSpread = new Vector2(0.18f, 0.12f);
+    [Tooltip("Граница свободного размещения внутри нижнего хлеба в локальных координатах хлеба.")]
+    [SerializeField] private Vector2 placementHalfExtents = new Vector2(0.36f, 0.36f);
+
+    [Tooltip("Небольшой зазор над верхней поверхностью нижнего хлеба, чтобы первый ингредиент не проваливался.")]
+    [SerializeField] private float surfacePadding = 0.01f;
+
+    [Header("Placement Animation")]
+    [Tooltip("Включить короткое падение ингредиента после отпускания мыши.")]
+    [SerializeField] private bool animatePlacement = true;
+
+    [Tooltip("С какой высоты ингредиент падает на итоговую позицию.")]
+    [SerializeField] private float dropAnimationHeight = 0.22f;
+
+    [Tooltip("Длительность падения ингредиента.")]
+    [SerializeField] private float dropAnimationDuration = 0.16f;
 
     private SandwichState currentSandwich;
 
@@ -52,6 +66,11 @@ public class SandwichBoard : MonoBehaviour
 
     public bool Accept(DraggableObject draggableObject)
     {
+        return Accept(draggableObject, draggableObject != null ? draggableObject.transform.position : transform.position);
+    }
+
+    public bool Accept(DraggableObject draggableObject, Vector3 dropWorldPoint)
+    {
         if (!CanAccept(draggableObject))
             return false;
 
@@ -72,7 +91,7 @@ public class SandwichBoard : MonoBehaviour
         }
         else
         {
-            PlaceIngredient(draggableObject, ingredient);
+            PlaceIngredient(draggableObject, ingredient, dropWorldPoint);
         }
 
         return true;
@@ -99,25 +118,24 @@ public class SandwichBoard : MonoBehaviour
         draggableObject.SetCanDrag(true);
     }
 
-    private void PlaceIngredient(DraggableObject draggableObject, IngredientInstance ingredient)
+    private void PlaceIngredient(DraggableObject draggableObject, IngredientInstance ingredient, Vector3 dropWorldPoint)
     {
         Transform root = currentSandwich.transform;
-        int layerIndex = currentSandwich.IngredientCount;
-        Vector3 targetPosition = root.position + Vector3.up * layerHeight * (layerIndex + 1);
-        targetPosition += GetLayerOffset(layerIndex);
+        int layerIndex = currentSandwich.GetNextIngredientLayerIndex(ingredient.Type);
+        Vector3 targetPosition = GetFreePlacementPosition(root, dropWorldPoint, layerIndex);
 
-        Place(draggableObject, ingredient, targetPosition, root.rotation, root);
+        Place(draggableObject, ingredient, targetPosition, root.rotation, root, true);
         currentSandwich.RegisterIngredient(ingredient);
     }
 
     private void PlaceTopBread(DraggableObject draggableObject, IngredientInstance ingredient)
     {
         Transform root = currentSandwich.transform;
-        int layerIndex = currentSandwich.IngredientCount;
-        Vector3 targetPosition = root.position + Vector3.up * layerHeight * (layerIndex + 1);
+        int layerIndex = GetTopBreadLayerIndex();
+        Vector3 targetPosition = root.position + root.up * GetLayerHeightOffset(root, layerIndex);
 
         ingredient.AssignBreadRole(BreadRole.Top);
-        Place(draggableObject, ingredient, targetPosition, root.rotation, root);
+        Place(draggableObject, ingredient, targetPosition, root.rotation, root, true);
         currentSandwich.RegisterTopBread(ingredient);
     }
 
@@ -131,11 +149,11 @@ public class SandwichBoard : MonoBehaviour
         draggableObject.SetPhysicsLocked(true);
     }
 
-    private void Place(DraggableObject draggableObject, IngredientInstance ingredient, Vector3 position, Quaternion rotation, Transform parent)
+    private void Place(DraggableObject draggableObject, IngredientInstance ingredient, Vector3 position, Quaternion rotation, Transform parent, bool shouldAnimate = false)
     {
         bool isRoot = parent == draggableObject.transform;
 
-        draggableObject.CompleteDrop(position);
+        draggableObject.FinishDrag();
         draggableObject.transform.rotation = rotation;
 
         if (!isRoot)
@@ -147,23 +165,90 @@ public class SandwichBoard : MonoBehaviour
         if (isRoot)
             draggableObject.SetFailedDropAction(DragFailedDropAction.ReturnToStart);
 
+        if (shouldAnimate && animatePlacement)
+            StartCoroutine(AnimatePlacement(draggableObject.transform, position));
+        else
+            draggableObject.MoveTo(position);
+
         ingredient.MarkPlacedOnSandwich(currentSandwich);
     }
 
-    private Vector3 GetLayerOffset(int layerIndex)
+    private Vector3 GetFreePlacementPosition(Transform root, Vector3 dropWorldPoint, int layerIndex)
     {
-        int patternIndex = layerIndex % 4;
+        Vector3 localDropPoint = root.InverseTransformPoint(dropWorldPoint);
+        localDropPoint.y = 0f;
+        localDropPoint = ClampToBreadBounds(localDropPoint);
 
-        switch (patternIndex)
+        Vector3 horizontalPosition = root.TransformPoint(localDropPoint);
+        return horizontalPosition + root.up * GetLayerHeightOffset(root, layerIndex);
+    }
+
+    private float GetLayerHeightOffset(Transform root, int layerIndex)
+    {
+        int additionalLayerCount = Mathf.Max(0, layerIndex - 1);
+        return GetBottomBreadSurfaceOffset(root) + surfacePadding + layerHeight * additionalLayerCount;
+    }
+
+    private float GetBottomBreadSurfaceOffset(Transform root)
+    {
+        Collider bottomBreadCollider = currentSandwich.BottomBread != null
+            ? currentSandwich.BottomBread.GetComponent<Collider>()
+            : root.GetComponent<Collider>();
+
+        if (bottomBreadCollider is BoxCollider boxCollider)
         {
-            case 0:
-                return new Vector3(ingredientSpread.x, 0f, ingredientSpread.y);
-            case 1:
-                return new Vector3(-ingredientSpread.x, 0f, ingredientSpread.y);
-            case 2:
-                return new Vector3(ingredientSpread.x, 0f, -ingredientSpread.y);
-            default:
-                return new Vector3(-ingredientSpread.x, 0f, -ingredientSpread.y);
+            Vector3 localTopPoint = boxCollider.center + Vector3.up * boxCollider.size.y * 0.5f;
+            Vector3 worldTopPoint = root.TransformPoint(localTopPoint);
+            return Mathf.Max(0f, Vector3.Dot(worldTopPoint - root.position, root.up));
         }
+
+        if (bottomBreadCollider != null)
+            return Mathf.Max(0f, bottomBreadCollider.bounds.max.y - root.position.y);
+
+        return layerHeight;
+    }
+
+    private Vector3 ClampToBreadBounds(Vector3 localPoint)
+    {
+        if (placementHalfExtents.x <= 0f || placementHalfExtents.y <= 0f)
+            return Vector3.zero;
+
+        float normalizedX = localPoint.x / placementHalfExtents.x;
+        float normalizedZ = localPoint.z / placementHalfExtents.y;
+        float normalizedMagnitude = Mathf.Sqrt(normalizedX * normalizedX + normalizedZ * normalizedZ);
+
+        if (normalizedMagnitude <= 1f)
+            return localPoint;
+
+        normalizedX /= normalizedMagnitude;
+        normalizedZ /= normalizedMagnitude;
+
+        localPoint.x = normalizedX * placementHalfExtents.x;
+        localPoint.z = normalizedZ * placementHalfExtents.y;
+        return localPoint;
+    }
+
+    private int GetTopBreadLayerIndex()
+    {
+        return currentSandwich.GetHighestIngredientLayerIndex() + 1;
+    }
+
+    private IEnumerator AnimatePlacement(Transform placedTransform, Vector3 targetPosition)
+    {
+        Vector3 startPosition = targetPosition + Vector3.up * dropAnimationHeight;
+        float elapsed = 0f;
+
+        placedTransform.position = startPosition;
+
+        while (elapsed < dropAnimationDuration)
+        {
+            elapsed += Time.deltaTime;
+            float progress = Mathf.Clamp01(elapsed / dropAnimationDuration);
+            float easedProgress = 1f - Mathf.Pow(1f - progress, 3f);
+            placedTransform.position = Vector3.Lerp(startPosition, targetPosition, easedProgress);
+            yield return null;
+        }
+
+        placedTransform.position = targetPosition;
     }
 }

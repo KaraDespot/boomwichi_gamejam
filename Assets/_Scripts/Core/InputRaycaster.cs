@@ -92,7 +92,13 @@ public class InputRaycaster : MonoBehaviour
 
     public bool TryGetDropZone(Vector2 screenPosition, out DropZone dropZone)
     {
+        return TryGetDropZone(screenPosition, out dropZone, out _);
+    }
+
+    public bool TryGetDropZone(Vector2 screenPosition, out DropZone dropZone, out Vector3 dropPoint)
+    {
         dropZone = null;
+        dropPoint = Vector3.zero;
 
         if (!TryCreateRay(screenPosition, out Ray ray))
             return false;
@@ -107,6 +113,7 @@ public class InputRaycaster : MonoBehaviour
                 continue;
 
             dropZone = candidate;
+            dropPoint = hits[i].point;
             closestDistance = hits[i].distance;
         }
 
