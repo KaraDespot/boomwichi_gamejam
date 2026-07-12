@@ -451,6 +451,7 @@ GameObject:
   - component: {fileID: 219436332}
   - component: {fileID: 219436333}
   - component: {fileID: 219436334}
+  - component: {fileID: 219436335}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -578,6 +579,35 @@ MonoBehaviour:
   shakeFxLocalOffset: {x: 0, y: 0.06, z: 0}
   forceIdleFxLoop: 1
   shakeFxReleaseLifetime: 2
+--- !u!114 &219436335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 219436327}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2d3e4f5a6b7489012345678abcdef02, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cockroachPrefab: {fileID: 141014, guid: e8a98f96516902e4384263b5d25a25c6, type: 3}
+  spawnScale: 0.08
+  moveSpeed: 0.55
+  directionChangeInterval: {x: 0.6, y: 1.4}
+  clickWorldRadius: 0.42
+  minSpawnInterval: 18
+  maxSpawnInterval: 7
+  maxAliveCockroaches: 3
+  spawnAreaCenter: {fileID: 296971406}
+  spawnHalfExtents: {x: 1.6, y: 0.9}
+  spawnEdgePadding: 0.15
+  spawnAtTableEdges: 1
+  spawnBorderWidth: 0.35
+  dayTimer: {fileID: 219436330}
+  inputRaycaster: {fileID: 447840708}
+  fallbackTableHeight: 0.52
+  spawnOneImmediatelyForTesting: 1
 --- !u!1 &296971405
 GameObject:
   m_ObjectHideFlags: 0
@@ -826,6 +856,10 @@ MonoBehaviour:
   ingredientContainerLayerMask:
     serializedVersion: 2
     m_Bits: 512
+  cockroachLayerMask:
+    serializedVersion: 2
+    m_Bits: 1024
+  cockroachClickAssistPixels: 64
   maxRayDistance: 100
   useFallbackTablePlane: 1
   fallbackTableHeight: 0
