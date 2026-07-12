@@ -114,6 +114,21 @@ public class EventBus : MonoBehaviour
     public event Action<SandwichState> OnMoldFallenOnSandwich;
 
     /// <summary>
+    /// На столе появился таракан.
+    /// </summary>
+    public event Action<Cockroach> OnCockroachSpawned;
+
+    /// <summary>
+    /// Таракан раздавлен кликом.
+    /// </summary>
+    public event Action<Cockroach> OnCockroachKilled;
+
+    /// <summary>
+    /// Таракан заразил сендвич на тарелке.
+    /// </summary>
+    public event Action<SandwichState> OnSandwichCockroachContaminated;
+
+    /// <summary>
     /// Инициализация singleton-экземпляра EventBus.
     /// Объект сохраняется между сценами, чтобы подписчики не теряли источник событий.
     /// </summary>
@@ -234,5 +249,20 @@ public class EventBus : MonoBehaviour
     public void RaiseMoldFallenOnSandwich(SandwichState sandwichState)
     {
         OnMoldFallenOnSandwich?.Invoke(sandwichState);
+    }
+
+    public void RaiseCockroachSpawned(Cockroach cockroach)
+    {
+        OnCockroachSpawned?.Invoke(cockroach);
+    }
+
+    public void RaiseCockroachKilled(Cockroach cockroach)
+    {
+        OnCockroachKilled?.Invoke(cockroach);
+    }
+
+    public void RaiseSandwichCockroachContaminated(SandwichState sandwichState)
+    {
+        OnSandwichCockroachContaminated?.Invoke(sandwichState);
     }
 }
