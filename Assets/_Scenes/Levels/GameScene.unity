@@ -1071,10 +1071,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SandwichBoard
   bottomBreadPoint: {fileID: 671526337}
-  layerHeight: 0.025
+  layerHeight: 0.015
   placementHalfExtents: {x: 0.36, y: 0.36}
-  surfacePadding: 0.01
-  sauceSurfacePadding: 0.004
+  surfacePadding: 0.003
+  sauceSurfacePadding: 0.002
   animatePlacement: 1
   dropAnimationHeight: 0.22
   dropAnimationDuration: 0.16

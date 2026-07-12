@@ -18,16 +18,16 @@ public class SandwichBoard : MonoBehaviour
 
     [Header("Stack")]
     [Tooltip("Высота между слоями ингредиентов.")]
-    [SerializeField] private float layerHeight = 0.04f;
+    [SerializeField] private float layerHeight = 0.015f;
 
     [Tooltip("Граница свободного размещения внутри нижнего хлеба в локальных координатах хлеба.")]
     [SerializeField] private Vector2 placementHalfExtents = new Vector2(0.36f, 0.36f);
 
     [Tooltip("Небольшой зазор над верхней поверхностью нижнего хлеба, чтобы первый ингредиент не проваливался.")]
-    [SerializeField] private float surfacePadding = 0.01f;
+    [SerializeField] private float surfacePadding = 0.003f;
 
     [Tooltip("Зазор соуса над хлебом. Соус всегда лежит на поверхности хлеба и не создаёт новый слой начинки.")]
-    [SerializeField] private float sauceSurfacePadding = 0.004f;
+    [SerializeField] private float sauceSurfacePadding = 0.002f;
 
     [Header("Placement Animation")]
     [Tooltip("Включить короткое падение ингредиента после отпускания мыши.")]

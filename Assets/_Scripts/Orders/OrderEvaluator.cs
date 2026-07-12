@@ -230,7 +230,7 @@ public class OrderEvaluator : MonoBehaviour
             IngredientType type = ingredients[i].type;
             int count = Mathf.Max(0, ingredients[i].count);
 
-            if (count <= 0)
+            if (count <= 0 || type == IngredientType.Bread)
                 continue;
 
             if (!expectedCounts.ContainsKey(type))

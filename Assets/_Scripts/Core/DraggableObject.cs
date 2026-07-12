@@ -27,7 +27,7 @@ public class DraggableObject : MonoBehaviour
 {
     [Header("Drag")]
     [Tooltip("Высота объекта над точкой стола во время перетаскивания.")]
-    [SerializeField] private float dragHeight = 0.18f;
+    [SerializeField] private float dragHeight = 0.4f;
 
     [Tooltip("Что сделать, если объект отпустили не над подходящей зоной.")]
     [SerializeField] private DragFailedDropAction failedDropAction = DragFailedDropAction.ReturnToStart;

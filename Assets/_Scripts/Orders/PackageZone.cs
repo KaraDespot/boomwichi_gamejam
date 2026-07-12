@@ -2,7 +2,7 @@
  * PackageZone
  * Назначение: зона сдачи сендвича клиенту через пакет.
  * Что делает: принимает root-сендвич, запускает OrderEvaluator, начисляет чаевые и завершает текущий заказ.
- * Связи: вызывается DropZone типа Package, использует OrderManager, OrderEvaluator и TipsWallet.
+ * Связи: вызывается DropZone типа Package, использует OrderManager и OrderEvaluator.
  * Паттерны: Domain Controller, Event Publisher.
  */
 
@@ -29,10 +29,7 @@ public class PackageZone : MonoBehaviour
     [Tooltip("Сервис проверки заказа. Если пусто, будет найден на сцене или создан рядом с пакетом.")]
     [SerializeField] private OrderEvaluator orderEvaluator;
 
-    [Tooltip("Кошелёк чаевых. Если пусто, будет найден на сцене или создан рядом с пакетом.")]
-    [SerializeField] private TipsWallet tipsWallet;
-
-    [Tooltip("Создавать недостающие локальные сервисы оценки/чаевых на этом объекте в Play Mode.")]
+    [Tooltip("Создавать недостающий локальный сервис оценки на этом объекте в Play Mode.")]
     [SerializeField] private bool createRuntimeServicesIfMissing = true;
 
     public event Action<OrderEvaluationResult> SandwichDelivered;
@@ -87,9 +84,6 @@ public class PackageZone : MonoBehaviour
         draggableObject.SetPhysicsLocked(true);
         sandwichState.MarkDelivered();
 
-        if (tipsWallet != null)
-            tipsWallet.AddTips(LastDeliveryResult.TipAmount);
-
         if (orderManager != null)
             orderManager.CompleteCurrentOrder(LastDeliveryResult.TipAmount);
 
@@ -116,17 +110,11 @@ public class PackageZone : MonoBehaviour
         if (orderEvaluator == null)
             orderEvaluator = FindFirstObjectByType<OrderEvaluator>();
 
-        if (tipsWallet == null)
-            tipsWallet = TipsWallet.Instance != null ? TipsWallet.Instance : FindFirstObjectByType<TipsWallet>();
-
         if (!createRuntimeServicesIfMissing)
             return;
 
         if (orderEvaluator == null)
             orderEvaluator = gameObject.AddComponent<OrderEvaluator>();
-
-        if (tipsWallet == null)
-            tipsWallet = gameObject.AddComponent<TipsWallet>();
     }
 
     private OrderDataAsset GetCurrentOrder()

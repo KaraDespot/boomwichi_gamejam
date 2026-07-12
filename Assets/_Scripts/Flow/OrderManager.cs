@@ -6,6 +6,7 @@
  * Паттерны: Manager, Observer через EventBus.
  */
 
+using System.Collections;
 using UnityEngine;
 
 public class OrderManager : MonoBehaviour
@@ -17,8 +18,13 @@ public class OrderManager : MonoBehaviour
     [Tooltip("Перетащи сюда Order Data Asset в нужном порядке. Создать: ПКМ в Project → Create → Boomwichi → Order Data.")]
     [SerializeField] private OrderDataAsset[] dayOrders;
 
+    [Header("Реакция клиента")]
+    [Tooltip("Пауза после сдачи заказа: успеваем показать оценку/чаевые, потом появляется следующий заказ или финал дня.")]
+    [SerializeField] private float customerReactionDuration = 1.25f;
+
     private int currentOrderIndex = -1;
     private bool dayOrdersFinished;
+    private Coroutine orderTransitionRoutine;
 
     public int CurrentOrderIndex => currentOrderIndex;
     public int TotalOrders => dayOrders != null ? dayOrders.Length : 0;
@@ -48,6 +54,8 @@ public class OrderManager : MonoBehaviour
 
     private void OnDisable()
     {
+        StopOrderTransition();
+
         if (EventBus.Instance != null)
         {
             EventBus.Instance.OnDayStateChanged -= HandleDayStateChanged;
@@ -74,6 +82,7 @@ public class OrderManager : MonoBehaviour
     /// </summary>
     public void ResetDayOrders()
     {
+        StopOrderTransition();
         currentOrderIndex = -1;
         dayOrdersFinished = false;
 
@@ -140,6 +149,8 @@ public class OrderManager : MonoBehaviour
         if (dayOrdersFinished || currentOrderIndex < 0)
             return;
 
+        StopOrderTransition();
+
         if (customerTimer != null)
             customerTimer.StopTimer();
 
@@ -152,7 +163,7 @@ public class OrderManager : MonoBehaviour
         if (GameManager.Instance != null)
             GameManager.Instance.SetDayState(DayFlowState.CustomerReaction);
 
-        StartNextOrder();
+        orderTransitionRoutine = StartCoroutine(AdvanceAfterCustomerReaction());
     }
 
     private void HandleDayStateChanged(DayFlowState state)
@@ -184,6 +195,24 @@ public class OrderManager : MonoBehaviour
 
         if (GameManager.Instance != null)
             GameManager.Instance.FinishDay();
+    }
+
+    private IEnumerator AdvanceAfterCustomerReaction()
+    {
+        if (customerReactionDuration > 0f)
+            yield return new WaitForSeconds(customerReactionDuration);
+
+        orderTransitionRoutine = null;
+        StartNextOrder();
+    }
+
+    private void StopOrderTransition()
+    {
+        if (orderTransitionRoutine == null)
+            return;
+
+        StopCoroutine(orderTransitionRoutine);
+        orderTransitionRoutine = null;
     }
 
     private void ValidateDayOrders()

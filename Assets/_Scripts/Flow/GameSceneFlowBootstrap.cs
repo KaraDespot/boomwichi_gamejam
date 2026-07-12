@@ -2,7 +2,7 @@
  * GameSceneFlowBootstrap
  * Назначение: инициализация игрового дня при загрузке GameScene.
  * Что делает: гарантирует наличие DayTimer, запускает flow GameManager, сбрасывает заказы.
- * Связи: GameManager, DayTimer, OrderManager, TutorialUI, EventBus.
+ * Связи: GameManager, DayTimer, OrderManager, ScoreManager, TutorialUI, EventBus.
  * Паттерны: Bootstrap компонент сцены, композиция менеджеров дня.
  */
 
@@ -17,6 +17,7 @@ public class GameSceneFlowBootstrap : MonoBehaviour
 
     private DayTimer dayTimer;
     private OrderManager orderManager;
+    private ScoreManager scoreManager;
     private bool sceneFlowInitialized;
 
     private void Awake()
@@ -28,6 +29,10 @@ public class GameSceneFlowBootstrap : MonoBehaviour
         orderManager = GetComponent<OrderManager>();
         if (orderManager == null)
             orderManager = gameObject.AddComponent<OrderManager>();
+
+        scoreManager = GetComponent<ScoreManager>();
+        if (scoreManager == null)
+            scoreManager = gameObject.AddComponent<ScoreManager>();
     }
 
     private void OnEnable()
@@ -75,6 +80,9 @@ public class GameSceneFlowBootstrap : MonoBehaviour
 
         if (orderManager != null)
             orderManager.ResetDayOrders();
+
+        if (scoreManager != null)
+            scoreManager.ResetDayScore();
 
         GameManager.Instance.BeginDayFlow();
 
