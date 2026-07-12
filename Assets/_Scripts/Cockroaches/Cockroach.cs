@@ -42,6 +42,17 @@ public class Cockroach : MonoBehaviour
     /// <summary> Точка для screen-space клика (центр зоны раздавливания). </summary>
     public Vector3 ClickWorldPoint => transform.position + Vector3.up * clickTargetHeight;
 
+    /// <summary> Точка на столе, где остаётся пятно после раздавливания. </summary>
+    public Vector3 SquashWorldPoint
+    {
+        get
+        {
+            Vector3 point = transform.position;
+            point.y = tableHeight;
+            return point;
+        }
+    }
+
     private void OnEnable()
     {
         if (!activeInstances.Contains(this))
@@ -81,11 +92,22 @@ public class Cockroach : MonoBehaviour
 
         isAlive = false;
         enabled = false;
+        HideVisuals();
 
         if (EventBus.Instance != null)
             EventBus.Instance.RaiseCockroachKilled(this);
 
         Destroy(gameObject, squashDestroyDelay);
+    }
+
+    private void HideVisuals()
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            if (renderers[i] != null)
+                renderers[i].enabled = false;
+        }
     }
 
     private void UpdateMovement()
