@@ -38,6 +38,7 @@ public class SandwichState : MonoBehaviour
     public bool IsInGrill { get; private set; }
     public SandwichCookState CookState { get; private set; }
     public float CookProgressSeconds { get; private set; }
+    public bool HasFallenMold { get; private set; }
     public int IngredientCount => ingredients.Count;
 
     public void Initialize(SandwichBoard board, IngredientInstance bread)
@@ -49,6 +50,7 @@ public class SandwichState : MonoBehaviour
         IsInGrill = false;
         CookState = SandwichCookState.Raw;
         CookProgressSeconds = 0f;
+        HasFallenMold = false;
         ingredients.Clear();
         ingredientCounts.Clear();
         ApplyCookVisuals();
@@ -171,6 +173,14 @@ public class SandwichState : MonoBehaviour
     public void AddCookProgress(float seconds)
     {
         CookProgressSeconds += Mathf.Max(0f, seconds);
+    }
+
+    /// <summary>
+    /// Плесень упала на сендвич при очистке над доской. Исправить нельзя.
+    /// </summary>
+    public void MarkFallenMold()
+    {
+        HasFallenMold = true;
     }
 
     public void DetachFromBoard()

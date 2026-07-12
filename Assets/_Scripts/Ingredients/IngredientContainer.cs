@@ -64,6 +64,9 @@ public class IngredientContainer : MonoBehaviour
         draggableObject.SetFailedDropAction(failedDropAction);
         draggableObject.SetCanDrag(true);
 
+        if (EventBus.Instance != null)
+            EventBus.Instance.RaiseIngredientSpawned(ingredientInstance);
+
         if (instance.GetComponentInChildren<Collider>() == null)
             Debug.LogWarning($"{name}: у созданного ингредиента нет Collider. Его можно будет тащить после spawn, но нельзя будет выбрать повторно.", instance);
 

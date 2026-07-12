@@ -6,10 +6,10 @@ using UnityEngine;
  * Назначение: единая шина событий между core/UI/gameplay системами.
  * Зачем нужен: снижает связанность - отправитель события не зависит от конкретных получателей.
  * Как используется сейчас:
- *  - GameManager публикует pause/resume.
+ *  - GameManager публикует pause/resume и смену DayFlowState.
  *  - SceneLoader публикует факт загрузки любой сцены.
- *  - EncounterTrigger публикует факт завершения encounter.
- * Подписчики могут свободно добавляться в будущих уроках без правок отправителей.
+ *  - DayTimer публикует прогресс дня.
+ * Подписчики могут свободно добавляться без правок отправителей.
  */
 public class EventBus : MonoBehaviour
 {
@@ -39,6 +39,81 @@ public class EventBus : MonoBehaviour
     public event Action<string> OnEncounterCompleted;
 
     /// <summary>
+    /// Смена состояния игрового дня (Tutorial, PlayingOrder и т.д.).
+    /// </summary>
+    public event Action<DayFlowState> OnDayStateChanged;
+
+    /// <summary>
+    /// Обновление таймера дня: прошло секунд / всего секунд.
+    /// </summary>
+    public event Action<float, float> OnDayTimeUpdated;
+
+    /// <summary>
+    /// Лимит 5 минут исчерпан; текущий заказ можно доделать.
+    /// </summary>
+    public event Action OnDayTimeExpired;
+
+    /// <summary>
+    /// Смена полностью завершена (все заказы обработаны или день закрыт).
+    /// </summary>
+    public event Action OnDayFinished;
+
+    /// <summary>
+    /// Первое действие игрока в заказе (скрыть облако заказа).
+    /// </summary>
+    public event Action OnFirstPlayerAction;
+
+    /// <summary>
+    /// Начался новый заказ: индекс и описание.
+    /// </summary>
+    public event Action<int, OrderDataAsset> OnOrderStarted;
+
+    /// <summary>
+    /// Заказ провален (таймер, грязь и т.д.).
+    /// </summary>
+    public event Action<int> OnOrderFailed;
+
+    /// <summary>
+    /// Заказ успешно сдан: индекс и начисленные чаевые.
+    /// </summary>
+    public event Action<int, int> OnOrderCompleted;
+
+    /// <summary>
+    /// Обновление таймера клиента: осталось / всего секунд.
+    /// </summary>
+    public event Action<float, float> OnCustomerTimeUpdated;
+
+    /// <summary>
+    /// Таймер ожидания клиента истёк.
+    /// </summary>
+    public event Action OnCustomerTimeExpired;
+
+    /// <summary>
+    /// Изменились накопленные чаевые за день.
+    /// </summary>
+    public event Action<int> OnTipsChanged;
+
+    /// <summary>
+    /// Ингредиент создан из контейнера.
+    /// </summary>
+    public event Action<IngredientInstance> OnIngredientSpawned;
+
+    /// <summary>
+    /// На ингредиенте появилась плесень.
+    /// </summary>
+    public event Action<IngredientInstance> OnIngredientMolded;
+
+    /// <summary>
+    /// Плесень очищена с ингредиента.
+    /// </summary>
+    public event Action<IngredientInstance> OnMoldCleaned;
+
+    /// <summary>
+    /// Плесень упала на сендвич при очистке над доской.
+    /// </summary>
+    public event Action<SandwichState> OnMoldFallenOnSandwich;
+
+    /// <summary>
     /// Инициализация singleton-экземпляра EventBus.
     /// Объект сохраняется между сценами, чтобы подписчики не теряли источник событий.
     /// </summary>
@@ -59,7 +134,7 @@ public class EventBus : MonoBehaviour
     /// </summary>
     public void RaiseGamePaused()
     {
-        OnGamePaused?.Invoke(); // вызываем событие, если есть подписчики
+        OnGamePaused?.Invoke();
     }
 
     /// <summary>
@@ -84,5 +159,80 @@ public class EventBus : MonoBehaviour
     public void RaiseEncounterCompleted(string encounterId)
     {
         OnEncounterCompleted?.Invoke(encounterId);
+    }
+
+    public void RaiseDayStateChanged(DayFlowState state)
+    {
+        OnDayStateChanged?.Invoke(state);
+    }
+
+    public void RaiseDayTimeUpdated(float elapsed, float total)
+    {
+        OnDayTimeUpdated?.Invoke(elapsed, total);
+    }
+
+    public void RaiseDayTimeExpired()
+    {
+        OnDayTimeExpired?.Invoke();
+    }
+
+    public void RaiseDayFinished()
+    {
+        OnDayFinished?.Invoke();
+    }
+
+    public void RaiseFirstPlayerAction()
+    {
+        OnFirstPlayerAction?.Invoke();
+    }
+
+    public void RaiseOrderStarted(int orderIndex, OrderDataAsset order)
+    {
+        OnOrderStarted?.Invoke(orderIndex, order);
+    }
+
+    public void RaiseOrderFailed(int orderIndex)
+    {
+        OnOrderFailed?.Invoke(orderIndex);
+    }
+
+    public void RaiseOrderCompleted(int orderIndex, int tipsEarned)
+    {
+        OnOrderCompleted?.Invoke(orderIndex, tipsEarned);
+    }
+
+    public void RaiseCustomerTimeUpdated(float remaining, float total)
+    {
+        OnCustomerTimeUpdated?.Invoke(remaining, total);
+    }
+
+    public void RaiseCustomerTimeExpired()
+    {
+        OnCustomerTimeExpired?.Invoke();
+    }
+
+    public void RaiseTipsChanged(int totalTips)
+    {
+        OnTipsChanged?.Invoke(totalTips);
+    }
+
+    public void RaiseIngredientSpawned(IngredientInstance ingredient)
+    {
+        OnIngredientSpawned?.Invoke(ingredient);
+    }
+
+    public void RaiseIngredientMolded(IngredientInstance ingredient)
+    {
+        OnIngredientMolded?.Invoke(ingredient);
+    }
+
+    public void RaiseMoldCleaned(IngredientInstance ingredient)
+    {
+        OnMoldCleaned?.Invoke(ingredient);
+    }
+
+    public void RaiseMoldFallenOnSandwich(SandwichState sandwichState)
+    {
+        OnMoldFallenOnSandwich?.Invoke(sandwichState);
     }
 }
