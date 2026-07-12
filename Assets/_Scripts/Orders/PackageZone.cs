@@ -78,8 +78,8 @@ public class PackageZone : MonoBehaviour
         HasDeliveryResult = true;
 
         Vector3 targetPosition = GetSnapPosition();
-        draggableObject.FinishDrag();
-        draggableObject.transform.SetPositionAndRotation(targetPosition, transform.rotation);
+        draggableObject.transform.rotation = transform.rotation;
+        draggableObject.CompleteDrop(targetPosition);
         draggableObject.SetCanDrag(false);
         draggableObject.SetPhysicsLocked(true);
         sandwichState.MarkDelivered();

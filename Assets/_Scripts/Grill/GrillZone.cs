@@ -35,11 +35,35 @@ public class GrillZone : MonoBehaviour
     [Tooltip("Локальный угол крышки, когда грильница закрыта.")]
     [SerializeField] private Vector3 closedLidEulerAngles = Vector3.zero;
 
+    [Header("Timer Visual")]
+    [Tooltip("Показывать простой runtime-индикатор таймера над грильницей.")]
+    [SerializeField] private bool showTimerVisual = true;
+
+    [Tooltip("Локальная позиция индикатора таймера относительно грильницы.")]
+    [SerializeField] private Vector3 timerLocalOffset = new Vector3(0f, 0.85f, 0f);
+
+    [Tooltip("Размер индикатора таймера.")]
+    [SerializeField] private Vector3 timerSize = new Vector3(0.8f, 0.06f, 0.06f);
+
+    [Tooltip("Цвет таймера в состоянии Raw.")]
+    [SerializeField] private Color rawTimerColor = new Color(1f, 0.75f, 0.18f, 1f);
+
+    [Tooltip("Цвет таймера в состоянии Toasted.")]
+    [SerializeField] private Color toastedTimerColor = new Color(0.35f, 0.95f, 0.35f, 1f);
+
+    [Tooltip("Цвет таймера в состоянии Burnt.")]
+    [SerializeField] private Color burntTimerColor = new Color(0.12f, 0.08f, 0.05f, 1f);
+
     private Coroutine cookRoutine;
     private DraggableObject currentDraggable;
     private SandwichState currentSandwich;
+    private Transform timerRoot;
+    private Transform timerFill;
+    private Renderer timerFillRenderer;
+    private Material timerFillMaterial;
     private bool isClosed;
     private bool canOpen;
+    private bool isSandwichBeingDragged;
 
     public bool HasSandwich => currentSandwich != null;
     public bool IsClosed => isClosed;
@@ -48,6 +72,8 @@ public class GrillZone : MonoBehaviour
 
     private void Awake()
     {
+        CreateTimerVisual();
+        UpdateTimerVisual();
         ApplyLidState(false);
     }
 
@@ -76,14 +102,15 @@ public class GrillZone : MonoBehaviour
 
         currentDraggable = draggableObject;
         currentSandwich = draggableObject.GetComponent<SandwichState>();
+        isSandwichBeingDragged = false;
 
         currentSandwich.DetachFromBoard();
         currentSandwich.MarkEnteredGrill();
 
-        currentDraggable.FinishDrag();
+        currentDraggable.CompleteDrop(GetSnapPosition());
         currentDraggable.SetCanDrag(false);
         currentDraggable.SetPhysicsLocked(true);
-        currentDraggable.transform.SetPositionAndRotation(GetSnapPosition(), transform.rotation);
+        currentDraggable.transform.rotation = transform.rotation;
 
         CloseGrill();
         StartCooking();
@@ -103,6 +130,7 @@ public class GrillZone : MonoBehaviour
         currentDraggable.SetFailedDropAction(DragFailedDropAction.ReturnToStart);
         currentDraggable.DragStarted += HandleCurrentSandwichDragStarted;
 
+        UpdateTimerVisual();
         return true;
     }
 
@@ -117,6 +145,7 @@ public class GrillZone : MonoBehaviour
         StopCookingTimer();
         canOpen = currentSandwich != null && currentSandwich.CookState != SandwichCookState.Raw;
         cookRoutine = StartCoroutine(CookRoutine());
+        UpdateTimerVisual();
     }
 
     private void StopCookingTimer()
@@ -142,6 +171,7 @@ public class GrillZone : MonoBehaviour
             {
                 currentSandwich.SetCookState(SandwichCookState.Toasted);
                 canOpen = true;
+                UpdateTimerVisual();
                 Debug.Log($"{name}: сендвич готов, можно открыть грильницу.", this);
             }
 
@@ -149,13 +179,16 @@ public class GrillZone : MonoBehaviour
             {
                 currentSandwich.SetCookState(SandwichCookState.Burnt);
                 canOpen = true;
+                UpdateTimerVisual();
                 Debug.Log($"{name}: сендвич пережарен.", this);
             }
 
+            UpdateTimerVisual();
             yield return null;
         }
 
         cookRoutine = null;
+        UpdateTimerVisual();
     }
 
     private void CloseGrill()
@@ -163,12 +196,14 @@ public class GrillZone : MonoBehaviour
         isClosed = true;
         canOpen = false;
         ApplyLidState(true);
+        UpdateTimerVisual();
     }
 
     private void OpenGrill()
     {
         isClosed = false;
         ApplyLidState(false);
+        UpdateTimerVisual();
     }
 
     private void ApplyLidState(bool closed)
@@ -187,8 +222,159 @@ public class GrillZone : MonoBehaviour
             return;
 
         currentDraggable.DragStarted -= HandleCurrentSandwichDragStarted;
+        currentDraggable.DragEnded += HandleCurrentSandwichDragEnded;
         currentSandwich.MarkRemovedFromGrill();
+        isSandwichBeingDragged = true;
+        StopCookingTimer();
+        UpdateTimerVisual();
+    }
+
+    private void HandleCurrentSandwichDragEnded(DraggableObject draggableObject, DragEndResult result)
+    {
+        if (draggableObject != currentDraggable)
+            return;
+
+        currentDraggable.DragEnded -= HandleCurrentSandwichDragEnded;
+        isSandwichBeingDragged = false;
+
+        if (result == DragEndResult.Completed)
+        {
+            ClearCurrentSandwich();
+            return;
+        }
+
+        ReturnSandwichToGrill();
+    }
+
+    private void ReturnSandwichToGrill()
+    {
+        if (currentDraggable == null || currentSandwich == null)
+            return;
+
+        currentSandwich.MarkEnteredGrill();
+        currentDraggable.SetCanDrag(false);
+        currentDraggable.SetPhysicsLocked(true);
+        currentDraggable.transform.SetPositionAndRotation(GetSnapPosition(), transform.rotation);
+
+        if (currentSandwich.CookState == SandwichCookState.Burnt)
+        {
+            OpenGrill();
+            currentDraggable.SetCanDrag(true);
+            currentDraggable.DragStarted += HandleCurrentSandwichDragStarted;
+            UpdateTimerVisual();
+            return;
+        }
+
+        CloseGrill();
+        StartCooking();
+    }
+
+    private void ClearCurrentSandwich()
+    {
+        StopCookingTimer();
+
+        if (currentSandwich != null)
+            currentSandwich.MarkRemovedFromGrill();
+
         currentDraggable = null;
         currentSandwich = null;
+        isSandwichBeingDragged = false;
+        OpenGrill();
+        HideTimerVisual();
+    }
+
+    private void CreateTimerVisual()
+    {
+        if (!showTimerVisual || timerRoot != null)
+            return;
+
+        GameObject rootObject = new GameObject("GrillTimer");
+        timerRoot = rootObject.transform;
+        timerRoot.SetParent(transform, false);
+        timerRoot.localPosition = timerLocalOffset;
+        timerRoot.localRotation = Quaternion.identity;
+
+        GameObject backgroundObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        backgroundObject.name = "TimerBackground";
+        backgroundObject.transform.SetParent(timerRoot, false);
+        backgroundObject.transform.localPosition = Vector3.zero;
+        backgroundObject.transform.localScale = timerSize;
+        RemoveRuntimeCollider(backgroundObject);
+
+        Renderer backgroundRenderer = backgroundObject.GetComponent<Renderer>();
+        if (backgroundRenderer != null)
+            backgroundRenderer.sharedMaterial = CreateTimerMaterial(new Color(0.05f, 0.05f, 0.05f, 1f));
+
+        GameObject fillObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        fillObject.name = "TimerFill";
+        timerFill = fillObject.transform;
+        timerFill.SetParent(timerRoot, false);
+        RemoveRuntimeCollider(fillObject);
+
+        timerFillRenderer = fillObject.GetComponent<Renderer>();
+        timerFillMaterial = CreateTimerMaterial(rawTimerColor);
+        if (timerFillRenderer != null)
+            timerFillRenderer.sharedMaterial = timerFillMaterial;
+    }
+
+    private void UpdateTimerVisual()
+    {
+        if (timerRoot == null || timerFill == null)
+            return;
+
+        bool shouldShow = currentSandwich != null && !isSandwichBeingDragged;
+        timerRoot.gameObject.SetActive(shouldShow);
+        if (!shouldShow)
+            return;
+
+        float burntAt = Mathf.Max(Mathf.Max(0f, toastedSeconds), burntSeconds);
+        float normalizedProgress = burntAt > 0f
+            ? Mathf.Clamp01(currentSandwich.CookProgressSeconds / burntAt)
+            : 1f;
+
+        timerFill.localScale = new Vector3(timerSize.x * normalizedProgress, timerSize.y, timerSize.z);
+        timerFill.localPosition = new Vector3(-timerSize.x * (1f - normalizedProgress) * 0.5f, 0f, 0f);
+
+        if (timerFillMaterial != null)
+            timerFillMaterial.color = GetTimerColor(currentSandwich.CookState);
+    }
+
+    private void HideTimerVisual()
+    {
+        if (timerRoot != null)
+            timerRoot.gameObject.SetActive(false);
+    }
+
+    private Color GetTimerColor(SandwichCookState cookState)
+    {
+        switch (cookState)
+        {
+            case SandwichCookState.Toasted:
+                return toastedTimerColor;
+
+            case SandwichCookState.Burnt:
+                return burntTimerColor;
+
+            default:
+                return rawTimerColor;
+        }
+    }
+
+    private Material CreateTimerMaterial(Color color)
+    {
+        Shader shader = Shader.Find("Universal Render Pipeline/Lit");
+        if (shader == null)
+            shader = Shader.Find("Standard");
+
+        Material material = new Material(shader);
+        material.color = color;
+        return material;
+    }
+
+    private void RemoveRuntimeCollider(GameObject target)
+    {
+        Collider collider = target.GetComponent<Collider>();
+        if (collider != null)
+            Destroy(collider);
     }
 }

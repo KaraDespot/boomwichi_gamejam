@@ -114,7 +114,7 @@ public class DropZone : MonoBehaviour
                 break;
 
             case DropZoneAction.DeactivateObject:
-                draggableObject.FinishDrag();
+                draggableObject.CompleteDrop(draggableObject.transform.position);
                 draggableObject.gameObject.SetActive(false);
                 break;
         }

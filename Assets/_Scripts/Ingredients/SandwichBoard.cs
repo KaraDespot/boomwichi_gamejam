@@ -58,6 +58,9 @@ public class SandwichBoard : MonoBehaviour
         if (sandwichState != null && sandwichState == currentSandwich)
             return true;
 
+        if (sandwichState != null)
+            return currentSandwich == null && sandwichState.HasBottomBread && !sandwichState.IsDelivered;
+
         IngredientInstance ingredient = draggableObject.GetComponent<IngredientInstance>();
         if (ingredient == null || ingredient.IsPlacedOnSandwich)
             return false;
@@ -92,6 +95,12 @@ public class SandwichBoard : MonoBehaviour
         if (sandwichState != null && sandwichState == currentSandwich)
         {
             RepositionCurrentSandwich(draggableObject);
+            return true;
+        }
+
+        if (sandwichState != null)
+        {
+            PlaceExistingSandwich(draggableObject, sandwichState);
             return true;
         }
 
@@ -192,6 +201,13 @@ public class SandwichBoard : MonoBehaviour
         draggableObject.SetCanDrag(true);
         draggableObject.SetFailedDropAction(DragFailedDropAction.ReturnToStart);
         draggableObject.SetPhysicsLocked(true);
+    }
+
+    private void PlaceExistingSandwich(DraggableObject draggableObject, SandwichState sandwichState)
+    {
+        currentSandwich = sandwichState;
+        currentSandwich.AttachToBoard(this);
+        RepositionCurrentSandwich(draggableObject);
     }
 
     private void Place(DraggableObject draggableObject, IngredientInstance ingredient, Vector3 position, Quaternion rotation, Transform parent, bool shouldAnimate = false)

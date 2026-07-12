@@ -64,8 +64,10 @@ public class DragController : MonoBehaviour
 
     private void BeginDrag(DraggableObject draggableObject, Vector2 screenPosition, bool preservePointerOffset)
     {
+        if (draggableObject == null || !draggableObject.BeginDrag())
+            return;
+
         currentDraggable = draggableObject;
-        currentDraggable.BeginDrag();
 
         if (!inputRaycaster.TryGetTablePoint(screenPosition, out Vector3 tablePoint))
         {

@@ -16,6 +16,12 @@ public enum DragFailedDropAction
     DestroyObject
 }
 
+public enum DragEndResult
+{
+    Completed,
+    Cancelled
+}
+
 [DisallowMultipleComponent]
 public class DraggableObject : MonoBehaviour
 {
@@ -29,6 +35,12 @@ public class DraggableObject : MonoBehaviour
     [Tooltip("На время drag коллайдеры объекта отключаются, чтобы raycast попадал в стол и drop zones, а не в сам объект.")]
     [SerializeField] private bool disableCollidersWhileDragging = true;
 
+    [Tooltip("Плавно вести объект к курсору вместо мгновенного телепорта.")]
+    [SerializeField] private bool smoothDragMovement = true;
+
+    [Tooltip("Скорость плавного следования за курсором.")]
+    [SerializeField] private float dragFollowSpeed = 28f;
+
     private Rigidbody cachedRigidbody;
     private Collider[] cachedColliders;
     private bool hadRigidbody;
@@ -39,13 +51,16 @@ public class DraggableObject : MonoBehaviour
     private bool physicsLocked;
     private Vector3 startPosition;
     private Quaternion startRotation;
+    private Vector3 targetPosition;
     private bool canDrag = true;
+    private bool hasTargetPosition;
 
     public float DragHeight => dragHeight;
     public bool CanDrag => canDrag && isActiveAndEnabled;
     public bool IsDragging { get; private set; }
 
     public event Action<DraggableObject> DragStarted;
+    public event Action<DraggableObject, DragEndResult> DragEnded;
 
     private void Awake()
     {
@@ -58,6 +73,15 @@ public class DraggableObject : MonoBehaviour
 
         initialKinematicState = cachedRigidbody.isKinematic;
         initialGravityState = cachedRigidbody.useGravity;
+    }
+
+    private void Update()
+    {
+        if (!IsDragging || !smoothDragMovement || !hasTargetPosition)
+            return;
+
+        float progress = 1f - Mathf.Exp(-dragFollowSpeed * Time.deltaTime);
+        transform.position = Vector3.Lerp(transform.position, targetPosition, progress);
     }
 
     public void SetCanDrag(bool isAllowed)
@@ -88,22 +112,24 @@ public class DraggableObject : MonoBehaviour
         cachedRigidbody.useGravity = initialGravityState;
     }
 
-    public void BeginDrag()
+    public bool BeginDrag()
     {
         if (!CanDrag)
-            return;
+            return false;
 
         RefreshCachedColliders();
         IsDragging = true;
         startPosition = transform.position;
         startRotation = transform.rotation;
+        targetPosition = startPosition;
+        hasTargetPosition = true;
 
         SetCollidersEnabled(!disableCollidersWhileDragging);
 
         if (!hadRigidbody)
         {
             DragStarted?.Invoke(this);
-            return;
+            return true;
         }
 
         previousKinematicState = cachedRigidbody.isKinematic;
@@ -112,23 +138,35 @@ public class DraggableObject : MonoBehaviour
         cachedRigidbody.useGravity = false;
 
         DragStarted?.Invoke(this);
+        return true;
     }
 
     public void MoveTo(Vector3 worldPosition)
     {
+        if (IsDragging && smoothDragMovement)
+        {
+            targetPosition = worldPosition;
+            hasTargetPosition = true;
+            return;
+        }
+
         transform.position = worldPosition;
     }
 
     public void CompleteDrop(Vector3 worldPosition)
     {
+        hasTargetPosition = false;
         transform.position = worldPosition;
         FinishDrag();
+        DragEnded?.Invoke(this, DragEndResult.Completed);
     }
 
     public void CancelDrag()
     {
+        hasTargetPosition = false;
         transform.SetPositionAndRotation(startPosition, startRotation);
         FinishDrag();
+        DragEnded?.Invoke(this, DragEndResult.Cancelled);
     }
 
     public void HandleFailedDrop()
@@ -140,12 +178,16 @@ public class DraggableObject : MonoBehaviour
                 break;
 
             case DragFailedDropAction.DeactivateObject:
+                hasTargetPosition = false;
                 FinishDrag();
+                DragEnded?.Invoke(this, DragEndResult.Cancelled);
                 gameObject.SetActive(false);
                 break;
 
             case DragFailedDropAction.DestroyObject:
+                hasTargetPosition = false;
                 FinishDrag();
+                DragEnded?.Invoke(this, DragEndResult.Cancelled);
                 Destroy(gameObject);
                 break;
         }

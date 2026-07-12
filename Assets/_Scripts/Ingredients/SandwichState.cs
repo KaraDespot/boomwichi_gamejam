@@ -181,6 +181,11 @@ public class SandwichState : MonoBehaviour
         ownerBoard = null;
     }
 
+    public void AttachToBoard(SandwichBoard board)
+    {
+        ownerBoard = board;
+    }
+
     private void OnDisable()
     {
         if (ownerBoard != null)

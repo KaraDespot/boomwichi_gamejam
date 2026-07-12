@@ -1013,6 +1013,12 @@ MonoBehaviour:
   lidTransform: {fileID: 0}
   openLidEulerAngles: {x: -55, y: 0, z: 0}
   closedLidEulerAngles: {x: 0, y: 0, z: 0}
+  showTimerVisual: 1
+  timerLocalOffset: {x: 0, y: 0.85, z: 0}
+  timerSize: {x: 0.8, y: 0.06, z: 0.06}
+  rawTimerColor: {r: 1, g: 0.75, b: 0.18, a: 1}
+  toastedTimerColor: {r: 0.35, g: 0.95, b: 0.35, a: 1}
+  burntTimerColor: {r: 0.12, g: 0.08, b: 0.05, a: 1}
 --- !u!1 &679757960
 GameObject:
   m_ObjectHideFlags: 0
