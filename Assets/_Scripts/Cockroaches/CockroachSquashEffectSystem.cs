@@ -6,6 +6,7 @@
  * Паттерны: Manager, Observer через EventBus.
  */
 
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,6 +16,9 @@ public class CockroachSquashEffectSystem : MonoBehaviour
     [Tooltip("Кратковременный эффект в момент раздавливания.")]
     [SerializeField] private GameObject squashFxPrefab;
 
+    [Tooltip("Масштаб burst-FX относительно префаба.")]
+    [SerializeField] private float squashFxScale = 1f;
+
     [Tooltip("Сколько секунд держать burst-FX перед уничтожением.")]
     [SerializeField] private float squashFxLifetime = 2f;
 
@@ -22,14 +26,20 @@ public class CockroachSquashEffectSystem : MonoBehaviour
     [Tooltip("Плоское пятно, остающееся на поверхности стола.")]
     [SerializeField] private GameObject tableStainPrefab;
 
+    [Tooltip("Задержка перед появлением пятна после раздавливания (сек).")]
+    [SerializeField] private float stainSpawnDelay;
+
+    [Tooltip("Базовый масштаб пятна относительно префаба.")]
+    [SerializeField] private float stainScale = 1f;
+
+    [Tooltip("Случайный множитель масштаба пятна (мин–макс). 1–1 = без разброса.")]
+    [SerializeField] private Vector2 stainScaleRandomRange = new Vector2(0.85f, 1.2f);
+
     [Tooltip("Родитель для пятен. Если пусто — создаётся контейнер под Table или Managers.")]
     [SerializeField] private Transform stainParent;
 
     [Tooltip("Подъём пятна над столом, чтобы не мерцало с мешем.")]
     [SerializeField] private float stainSurfaceOffset = 0.003f;
-
-    [Tooltip("Случайный масштаб пятна (мин–макс).")]
-    [SerializeField] private Vector2 stainScaleRange = new Vector2(0.85f, 1.2f);
 
     [Header("Очистка")]
     [Tooltip("Убирать пятна при завершении дня.")]
@@ -51,6 +61,8 @@ public class CockroachSquashEffectSystem : MonoBehaviour
 
     private void OnDisable()
     {
+        StopAllCoroutines();
+
         if (EventBus.Instance == null)
             return;
 
@@ -67,12 +79,23 @@ public class CockroachSquashEffectSystem : MonoBehaviour
 
         Vector3 squashPoint = cockroach.SquashWorldPoint;
         SpawnSquashFx(squashPoint);
-        SpawnTableStain(squashPoint);
+
+        if (stainSpawnDelay > 0f)
+            StartCoroutine(SpawnTableStainDelayed(squashPoint, stainSpawnDelay));
+        else
+            SpawnTableStain(squashPoint);
     }
 
     private void HandleDayFinished()
     {
+        StopAllCoroutines();
         ClearAllStains();
+    }
+
+    private IEnumerator SpawnTableStainDelayed(Vector3 worldPoint, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SpawnTableStain(worldPoint);
     }
 
     private void SpawnSquashFx(Vector3 worldPoint)
@@ -82,6 +105,7 @@ public class CockroachSquashEffectSystem : MonoBehaviour
 
         Vector3 fxPosition = worldPoint + Vector3.up * 0.02f;
         GameObject fxInstance = Instantiate(squashFxPrefab, fxPosition, Quaternion.identity);
+        fxInstance.transform.localScale = Vector3.one * Mathf.Max(0.01f, squashFxScale);
         ConfigureOneShotParticles(fxInstance);
         Destroy(fxInstance, Mathf.Max(0.1f, squashFxLifetime));
     }
@@ -95,9 +119,13 @@ public class CockroachSquashEffectSystem : MonoBehaviour
         Vector3 stainPosition = worldPoint + Vector3.up * stainSurfaceOffset;
         Quaternion stainRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
         GameObject stainInstance = Instantiate(tableStainPrefab, stainPosition, stainRotation, parent);
+        TableStain.Configure(stainInstance);
 
-        float scale = Random.Range(stainScaleRange.x, stainScaleRange.y);
-        stainInstance.transform.localScale = Vector3.one * scale;
+        float randomMultiplier = Random.Range(
+            Mathf.Min(stainScaleRandomRange.x, stainScaleRandomRange.y),
+            Mathf.Max(stainScaleRandomRange.x, stainScaleRandomRange.y));
+        float finalScale = Mathf.Max(0.01f, stainScale) * randomMultiplier;
+        stainInstance.transform.localScale = Vector3.one * finalScale;
         activeStains.Add(stainInstance);
     }
 

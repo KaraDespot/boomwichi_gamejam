@@ -640,11 +640,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squashFxPrefab: {fileID: 191114, guid: 834c99069a124aa439d5795c3579843b, type: 3}
+  squashFxScale: 1
   squashFxLifetime: 2
   tableStainPrefab: {fileID: 3520120277094894129, guid: 05170fe87bf84232aaf093f210c8ef3a, type: 3}
+  stainSpawnDelay: 0.18
+  stainScale: 0.15
+  stainScaleRandomRange: {x: 0.85, y: 1.2}
   stainParent: {fileID: 296971406}
   stainSurfaceOffset: 0.003
-  stainScaleRange: {x: 0.85, y: 1.2}
   clearStainsOnDayFinished: 1
 --- !u!1 &296971405
 GameObject:
