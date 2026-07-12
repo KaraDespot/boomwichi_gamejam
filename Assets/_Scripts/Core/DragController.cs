@@ -22,6 +22,9 @@ public class DragController : MonoBehaviour
     private Vector3 dragOffset;
     private Vector3 lastValidDragPosition;
 
+    public DraggableObject CurrentDraggable => currentDraggable;
+    public bool IsDragging => currentDraggable != null;
+
     private void Awake()
     {
         if (inputRaycaster == null)
@@ -66,6 +69,9 @@ public class DragController : MonoBehaviour
     {
         if (draggableObject == null || !draggableObject.BeginDrag())
             return;
+
+        if (EventBus.Instance != null)
+            EventBus.Instance.RaiseFirstPlayerAction();
 
         currentDraggable = draggableObject;
 

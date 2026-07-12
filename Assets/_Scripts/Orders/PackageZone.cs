@@ -23,7 +23,7 @@ public class PackageZone : MonoBehaviour
     [SerializeField] private bool deactivateDeliveredSandwich = true;
 
     [Header("Order Services")]
-    [Tooltip("Менеджер текущего заказа. Если пусто, будет найден на сцене или создан рядом с пакетом.")]
+    [Tooltip("Менеджер текущего заказа из Flow. Если пусто, будет найден на сцене.")]
     [SerializeField] private OrderManager orderManager;
 
     [Tooltip("Сервис проверки заказа. Если пусто, будет найден на сцене или создан рядом с пакетом.")]
@@ -32,7 +32,7 @@ public class PackageZone : MonoBehaviour
     [Tooltip("Кошелёк чаевых. Если пусто, будет найден на сцене или создан рядом с пакетом.")]
     [SerializeField] private TipsWallet tipsWallet;
 
-    [Tooltip("Создавать недостающие сервисы на этом объекте в Play Mode, чтобы пакет работал без ручной настройки сцены.")]
+    [Tooltip("Создавать недостающие локальные сервисы оценки/чаевых на этом объекте в Play Mode.")]
     [SerializeField] private bool createRuntimeServicesIfMissing = true;
 
     public event Action<OrderEvaluationResult> SandwichDelivered;
@@ -76,7 +76,7 @@ public class PackageZone : MonoBehaviour
             return false;
 
         SandwichState sandwichState = draggableObject.GetComponent<SandwichState>();
-        OrderDefinition order = GetCurrentOrder();
+        OrderDataAsset order = GetCurrentOrder();
         LastDeliveryResult = orderEvaluator.Evaluate(order, sandwichState);
         HasDeliveryResult = true;
 
@@ -91,7 +91,7 @@ public class PackageZone : MonoBehaviour
             tipsWallet.AddTips(LastDeliveryResult.TipAmount);
 
         if (orderManager != null)
-            orderManager.CompleteCurrentOrder(LastDeliveryResult);
+            orderManager.CompleteCurrentOrder(LastDeliveryResult.TipAmount);
 
         SandwichDelivered?.Invoke(LastDeliveryResult);
         Debug.Log($"{name}: заказ сдан. {LastDeliveryResult.Summary}", this);
@@ -111,7 +111,7 @@ public class PackageZone : MonoBehaviour
     private void ResolveServices()
     {
         if (orderManager == null)
-            orderManager = OrderManager.Instance != null ? OrderManager.Instance : FindFirstObjectByType<OrderManager>();
+            orderManager = FindFirstObjectByType<OrderManager>();
 
         if (orderEvaluator == null)
             orderEvaluator = FindFirstObjectByType<OrderEvaluator>();
@@ -122,9 +122,6 @@ public class PackageZone : MonoBehaviour
         if (!createRuntimeServicesIfMissing)
             return;
 
-        if (orderManager == null)
-            orderManager = gameObject.AddComponent<OrderManager>();
-
         if (orderEvaluator == null)
             orderEvaluator = gameObject.AddComponent<OrderEvaluator>();
 
@@ -132,11 +129,8 @@ public class PackageZone : MonoBehaviour
             tipsWallet = gameObject.AddComponent<TipsWallet>();
     }
 
-    private OrderDefinition GetCurrentOrder()
+    private OrderDataAsset GetCurrentOrder()
     {
-        if (orderManager != null && orderManager.TryGetCurrentOrder(out OrderDefinition order))
-            return order;
-
-        return null;
+        return orderManager != null ? orderManager.CurrentOrder : null;
     }
 }

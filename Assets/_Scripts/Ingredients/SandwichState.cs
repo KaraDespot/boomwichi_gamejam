@@ -178,6 +178,9 @@ public class SandwichState : MonoBehaviour
         CookProgressSeconds += Mathf.Max(0f, seconds);
     }
 
+    /// <summary>
+    /// Плесень упала на сендвич при очистке над доской. Исправить нельзя.
+    /// </summary>
     public void MarkFallenMold()
     {
         HasFallenMold = true;

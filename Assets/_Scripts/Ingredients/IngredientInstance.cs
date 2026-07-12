@@ -26,6 +26,9 @@ public class IngredientInstance : MonoBehaviour
     public bool IsDirty => IsMoldy || IsRoachContaminated;
     public SandwichState SandwichState { get; private set; }
 
+    /// <summary> Может ли этот ингредиент получить плесень при спавне. </summary>
+    public bool CanBecomeMoldy => ingredientType != IngredientType.Sauce;
+
     public void Initialize(IngredientType type, BreadRole role)
     {
         ingredientType = type;
@@ -34,6 +37,22 @@ public class IngredientInstance : MonoBehaviour
         IsMoldy = false;
         IsRoachContaminated = false;
         SandwichState = null;
+    }
+
+    public void SetMoldy(bool isMoldy)
+    {
+        if (!CanBecomeMoldy)
+        {
+            IsMoldy = false;
+            return;
+        }
+
+        IsMoldy = isMoldy;
+    }
+
+    public void ClearMold()
+    {
+        IsMoldy = false;
     }
 
     public void AssignBreadRole(BreadRole role)
@@ -46,17 +65,6 @@ public class IngredientInstance : MonoBehaviour
         SandwichState = sandwichState;
         IsPlacedOnSandwich = true;
     }
-
-    public void SetMoldy(bool isMoldy)
-    {
-        IsMoldy = isMoldy;
-    }
-
-    public void ClearMold()
-    {
-        IsMoldy = false;
-    }
-
     public void MarkRoachContaminated()
     {
         IsRoachContaminated = true;

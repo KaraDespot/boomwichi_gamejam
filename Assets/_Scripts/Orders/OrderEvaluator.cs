@@ -1,8 +1,8 @@
 /*
  * OrderEvaluator
- * Назначение: проверка готового сендвича против текущего заказа.
+ * Назначение: проверка готового сендвича против текущего OrderDataAsset.
  * Что делает: ищет недостающие, лишние и грязные ингредиенты, проверяет хлеб и считает чаевые.
- * Связи: вызывается PackageZone, читает OrderDefinition, SandwichState и IngredientInstance.
+ * Связи: вызывается PackageZone, читает OrderDataAsset, SandwichState и IngredientInstance.
  * Паттерны: Domain Service.
  */
 
@@ -13,7 +13,7 @@ using UnityEngine;
 public class OrderEvaluator : MonoBehaviour
 {
     [Header("Tips")]
-    [Tooltip("Чаевые по умолчанию, если в заказе не задан свой максимум.")]
+    [Tooltip("Максимальные чаевые за идеальный заказ.")]
     [SerializeField] private int defaultMaxTips = 10;
 
     [Tooltip("Штраф за каждую недостающую единицу ингредиента.")]
@@ -34,7 +34,7 @@ public class OrderEvaluator : MonoBehaviour
     [Tooltip("Минимальные чаевые после всех штрафов.")]
     [SerializeField] private int minimumTips = 0;
 
-    public OrderEvaluationResult Evaluate(OrderDefinition order, SandwichState sandwichState)
+    public OrderEvaluationResult Evaluate(OrderDataAsset order, SandwichState sandwichState)
     {
         List<OrderEvaluationIssue> issues = new List<OrderEvaluationIssue>();
 
@@ -69,7 +69,7 @@ public class OrderEvaluator : MonoBehaviour
         return CreateResult(order, sandwichState, issues);
     }
 
-    private void EvaluateBread(OrderDefinition order, SandwichState sandwichState, List<OrderEvaluationIssue> issues)
+    private void EvaluateBread(OrderDataAsset order, SandwichState sandwichState, List<OrderEvaluationIssue> issues)
     {
         if (!sandwichState.HasBottomBread)
         {
@@ -93,64 +93,61 @@ public class OrderEvaluator : MonoBehaviour
             return;
         }
 
-        if (sandwichState.CookState == SandwichCookState.Raw && order.RequiredCookState != SandwichCookState.Raw)
+        SandwichCookState requiredCookState = ConvertToastState(order.RequiredTopToast);
+        if (sandwichState.CookState == SandwichCookState.Raw && requiredCookState != SandwichCookState.Raw)
         {
             issues.Add(new OrderEvaluationIssue(
                 OrderEvaluationIssueType.RawTopBread,
                 IngredientType.Bread,
-                (int)order.RequiredCookState,
+                (int)requiredCookState,
                 (int)sandwichState.CookState,
                 "Верхний хлеб сырой."));
 
             return;
         }
 
-        if (sandwichState.CookState != order.RequiredCookState)
+        if (sandwichState.CookState != requiredCookState)
         {
             issues.Add(new OrderEvaluationIssue(
                 OrderEvaluationIssueType.WrongCookState,
                 IngredientType.Bread,
-                (int)order.RequiredCookState,
+                (int)requiredCookState,
                 (int)sandwichState.CookState,
-                $"Нужна прожарка {order.RequiredCookState}, получено {sandwichState.CookState}."));
+                $"Нужна прожарка {requiredCookState}, получено {sandwichState.CookState}."));
         }
     }
 
-    private void EvaluateIngredients(OrderDefinition order, SandwichState sandwichState, List<OrderEvaluationIssue> issues)
+    private void EvaluateIngredients(OrderDataAsset order, SandwichState sandwichState, List<OrderEvaluationIssue> issues)
     {
-        for (int i = 0; i < order.RequiredIngredientCount; i++)
+        Dictionary<IngredientType, int> expectedCounts = BuildExpectedCounts(order);
+
+        foreach (KeyValuePair<IngredientType, int> expectedCount in expectedCounts)
         {
-            OrderIngredientRequirement requirement = order.GetRequirement(i);
-            if (requirement == null)
-                continue;
-
-            int actualCount = sandwichState.GetIngredientCount(requirement.IngredientType);
-            int expectedCount = requirement.Count;
-
-            if (actualCount < expectedCount)
+            int actualCount = sandwichState.GetIngredientCount(expectedCount.Key);
+            if (actualCount < expectedCount.Value)
             {
                 issues.Add(new OrderEvaluationIssue(
                     OrderEvaluationIssueType.MissingIngredient,
-                    requirement.IngredientType,
-                    expectedCount,
+                    expectedCount.Key,
+                    expectedCount.Value,
                     actualCount,
-                    $"Не хватает {requirement.IngredientType}: нужно {expectedCount}, есть {actualCount}."));
+                    $"Не хватает {expectedCount.Key}: нужно {expectedCount.Value}, есть {actualCount}."));
             }
 
-            if (actualCount > expectedCount)
+            if (actualCount > expectedCount.Value)
             {
                 issues.Add(new OrderEvaluationIssue(
                     OrderEvaluationIssueType.ExtraIngredient,
-                    requirement.IngredientType,
-                    expectedCount,
+                    expectedCount.Key,
+                    expectedCount.Value,
                     actualCount,
-                    $"Лишний {requirement.IngredientType}: нужно {expectedCount}, есть {actualCount}."));
+                    $"Лишний {expectedCount.Key}: нужно {expectedCount.Value}, есть {actualCount}."));
             }
         }
 
         foreach (KeyValuePair<IngredientType, int> ingredientCount in sandwichState.IngredientCounts)
         {
-            if (ingredientCount.Value <= 0 || order.TryGetRequirement(ingredientCount.Key, out _))
+            if (ingredientCount.Value <= 0 || expectedCounts.ContainsKey(ingredientCount.Key))
                 continue;
 
             issues.Add(new OrderEvaluationIssue(
@@ -217,12 +214,40 @@ public class OrderEvaluator : MonoBehaviour
         }
     }
 
+    private Dictionary<IngredientType, int> BuildExpectedCounts(OrderDataAsset order)
+    {
+        Dictionary<IngredientType, int> expectedCounts = new Dictionary<IngredientType, int>();
+
+        if (order.RequiresSauce)
+            expectedCounts[IngredientType.Sauce] = 1;
+
+        OrderIngredientRequirement[] ingredients = order.Ingredients;
+        if (ingredients == null)
+            return expectedCounts;
+
+        for (int i = 0; i < ingredients.Length; i++)
+        {
+            IngredientType type = ingredients[i].type;
+            int count = Mathf.Max(0, ingredients[i].count);
+
+            if (count <= 0)
+                continue;
+
+            if (!expectedCounts.ContainsKey(type))
+                expectedCounts.Add(type, 0);
+
+            expectedCounts[type] += count;
+        }
+
+        return expectedCounts;
+    }
+
     private OrderEvaluationResult CreateResult(
-        OrderDefinition order,
+        OrderDataAsset order,
         SandwichState sandwichState,
         IReadOnlyList<OrderEvaluationIssue> issues)
     {
-        int tips = CalculateTips(order, issues);
+        int tips = CalculateTips(issues);
         string summary = issues.Count == 0
             ? $"Заказ выполнен. Чаевые: {tips}."
             : $"Заказ с ошибками: {issues.Count}. Чаевые: {tips}.";
@@ -230,14 +255,12 @@ public class OrderEvaluator : MonoBehaviour
         return new OrderEvaluationResult(order, sandwichState, issues, tips, summary);
     }
 
-    private int CalculateTips(OrderDefinition order, IReadOnlyList<OrderEvaluationIssue> issues)
+    private int CalculateTips(IReadOnlyList<OrderEvaluationIssue> issues)
     {
         if (ContainsBlockingIssue(issues))
             return minimumTips;
 
-        int tips = order != null && order.MaxTips > 0
-            ? order.MaxTips
-            : defaultMaxTips;
+        int tips = defaultMaxTips;
 
         for (int i = 0; i < issues.Count; i++)
         {
@@ -285,5 +308,20 @@ public class OrderEvaluator : MonoBehaviour
         }
 
         return false;
+    }
+
+    private SandwichCookState ConvertToastState(ToastState toastState)
+    {
+        switch (toastState)
+        {
+            case ToastState.Burnt:
+                return SandwichCookState.Burnt;
+
+            case ToastState.Toasted:
+                return SandwichCookState.Toasted;
+
+            default:
+                return SandwichCookState.Raw;
+        }
     }
 }

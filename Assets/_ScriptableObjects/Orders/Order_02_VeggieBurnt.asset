@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7f8a9b0c1d2435690abcdef12345607, type: 3}
+  m_Name: Order_02_VeggieBurnt
+  m_EditorClassIdentifier: 
+  customerPhrase: "\u0421\u043E\u0443\u0441, \u043E\u0433\u0443\u0440\u0446\u044B, \u043B\u0443\u043A, \u0441\u044B\u0440. \u0418 \u0445\u043B\u0435\u0431 \u043F\u0435\u0440\u0435\u0436\u0430\u0440\u044C, \u044F \u043B\u044E\u0431\u043B\u044E \u043F\u043E\u0447\u0442\u0438 \u0443\u0433\u043E\u043B\u044C."
+  requiresSauce: 1
+  ingredients:
+  - type: 2
+    count: 4
+  - type: 7
+    count: 4
+  - type: 5
+    count: 1
+  requiredTopToast: 2
