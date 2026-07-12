@@ -2986,9 +2986,6 @@ MonoBehaviour:
   snapPoint: {fileID: 2045625930}
   snapOffset: {x: 0, y: 0.4, z: 0}
   deactivateDeliveredSandwich: 1
-  requireTopBreadForPositiveRating: 1
-  requireFillingForPositiveRating: 1
-  requireCookedForPositiveRating: 1
   orderManager: {fileID: 0}
   orderEvaluator: {fileID: 0}
   tipsWallet: {fileID: 0}

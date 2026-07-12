@@ -18,6 +18,10 @@ public class MoldVisual : MonoBehaviour
     [Tooltip("Какие MeshRenderer менять. Если пусто — все дочерние Renderer на этом объекте.")]
     [SerializeField] private Renderer[] targetRenderers;
 
+    [Header("Чистый вид")]
+    [Tooltip("Материал обычного продукта. Если не задан, используется материал модели.")]
+    [SerializeField] private Material cleanMaterial;
+
     [Header("Плесневой вид")]
     [Tooltip("Полный материал плесневого продукта. Приоритетнее текстуры.")]
     [SerializeField] private Material moldyMaterial;
@@ -78,6 +82,11 @@ public class MoldVisual : MonoBehaviour
         EnsureInitialized();
     }
 
+    private void OnValidate()
+    {
+        ApplyCleanMaterialInEditor();
+    }
+
     private bool EnsureInitialized()
     {
         if (isInitialized)
@@ -102,8 +111,11 @@ public class MoldVisual : MonoBehaviour
             if (renderer == null)
                 continue;
 
-            cleanMaterialInstances[i] = renderer.material;
+            cleanMaterialInstances[i] = cleanMaterial != null
+                ? new Material(cleanMaterial)
+                : renderer.material;
             moldyMaterialInstances[i] = CreateMoldyMaterialInstance(cleanMaterialInstances[i]);
+            renderer.material = cleanMaterialInstances[i];
         }
 
         isInitialized = true;
@@ -125,6 +137,25 @@ public class MoldVisual : MonoBehaviour
             instance.SetTexture(MainTexId, moldyTexture);
 
         return instance;
+    }
+
+    private void ApplyCleanMaterialInEditor()
+    {
+        if (cleanMaterial == null)
+            return;
+
+        Renderer[] renderers = targetRenderers != null && targetRenderers.Length > 0
+            ? targetRenderers
+            : GetComponentsInChildren<Renderer>(true);
+
+        if (renderers == null)
+            return;
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            if (renderers[i] != null)
+                renderers[i].sharedMaterial = cleanMaterial;
+        }
     }
 
     private void OnDestroy()

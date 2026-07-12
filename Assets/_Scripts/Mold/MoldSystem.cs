@@ -124,9 +124,12 @@ public class MoldSystem : MonoBehaviour
 
         ingredient.SetMoldy(true);
 
-        MoldVisual moldVisual = MoldVisual.GetOrCreate(ingredient);
-        if (moldVisual != null)
-            moldVisual.SetMoldyVisual(true);
+        if (!TrySetCookAwareMoldVisual(ingredient, true))
+        {
+            MoldVisual moldVisual = MoldVisual.GetOrCreate(ingredient);
+            if (moldVisual != null)
+                moldVisual.SetMoldyVisual(true);
+        }
 
         EnsureIdleFx(ingredient);
 
@@ -141,9 +144,12 @@ public class MoldSystem : MonoBehaviour
 
         ingredient.ClearMold();
 
-        MoldVisual moldVisual = ingredient.GetComponent<MoldVisual>();
-        if (moldVisual != null)
-            moldVisual.SetMoldyVisual(false);
+        if (!TrySetCookAwareMoldVisual(ingredient, false))
+        {
+            MoldVisual moldVisual = ingredient.GetComponent<MoldVisual>();
+            if (moldVisual != null)
+                moldVisual.SetMoldyVisual(false);
+        }
 
         DestroyIdleFx(ingredient);
 
@@ -222,6 +228,16 @@ public class MoldSystem : MonoBehaviour
 
         ProcessMoldRemoval(ingredient, pointer);
         ResetShakeSession();
+    }
+
+    private static bool TrySetCookAwareMoldVisual(IngredientInstance ingredient, bool isMoldy)
+    {
+        BreadCookVisual breadCookVisual = ingredient.GetComponent<BreadCookVisual>();
+        if (breadCookVisual == null)
+            return false;
+
+        breadCookVisual.SetMoldyVisual(isMoldy);
+        return true;
     }
 
     private void RegisterDirectionChange(Vector2 delta)
