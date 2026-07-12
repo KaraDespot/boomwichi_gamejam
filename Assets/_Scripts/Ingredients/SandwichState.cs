@@ -27,6 +27,7 @@ public class SandwichState : MonoBehaviour
     public bool HasTopBread => topBread != null;
     public bool HasSauce => GetIngredientCount(IngredientType.Sauce) > 0;
     public bool IsClosed => HasTopBread;
+    public bool IsDelivered { get; private set; }
     public int IngredientCount => ingredients.Count;
 
     public void Initialize(SandwichBoard board, IngredientInstance bread)
@@ -34,6 +35,7 @@ public class SandwichState : MonoBehaviour
         ownerBoard = board;
         bottomBread = bread;
         topBread = null;
+        IsDelivered = false;
         ingredients.Clear();
         ingredientCounts.Clear();
     }
@@ -125,6 +127,11 @@ public class SandwichState : MonoBehaviour
     public void RegisterTopBread(IngredientInstance bread)
     {
         topBread = bread;
+    }
+
+    public void MarkDelivered()
+    {
+        IsDelivered = true;
     }
 
     public void DetachFromBoard()

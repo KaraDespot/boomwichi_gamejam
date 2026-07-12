@@ -2246,7 +2246,9 @@ GameObject:
   - component: {fileID: 2045625933}
   - component: {fileID: 2045625932}
   - component: {fileID: 2045625931}
-  m_Layer: 0
+  - component: {fileID: 2045625934}
+  - component: {fileID: 2045625935}
+  m_Layer: 8
   m_Name: Package
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2284,7 +2286,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -2349,6 +2351,40 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2045625929}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &2045625934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045625929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5b8d2e3f4a9471b8c2d3e4f5a6b7c8d, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::DropZone
+  zoneType: 2
+  snapPoint: {fileID: 2045625930}
+  snapOffset: {x: 0, y: 0.4, z: 0}
+  sandwichBoard: {fileID: 0}
+  packageZone: {fileID: 2045625935}
+--- !u!114 &2045625935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045625929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e881e31491d464c9680ae98ad5dc168, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::PackageZone
+  snapPoint: {fileID: 2045625930}
+  snapOffset: {x: 0, y: 0.4, z: 0}
+  deactivateDeliveredSandwich: 1
+  requireTopBreadForPositiveRating: 1
+  requireFillingForPositiveRating: 1
 --- !u!114 &2120509120 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6382135249821660623, guid: 25ac4f9b09e6eda4ebd6bb12203d7123, type: 3}

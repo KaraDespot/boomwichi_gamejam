@@ -11,7 +11,8 @@ using UnityEngine;
 public enum DropZoneType
 {
     Board,
-    Trash
+    Trash,
+    Package
 }
 
 public enum DropZoneAction
@@ -36,6 +37,9 @@ public class DropZone : MonoBehaviour
     [Tooltip("Правила сборки сендвича для зоны доски. Если пусто, объект просто ставится в snap point.")]
     [SerializeField] private SandwichBoard sandwichBoard;
 
+    [Tooltip("Правила сдачи сендвича для зоны пакета.")]
+    [SerializeField] private PackageZone packageZone;
+
     public DropZoneType ZoneType => zoneType;
     public DropZoneAction DropAction => GetDropAction();
 
@@ -43,6 +47,9 @@ public class DropZone : MonoBehaviour
     {
         if (sandwichBoard == null)
             sandwichBoard = GetComponent<SandwichBoard>();
+
+        if (packageZone == null)
+            packageZone = GetComponent<PackageZone>();
     }
 
     public bool CanAccept(DraggableObject draggableObject)
@@ -52,6 +59,9 @@ public class DropZone : MonoBehaviour
 
         if (zoneType == DropZoneType.Trash)
             return draggableObject.GetComponent<SauceDispenser>() == null;
+
+        if (zoneType == DropZoneType.Package)
+            return packageZone != null && packageZone.CanAccept(draggableObject);
 
         if (sandwichBoard != null)
             return sandwichBoard.CanAccept(draggableObject);
@@ -72,6 +82,12 @@ public class DropZone : MonoBehaviour
         switch (GetDropAction())
         {
             case DropZoneAction.SnapToZone:
+                if (packageZone != null)
+                {
+                    packageZone.Accept(draggableObject, dropWorldPoint);
+                    break;
+                }
+
                 if (sandwichBoard != null)
                 {
                     sandwichBoard.Accept(draggableObject, dropWorldPoint);
