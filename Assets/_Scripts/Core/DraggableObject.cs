@@ -6,6 +6,7 @@
  * Паттерны: Component, Encapsulation of state.
  */
 
+using System;
 using UnityEngine;
 
 public enum DragFailedDropAction
@@ -43,6 +44,8 @@ public class DraggableObject : MonoBehaviour
     public float DragHeight => dragHeight;
     public bool CanDrag => canDrag && isActiveAndEnabled;
     public bool IsDragging { get; private set; }
+
+    public event Action<DraggableObject> DragStarted;
 
     private void Awake()
     {
@@ -98,12 +101,17 @@ public class DraggableObject : MonoBehaviour
         SetCollidersEnabled(!disableCollidersWhileDragging);
 
         if (!hadRigidbody)
+        {
+            DragStarted?.Invoke(this);
             return;
+        }
 
         previousKinematicState = cachedRigidbody.isKinematic;
         previousGravityState = cachedRigidbody.useGravity;
         cachedRigidbody.isKinematic = true;
         cachedRigidbody.useGravity = false;
+
+        DragStarted?.Invoke(this);
     }
 
     public void MoveTo(Vector3 worldPosition)

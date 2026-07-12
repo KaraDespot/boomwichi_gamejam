@@ -167,7 +167,7 @@ public class SandwichBoard : MonoBehaviour
     {
         Transform root = currentSandwich.transform;
         float heightOffset = GetBottomBreadSurfaceOffset(root) + sauceSurfacePadding;
-        Vector3 targetPosition = GetBreadSurfacePlacementPosition(root, dropWorldPoint, heightOffset);
+        Vector3 targetPosition = root.position + root.up * heightOffset;
 
         Place(draggableObject, ingredient, targetPosition, root.rotation, root, true);
         currentSandwich.RegisterIngredient(ingredient);

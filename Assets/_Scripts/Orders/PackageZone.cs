@@ -50,6 +50,9 @@ public class PackageZone : MonoBehaviour
     [Tooltip("Без начинки сендвич принимается, но получает негативную оценку.")]
     [SerializeField] private bool requireFillingForPositiveRating = true;
 
+    [Tooltip("Сырой сендвич принимается, но получает негативную оценку.")]
+    [SerializeField] private bool requireCookedForPositiveRating = true;
+
     public event Action<SandwichDeliveryResult> SandwichDelivered;
 
     public bool HasDeliveryResult { get; private set; }
@@ -103,6 +106,9 @@ public class PackageZone : MonoBehaviour
 
         if (requireFillingForPositiveRating && sandwichState.IngredientCount == 0)
             return new SandwichDeliveryResult(sandwichState, SandwichDeliveryRating.Negative, "Нет начинки.");
+
+        if (requireCookedForPositiveRating && sandwichState.CookState == SandwichCookState.Raw)
+            return new SandwichDeliveryResult(sandwichState, SandwichDeliveryRating.Negative, "Сендвич сырой.");
 
         return new SandwichDeliveryResult(sandwichState, SandwichDeliveryRating.Positive, "Сендвич принят.");
     }

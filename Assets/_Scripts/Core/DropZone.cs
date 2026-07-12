@@ -12,7 +12,8 @@ public enum DropZoneType
 {
     Board,
     Trash,
-    Package
+    Package,
+    Grill
 }
 
 public enum DropZoneAction
@@ -40,6 +41,9 @@ public class DropZone : MonoBehaviour
     [Tooltip("Правила сдачи сендвича для зоны пакета.")]
     [SerializeField] private PackageZone packageZone;
 
+    [Tooltip("Правила грильницы для зоны гриля.")]
+    [SerializeField] private GrillZone grillZone;
+
     public DropZoneType ZoneType => zoneType;
     public DropZoneAction DropAction => GetDropAction();
 
@@ -50,6 +54,9 @@ public class DropZone : MonoBehaviour
 
         if (packageZone == null)
             packageZone = GetComponent<PackageZone>();
+
+        if (grillZone == null)
+            grillZone = GetComponent<GrillZone>();
     }
 
     public bool CanAccept(DraggableObject draggableObject)
@@ -62,6 +69,9 @@ public class DropZone : MonoBehaviour
 
         if (zoneType == DropZoneType.Package)
             return packageZone != null && packageZone.CanAccept(draggableObject);
+
+        if (zoneType == DropZoneType.Grill)
+            return grillZone != null && grillZone.CanAccept(draggableObject);
 
         if (sandwichBoard != null)
             return sandwichBoard.CanAccept(draggableObject);
@@ -82,6 +92,12 @@ public class DropZone : MonoBehaviour
         switch (GetDropAction())
         {
             case DropZoneAction.SnapToZone:
+                if (grillZone != null)
+                {
+                    grillZone.Accept(draggableObject, dropWorldPoint);
+                    break;
+                }
+
                 if (packageZone != null)
                 {
                     packageZone.Accept(draggableObject, dropWorldPoint);
@@ -102,6 +118,14 @@ public class DropZone : MonoBehaviour
                 draggableObject.gameObject.SetActive(false);
                 break;
         }
+    }
+
+    public bool TryHandleClick()
+    {
+        if (zoneType == DropZoneType.Grill && grillZone != null)
+            return grillZone.TryOpenAfterCooking();
+
+        return false;
     }
 
     public Vector3 GetSnapPosition()

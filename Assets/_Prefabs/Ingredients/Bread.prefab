@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 8695759967485989332}
   - component: {fileID: 5119895438536736940}
   - component: {fileID: 620000000000000001}
+  - component: {fileID: 620000000000000010}
   m_Layer: 7
   m_Name: Bread
   m_TagString: Untagged
@@ -171,3 +172,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::IngredientInstance
   ingredientType: 0
   breadRole: 0
+--- !u!114 &620000000000000010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3520120277094894129}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa3918e480e0488a85531a0847402838, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::BreadCookVisual
+  targetRenderers:
+  - {fileID: 1843005930243470021}
+  rawMaterial: {fileID: 2100000, guid: 70e850661e6ef064aa28adb9fe646900, type: 2}
+  toastedMaterial: {fileID: 2100000, guid: d77d161316a64c24b8eb1bd38ca14c52, type: 2}
+  burntMaterial: {fileID: 2100000, guid: 2c7cea1414b86184a8110bd943f4e419, type: 2}

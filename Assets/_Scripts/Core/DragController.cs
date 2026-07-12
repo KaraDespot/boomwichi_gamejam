@@ -55,7 +55,11 @@ public class DragController : MonoBehaviour
             ingredientContainer.TrySpawnIngredient(out DraggableObject spawnedDraggable))
         {
             BeginDrag(spawnedDraggable, screenPosition, false);
+            return;
         }
+
+        if (inputRaycaster.TryGetDropZone(screenPosition, out DropZone dropZone))
+            dropZone.TryHandleClick();
     }
 
     private void BeginDrag(DraggableObject draggableObject, Vector2 screenPosition, bool preservePointerOffset)
