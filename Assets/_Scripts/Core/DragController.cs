@@ -48,6 +48,13 @@ public class DragController : MonoBehaviour
 
     private void TryBeginDragFromPointer(Vector2 screenPosition)
     {
+        // Таракан — самый высокий приоритет: один клик, без drag/контейнеров поверх.
+        if (inputRaycaster.TryGetCockroach(screenPosition, out Cockroach cockroach))
+        {
+            cockroach.Squash();
+            return;
+        }
+
         if (inputRaycaster.TryGetDraggable(screenPosition, out DraggableObject draggableObject))
         {
             BeginDrag(draggableObject, screenPosition, true);

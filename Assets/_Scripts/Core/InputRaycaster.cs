@@ -6,6 +6,7 @@
  * Паттерны: Service/Adapter между Camera.PhysicsRaycast и gameplay-кодом.
  */
 
+using System.Collections.Generic;
 using UnityEngine;
 
 public class InputRaycaster : MonoBehaviour
@@ -26,6 +27,12 @@ public class InputRaycaster : MonoBehaviour
 
     [Tooltip("Слой контейнеров ингредиентов, из которых создаются новые ингредиенты.")]
     [SerializeField] private LayerMask ingredientContainerLayerMask = ~0;
+
+    [Tooltip("Слой тараканов, по которым можно кликнуть для раздавливания.")]
+    [SerializeField] private LayerMask cockroachLayerMask = ~0;
+
+    [Tooltip("Если raycast мимо, клик в этом радиусе (пикс) от таракана всё равно попадёт.")]
+    [SerializeField] private float cockroachClickAssistPixels = 64f;
 
     [Header("Плоскость стола")]
     [Tooltip("Максимальная дистанция raycast от камеры.")]
@@ -141,6 +148,73 @@ public class InputRaycaster : MonoBehaviour
         }
 
         return ingredientContainer != null;
+    }
+
+    public bool TryGetCockroach(Vector2 screenPosition, out Cockroach cockroach)
+    {
+        if (TryRaycastCockroach(screenPosition, out cockroach))
+            return true;
+
+        return TryAssistClickCockroach(screenPosition, out cockroach);
+    }
+
+    private bool TryRaycastCockroach(Vector2 screenPosition, out Cockroach cockroach)
+    {
+        cockroach = null;
+
+        if (!TryCreateRay(screenPosition, out Ray ray))
+            return false;
+
+        RaycastHit[] hits = Physics.RaycastAll(ray, maxRayDistance, cockroachLayerMask, QueryTriggerInteraction.Collide);
+        float closestDistance = float.MaxValue;
+
+        for (int i = 0; i < hits.Length; i++)
+        {
+            Cockroach candidate = hits[i].collider.GetComponentInParent<Cockroach>();
+            if (candidate == null || !candidate.IsAlive || hits[i].distance >= closestDistance)
+                continue;
+
+            cockroach = candidate;
+            closestDistance = hits[i].distance;
+        }
+
+        return cockroach != null;
+    }
+
+    private bool TryAssistClickCockroach(Vector2 screenPosition, out Cockroach cockroach)
+    {
+        cockroach = null;
+
+        if (cockroachClickAssistPixels <= 0f)
+            return false;
+
+        Camera camera = rayCamera != null ? rayCamera : Camera.main;
+        if (camera == null)
+            return false;
+
+        float maxDistanceSq = cockroachClickAssistPixels * cockroachClickAssistPixels;
+        float bestDistanceSq = maxDistanceSq;
+
+        IReadOnlyList<Cockroach> cockroaches = Cockroach.ActiveInstances;
+        for (int i = 0; i < cockroaches.Count; i++)
+        {
+            Cockroach candidate = cockroaches[i];
+            if (candidate == null || !candidate.IsAlive)
+                continue;
+
+            Vector3 screenPoint = camera.WorldToScreenPoint(candidate.ClickWorldPoint);
+            if (screenPoint.z <= 0f)
+                continue;
+
+            float distanceSq = ((Vector2)screenPoint - screenPosition).sqrMagnitude;
+            if (distanceSq >= bestDistanceSq)
+                continue;
+
+            bestDistanceSq = distanceSq;
+            cockroach = candidate;
+        }
+
+        return cockroach != null;
     }
 
     private bool TryCreateRay(Vector2 screenPosition, out Ray ray)
