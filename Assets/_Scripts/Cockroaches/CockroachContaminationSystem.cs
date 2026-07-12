@@ -26,10 +26,16 @@ public class CockroachContaminationSystem : MonoBehaviour
     [SerializeField] private bool forceToxicFxLoop = true;
 
     [Tooltip("Множитель масштаба toxic-FX на сендвиче.")]
-    [SerializeField] private float toxicFxScaleMultiplier = 0.88f;
+    [SerializeField] private float toxicFxScaleMultiplier = 1.15f;
 
-    [Tooltip("Размер частиц toxic-FX.")]
-    [SerializeField] private float toxicFxParticleSize = 0.34f;
+    [Tooltip("Размер частиц toxic-FX на сендвиче.")]
+    [SerializeField] private float toxicFxParticleSize = 0.58f;
+
+    [Tooltip("Зона эмиссии toxic-FX по длине (сендвич крупнее одного ингредиента).")]
+    [SerializeField] private float toxicFxMaxShapeLength = 0.42f;
+
+    [Tooltip("Зона эмиссии toxic-FX по радиусу.")]
+    [SerializeField] private float toxicFxMaxShapeRadius = 0.2f;
 
     private readonly Dictionary<SandwichState, GameObject> toxicFxBySandwich = new();
 
@@ -78,7 +84,9 @@ public class CockroachContaminationSystem : MonoBehaviour
             toxicFxScaleMultiplier,
             loop: forceToxicFxLoop,
             playOnAttach: true,
-            particleStartSize: toxicFxParticleSize);
+            particleStartSize: toxicFxParticleSize,
+            maxShapeLength: toxicFxMaxShapeLength,
+            maxShapeRadius: toxicFxMaxShapeRadius);
         toxicFxBySandwich[sandwichState] = fxInstance;
     }
 
