@@ -39,6 +39,8 @@ public class SandwichState : MonoBehaviour
     public SandwichCookState CookState { get; private set; }
     public float CookProgressSeconds { get; private set; }
     public bool HasFallenMold { get; private set; }
+    public bool HasCockroachContamination { get; private set; }
+    public bool IsDirty => HasFallenMold || HasCockroachContamination;
     public int IngredientCount => ingredients.Count;
 
     public void Initialize(SandwichBoard board, IngredientInstance bread)
@@ -51,6 +53,7 @@ public class SandwichState : MonoBehaviour
         CookState = SandwichCookState.Raw;
         CookProgressSeconds = 0f;
         HasFallenMold = false;
+        HasCockroachContamination = false;
         ingredients.Clear();
         ingredientCounts.Clear();
         ApplyCookVisuals();
@@ -181,6 +184,14 @@ public class SandwichState : MonoBehaviour
     public void MarkFallenMold()
     {
         HasFallenMold = true;
+    }
+
+    /// <summary>
+    /// Сендвич заражён тараканом на тарелке. Исправить нельзя.
+    /// </summary>
+    public void MarkCockroachContamination()
+    {
+        HasCockroachContamination = true;
     }
 
     public void DetachFromBoard()
