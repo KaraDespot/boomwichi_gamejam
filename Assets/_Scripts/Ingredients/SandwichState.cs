@@ -24,6 +24,7 @@ public class SandwichState : MonoBehaviour
     public bool HasBottomBread => bottomBread != null;
     public bool HasTopBread => topBread != null;
     public bool IsClosed => HasTopBread;
+    public bool HasFallenMold { get; private set; }
     public int IngredientCount => ingredients.Count;
 
     public void Initialize(SandwichBoard board, IngredientInstance bread)
@@ -31,6 +32,7 @@ public class SandwichState : MonoBehaviour
         ownerBoard = board;
         bottomBread = bread;
         topBread = null;
+        HasFallenMold = false;
         ingredients.Clear();
     }
 
@@ -45,6 +47,14 @@ public class SandwichState : MonoBehaviour
     public void RegisterTopBread(IngredientInstance bread)
     {
         topBread = bread;
+    }
+
+    /// <summary>
+    /// Плесень упала на сендвич при очистке над доской. Исправить нельзя.
+    /// </summary>
+    public void MarkFallenMold()
+    {
+        HasFallenMold = true;
     }
 
     public void DetachFromBoard()

@@ -24,6 +24,7 @@ public class SandwichBoard : MonoBehaviour
 
     private SandwichState currentSandwich;
 
+    public SandwichState CurrentSandwich => currentSandwich;
     public bool HasBottomBread => currentSandwich != null && currentSandwich.HasBottomBread;
     public bool HasTopBread => currentSandwich != null && currentSandwich.HasTopBread;
     public bool IsClosed => currentSandwich != null && currentSandwich.IsClosed;

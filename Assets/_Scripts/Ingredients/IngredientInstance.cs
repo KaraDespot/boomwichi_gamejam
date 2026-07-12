@@ -23,12 +23,35 @@ public class IngredientInstance : MonoBehaviour
     public bool IsPlacedOnSandwich { get; private set; }
     public SandwichState SandwichState { get; private set; }
 
+    /// <summary> Плесень на ингредиенте. Соус никогда не бывает плесневым. </summary>
+    public bool IsMoldy { get; private set; }
+
+    /// <summary> Может ли этот ингредиент получить плесень при спавне. </summary>
+    public bool CanBecomeMoldy => ingredientType != IngredientType.Sauce;
+
     public void Initialize(IngredientType type, BreadRole role)
     {
         ingredientType = type;
         breadRole = role;
         IsPlacedOnSandwich = false;
         SandwichState = null;
+        IsMoldy = false;
+    }
+
+    public void SetMoldy(bool isMoldy)
+    {
+        if (!CanBecomeMoldy)
+        {
+            IsMoldy = false;
+            return;
+        }
+
+        IsMoldy = isMoldy;
+    }
+
+    public void ClearMold()
+    {
+        IsMoldy = false;
     }
 
     public void AssignBreadRole(BreadRole role)

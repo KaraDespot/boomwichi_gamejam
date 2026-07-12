@@ -94,6 +94,26 @@ public class EventBus : MonoBehaviour
     public event Action<int> OnTipsChanged;
 
     /// <summary>
+    /// Ингредиент создан из контейнера.
+    /// </summary>
+    public event Action<IngredientInstance> OnIngredientSpawned;
+
+    /// <summary>
+    /// На ингредиенте появилась плесень.
+    /// </summary>
+    public event Action<IngredientInstance> OnIngredientMolded;
+
+    /// <summary>
+    /// Плесень очищена с ингредиента.
+    /// </summary>
+    public event Action<IngredientInstance> OnMoldCleaned;
+
+    /// <summary>
+    /// Плесень упала на сендвич при очистке над доской.
+    /// </summary>
+    public event Action<SandwichState> OnMoldFallenOnSandwich;
+
+    /// <summary>
     /// Инициализация singleton-экземпляра EventBus.
     /// Объект сохраняется между сценами, чтобы подписчики не теряли источник событий.
     /// </summary>
@@ -194,5 +214,25 @@ public class EventBus : MonoBehaviour
     public void RaiseTipsChanged(int totalTips)
     {
         OnTipsChanged?.Invoke(totalTips);
+    }
+
+    public void RaiseIngredientSpawned(IngredientInstance ingredient)
+    {
+        OnIngredientSpawned?.Invoke(ingredient);
+    }
+
+    public void RaiseIngredientMolded(IngredientInstance ingredient)
+    {
+        OnIngredientMolded?.Invoke(ingredient);
+    }
+
+    public void RaiseMoldCleaned(IngredientInstance ingredient)
+    {
+        OnMoldCleaned?.Invoke(ingredient);
+    }
+
+    public void RaiseMoldFallenOnSandwich(SandwichState sandwichState)
+    {
+        OnMoldFallenOnSandwich?.Invoke(sandwichState);
     }
 }
