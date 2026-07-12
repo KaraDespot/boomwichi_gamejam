@@ -26,6 +26,9 @@ public class SandwichBoard : MonoBehaviour
     [Tooltip("Небольшой зазор над верхней поверхностью нижнего хлеба, чтобы первый ингредиент не проваливался.")]
     [SerializeField] private float surfacePadding = 0.01f;
 
+    [Tooltip("Зазор соуса над хлебом. Соус всегда лежит на поверхности хлеба и не создаёт новый слой начинки.")]
+    [SerializeField] private float sauceSurfacePadding = 0.004f;
+
     [Header("Placement Animation")]
     [Tooltip("Включить короткое падение ингредиента после отпускания мыши.")]
     [SerializeField] private bool animatePlacement = true;
@@ -47,6 +50,10 @@ public class SandwichBoard : MonoBehaviour
         if (draggableObject == null)
             return false;
 
+        SauceDispenser sauceDispenser = draggableObject.GetComponent<SauceDispenser>();
+        if (sauceDispenser != null)
+            return CanAcceptSauceDispenser(sauceDispenser);
+
         SandwichState sandwichState = draggableObject.GetComponent<SandwichState>();
         if (sandwichState != null && sandwichState == currentSandwich)
             return true;
@@ -61,6 +68,9 @@ public class SandwichBoard : MonoBehaviour
         if (IsClosed)
             return false;
 
+        if (ingredient.Type == IngredientType.Sauce && currentSandwich.HasSauce)
+            return false;
+
         return true;
     }
 
@@ -73,6 +83,10 @@ public class SandwichBoard : MonoBehaviour
     {
         if (!CanAccept(draggableObject))
             return false;
+
+        SauceDispenser sauceDispenser = draggableObject.GetComponent<SauceDispenser>();
+        if (sauceDispenser != null)
+            return DispenseSauce(draggableObject, sauceDispenser, dropWorldPoint);
 
         SandwichState sandwichState = draggableObject.GetComponent<SandwichState>();
         if (sandwichState != null && sandwichState == currentSandwich)
@@ -91,7 +105,10 @@ public class SandwichBoard : MonoBehaviour
         }
         else
         {
-            PlaceIngredient(draggableObject, ingredient, dropWorldPoint);
+            if (ingredient.Type == IngredientType.Sauce)
+                PlaceSauce(draggableObject, ingredient, dropWorldPoint);
+            else
+                PlaceIngredient(draggableObject, ingredient, dropWorldPoint);
         }
 
         return true;
@@ -101,6 +118,24 @@ public class SandwichBoard : MonoBehaviour
     {
         if (sandwichState == currentSandwich)
             currentSandwich = null;
+    }
+
+    private bool CanAcceptSauceDispenser(SauceDispenser sauceDispenser)
+    {
+        return currentSandwich != null && sauceDispenser.CanDispense(currentSandwich);
+    }
+
+    private bool DispenseSauce(DraggableObject dispenserDraggable, SauceDispenser sauceDispenser, Vector3 dropWorldPoint)
+    {
+        if (!sauceDispenser.TryCreateSauce(out DraggableObject sauceDraggable, out IngredientInstance sauceIngredient))
+        {
+            dispenserDraggable.HandleFailedDrop();
+            return false;
+        }
+
+        PlaceSauce(sauceDraggable, sauceIngredient, dropWorldPoint);
+        dispenserDraggable.CancelDrag();
+        return true;
     }
 
     private void PlaceBottomBread(DraggableObject draggableObject, IngredientInstance ingredient)
@@ -123,6 +158,16 @@ public class SandwichBoard : MonoBehaviour
         Transform root = currentSandwich.transform;
         int layerIndex = currentSandwich.GetNextIngredientLayerIndex(ingredient.Type);
         Vector3 targetPosition = GetFreePlacementPosition(root, dropWorldPoint, layerIndex);
+
+        Place(draggableObject, ingredient, targetPosition, root.rotation, root, true);
+        currentSandwich.RegisterIngredient(ingredient);
+    }
+
+    private void PlaceSauce(DraggableObject draggableObject, IngredientInstance ingredient, Vector3 dropWorldPoint)
+    {
+        Transform root = currentSandwich.transform;
+        float heightOffset = GetBottomBreadSurfaceOffset(root) + sauceSurfacePadding;
+        Vector3 targetPosition = GetBreadSurfacePlacementPosition(root, dropWorldPoint, heightOffset);
 
         Place(draggableObject, ingredient, targetPosition, root.rotation, root, true);
         currentSandwich.RegisterIngredient(ingredient);
@@ -175,12 +220,17 @@ public class SandwichBoard : MonoBehaviour
 
     private Vector3 GetFreePlacementPosition(Transform root, Vector3 dropWorldPoint, int layerIndex)
     {
+        return GetBreadSurfacePlacementPosition(root, dropWorldPoint, GetLayerHeightOffset(root, layerIndex));
+    }
+
+    private Vector3 GetBreadSurfacePlacementPosition(Transform root, Vector3 dropWorldPoint, float heightOffset)
+    {
         Vector3 localDropPoint = root.InverseTransformPoint(dropWorldPoint);
         localDropPoint.y = 0f;
         localDropPoint = ClampToBreadBounds(localDropPoint);
 
         Vector3 horizontalPosition = root.TransformPoint(localDropPoint);
-        return horizontalPosition + root.up * GetLayerHeightOffset(root, layerIndex);
+        return horizontalPosition + root.up * heightOffset;
     }
 
     private float GetLayerHeightOffset(Transform root, int layerIndex)

@@ -51,7 +51,7 @@ public class DropZone : MonoBehaviour
             return false;
 
         if (zoneType == DropZoneType.Trash)
-            return true;
+            return draggableObject.GetComponent<SauceDispenser>() == null;
 
         if (sandwichBoard != null)
             return sandwichBoard.CanAccept(draggableObject);
