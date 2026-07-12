@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3398218181210598525}
   - component: {fileID: 1438588012459526224}
   - component: {fileID: 874404432209162447}
+  - component: {fileID: 518565088752647466}
   m_Layer: 7
   m_Name: Cheese
   m_TagString: Untagged
@@ -90,6 +91,27 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &518565088752647466
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1512616319411357220}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.99999994, y: 1.0000001, z: 0.99999994}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &3520120277094894129
 GameObject:
   m_ObjectHideFlags: 0
@@ -99,7 +121,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2854966154225865014}
-  - component: {fileID: 9132849096302516889}
   - component: {fileID: 8695759967485989332}
   - component: {fileID: 5119895438536736940}
   - component: {fileID: 620000000000000002}
@@ -126,27 +147,6 @@ Transform:
   - {fileID: 3398218181210598525}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &9132849096302516889
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3520120277094894129}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &8695759967485989332
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -186,7 +186,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4a7c1e2d3f84b0c9a1e2d3c4b5a6f7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DraggableObject
-  dragHeight: 0.18
+  dragHeight: 0.25
   failedDropAction: 1
   disableCollidersWhileDragging: 1
 --- !u!114 &620000000000000002

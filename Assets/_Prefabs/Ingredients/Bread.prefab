@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4a7c1e2d3f84b0c9a1e2d3c4b5a6f7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DraggableObject
-  dragHeight: 0.18
+  dragHeight: 0.25
   failedDropAction: 1
   disableCollidersWhileDragging: 1
 --- !u!114 &620000000000000001
