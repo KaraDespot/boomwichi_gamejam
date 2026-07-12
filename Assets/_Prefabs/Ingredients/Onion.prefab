@@ -88,6 +88,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::IngredientInstance
   ingredientType: 7
   breadRole: 0
+  sauceType: 0
 --- !u!114 &620000000000000900
 MonoBehaviour:
   m_ObjectHideFlags: 0

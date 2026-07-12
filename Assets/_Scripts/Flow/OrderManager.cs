@@ -206,6 +206,10 @@ public class OrderManager : MonoBehaviour
         if (customerTimer != null)
             customerTimer.StopTimer();
 
+        DayTimer dayTimer = GetComponent<DayTimer>();
+        if (dayTimer != null)
+            dayTimer.StopDay();
+
         if (GameManager.Instance != null)
             GameManager.Instance.FinishDay();
     }

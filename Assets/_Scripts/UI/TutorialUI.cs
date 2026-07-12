@@ -4,26 +4,37 @@
  * Что делает: показывает краткие правила и запускает день по кнопке.
  * Связи: GameManager, DayTimer, EventBus.
  * Паттерны: UI Controller, Observer.
+ *
+ * Настройка в сцене:
+ * - Создай панель TutorialPanel на Canvas (по умолчанию выключена).
+ * - Назначь tutorialPanel, tutorialBodyText, startDayButton в Inspector.
+ * - Компонент TutorialUI может висеть на UIController или на самой панели.
  */
 
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+[DisallowMultipleComponent]
 public class TutorialUI : MonoBehaviour
 {
     [Header("Панель")]
+    [Tooltip("Корневой объект экрана туториала. Должен быть выключен в сцене до старта дня.")]
     [SerializeField] private GameObject tutorialPanel;
 
     [Header("Текст")]
+    [Tooltip("Текст правил. Если в Inspector пусто — подставится defaultTutorialText при старте.")]
     [SerializeField] private TMP_Text tutorialBodyText;
 
     [Header("Кнопка")]
+    [Tooltip("Кнопка «Начать день».")]
     [SerializeField] private Button startDayButton;
 
     [Header("Ссылки")]
+    [Tooltip("Таймер смены на Managers. Если пусто — ищется на сцене.")]
     [SerializeField] private DayTimer dayTimer;
 
+    [Header("Текст по умолчанию")]
     [TextArea(4, 8)]
     [SerializeField] private string defaultTutorialText =
         "Собирай сендвич перетаскиванием ингредиентов.\n" +
@@ -35,7 +46,8 @@ public class TutorialUI : MonoBehaviour
         if (dayTimer == null)
             dayTimer = FindFirstObjectByType<DayTimer>();
 
-        EnsureRuntimePanelIfMissing();
+        ApplyDefaultTutorialText();
+        ValidateReferences();
     }
 
     private void OnEnable()
@@ -58,6 +70,13 @@ public class TutorialUI : MonoBehaviour
             startDayButton.onClick.RemoveListener(HandleStartDayClicked);
     }
 
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        ValidateReferences();
+    }
+#endif
+
     private void HandleDayStateChanged(DayFlowState state)
     {
         SyncVisibility(state);
@@ -74,10 +93,10 @@ public class TutorialUI : MonoBehaviour
 
     private void SyncVisibility(DayFlowState state)
     {
-        bool show = state == DayFlowState.Tutorial;
+        if (tutorialPanel == null)
+            return;
 
-        if (tutorialPanel != null)
-            tutorialPanel.SetActive(show);
+        tutorialPanel.SetActive(state == DayFlowState.Tutorial);
     }
 
     private void HandleStartDayClicked()
@@ -94,71 +113,24 @@ public class TutorialUI : MonoBehaviour
             tutorialPanel.SetActive(false);
     }
 
-    private void EnsureRuntimePanelIfMissing()
+    private void ApplyDefaultTutorialText()
     {
-        if (tutorialPanel != null)
-        {
-            if (tutorialBodyText != null)
-                tutorialBodyText.text = defaultTutorialText;
-
+        if (tutorialBodyText == null)
             return;
-        }
 
-        Canvas canvas = FindFirstObjectByType<Canvas>();
-        if (canvas == null)
-        {
-            Debug.LogWarning($"{name}: Canvas не найден — TutorialUI не создан.", this);
-            return;
-        }
+        if (string.IsNullOrWhiteSpace(tutorialBodyText.text))
+            tutorialBodyText.text = defaultTutorialText;
+    }
 
-        tutorialPanel = new GameObject("TutorialPanel", typeof(RectTransform), typeof(Image));
-        tutorialPanel.transform.SetParent(canvas.transform, false);
+    private void ValidateReferences()
+    {
+        if (tutorialPanel == null)
+            Debug.LogWarning($"{name}: назначь tutorialPanel в Inspector.", this);
 
-        RectTransform panelRect = tutorialPanel.GetComponent<RectTransform>();
-        panelRect.anchorMin = Vector2.zero;
-        panelRect.anchorMax = Vector2.one;
-        panelRect.offsetMin = Vector2.zero;
-        panelRect.offsetMax = Vector2.zero;
+        if (tutorialBodyText == null)
+            Debug.LogWarning($"{name}: назначь tutorialBodyText (TextMeshPro) в Inspector.", this);
 
-        Image panelImage = tutorialPanel.GetComponent<Image>();
-        panelImage.color = new Color(0f, 0f, 0f, 0.75f);
-
-        GameObject textObject = new GameObject("TutorialText", typeof(RectTransform), typeof(TextMeshProUGUI));
-        textObject.transform.SetParent(tutorialPanel.transform, false);
-        RectTransform textRect = textObject.GetComponent<RectTransform>();
-        textRect.anchorMin = new Vector2(0.1f, 0.35f);
-        textRect.anchorMax = new Vector2(0.9f, 0.85f);
-        textRect.offsetMin = Vector2.zero;
-        textRect.offsetMax = Vector2.zero;
-
-        tutorialBodyText = textObject.GetComponent<TextMeshProUGUI>();
-        tutorialBodyText.fontSize = 28f;
-        tutorialBodyText.alignment = TextAlignmentOptions.Center;
-        tutorialBodyText.text = defaultTutorialText;
-
-        GameObject buttonObject = new GameObject("StartDayButton", typeof(RectTransform), typeof(Image), typeof(Button));
-        buttonObject.transform.SetParent(tutorialPanel.transform, false);
-        RectTransform buttonRect = buttonObject.GetComponent<RectTransform>();
-        buttonRect.anchorMin = new Vector2(0.35f, 0.12f);
-        buttonRect.anchorMax = new Vector2(0.65f, 0.22f);
-        buttonRect.offsetMin = Vector2.zero;
-        buttonRect.offsetMax = Vector2.zero;
-
-        startDayButton = buttonObject.GetComponent<Button>();
-
-        GameObject buttonLabelObject = new GameObject("Label", typeof(RectTransform), typeof(TextMeshProUGUI));
-        buttonLabelObject.transform.SetParent(buttonObject.transform, false);
-        RectTransform labelRect = buttonLabelObject.GetComponent<RectTransform>();
-        labelRect.anchorMin = Vector2.zero;
-        labelRect.anchorMax = Vector2.one;
-        labelRect.offsetMin = Vector2.zero;
-        labelRect.offsetMax = Vector2.zero;
-
-        TextMeshProUGUI buttonLabel = buttonLabelObject.GetComponent<TextMeshProUGUI>();
-        buttonLabel.fontSize = 24f;
-        buttonLabel.alignment = TextAlignmentOptions.Center;
-        buttonLabel.text = "Начать день";
-
-        tutorialPanel.SetActive(false);
+        if (startDayButton == null)
+            Debug.LogWarning($"{name}: назначь startDayButton в Inspector.", this);
     }
 }

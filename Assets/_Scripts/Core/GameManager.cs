@@ -226,6 +226,10 @@ public class GameManager : MonoBehaviour
             return;
 
         SetDayState(DayFlowState.DayFinished);
+        Time.timeScale = 0f;
+
+        if (InputManager.Instance != null)
+            InputManager.Instance.EnableUIInput();
 
         if (EventBus.Instance != null)
             EventBus.Instance.RaiseDayFinished();
