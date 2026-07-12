@@ -19,6 +19,7 @@ public enum OrderEvaluationIssueType
     WrongCookState,
     MissingIngredient,
     ExtraIngredient,
+    WrongSauceType,
     MoldyIngredient,
     FallenMold,
     RoachContamination

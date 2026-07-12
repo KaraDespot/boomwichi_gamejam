@@ -112,6 +112,11 @@ public class GrillZone : MonoBehaviour
         currentDraggable.SetPhysicsLocked(true);
         currentDraggable.transform.rotation = transform.rotation;
 
+        Debug.Log(
+            $"[GrillZone] Принят сендвич {currentSandwich.name}: CookState={currentSandwich.CookState}, " +
+            $"прогресс={currentSandwich.CookProgressSeconds:F2}s",
+            this);
+
         CloseGrill();
         StartCooking();
         return true;
@@ -172,7 +177,10 @@ public class GrillZone : MonoBehaviour
                 currentSandwich.SetCookState(SandwichCookState.Toasted);
                 canOpen = true;
                 UpdateTimerVisual();
-                Debug.Log($"{name}: сендвич готов, можно открыть грильницу.", this);
+                Debug.Log(
+                    $"[GrillZone] {currentSandwich.name}: Raw → Toasted за {cookProgress:F2}s " +
+                    $"(порог={toastedAt:F2}s)",
+                    this);
             }
 
             if (cookProgress >= burntAt && currentSandwich.CookState == SandwichCookState.Toasted)
@@ -180,7 +188,10 @@ public class GrillZone : MonoBehaviour
                 currentSandwich.SetCookState(SandwichCookState.Burnt);
                 canOpen = true;
                 UpdateTimerVisual();
-                Debug.Log($"{name}: сендвич пережарен.", this);
+                Debug.Log(
+                    $"[GrillZone] {currentSandwich.name}: Toasted → Burnt за {cookProgress:F2}s " +
+                    $"(порог={burntAt:F2}s)",
+                    this);
             }
 
             UpdateTimerVisual();
@@ -226,6 +237,10 @@ public class GrillZone : MonoBehaviour
         currentSandwich.MarkRemovedFromGrill();
         isSandwichBeingDragged = true;
         StopCookingTimer();
+        Debug.Log(
+            $"[GrillZone] Сендвич снят с гриля: {currentSandwich.name}, " +
+            $"CookState={currentSandwich.CookState}, прогресс={currentSandwich.CookProgressSeconds:F2}s",
+            this);
         UpdateTimerVisual();
     }
 

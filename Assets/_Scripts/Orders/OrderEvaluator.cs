@@ -25,6 +25,9 @@ public class OrderEvaluator : MonoBehaviour
     [Tooltip("Штраф за неправильную прожарку хлеба.")]
     [SerializeField] private int wrongCookPenalty = 5;
 
+    [Tooltip("Штраф за неправильный цвет соуса.")]
+    [SerializeField] private int wrongSaucePenalty = 5;
+
     [Tooltip("Штраф за отсутствующий нижний или верхний хлеб.")]
     [SerializeField] private int missingBreadPenalty = 5;
 
@@ -33,6 +36,10 @@ public class OrderEvaluator : MonoBehaviour
 
     [Tooltip("Минимальные чаевые после всех штрафов.")]
     [SerializeField] private int minimumTips = 0;
+
+    [Header("Отладка")]
+    [Tooltip("Подробные логи проверки заказа и прожарки в консоль.")]
+    [SerializeField] private bool debugEvaluationLogs = true;
 
     public OrderEvaluationResult Evaluate(OrderDataAsset order, SandwichState sandwichState)
     {
@@ -47,7 +54,9 @@ public class OrderEvaluator : MonoBehaviour
                 0,
                 "Нет активного заказа."));
 
-            return CreateResult(order, sandwichState, issues);
+            OrderEvaluationResult noOrderResult = CreateResult(order, sandwichState, issues);
+            LogEvaluationResult(order, sandwichState, issues, noOrderResult);
+            return noOrderResult;
         }
 
         if (sandwichState == null)
@@ -59,14 +68,21 @@ public class OrderEvaluator : MonoBehaviour
                 0,
                 "В пакет не передан сендвич."));
 
-            return CreateResult(order, sandwichState, issues);
+            OrderEvaluationResult noSandwichResult = CreateResult(order, sandwichState, issues);
+            LogEvaluationResult(order, sandwichState, issues, noSandwichResult);
+            return noSandwichResult;
         }
 
+        LogSandwichSnapshot("до проверки", order, sandwichState);
+
         EvaluateBread(order, sandwichState, issues);
+        EvaluateSauce(order, sandwichState, issues);
         EvaluateIngredients(order, sandwichState, issues);
         EvaluateDirt(sandwichState, issues);
 
-        return CreateResult(order, sandwichState, issues);
+        OrderEvaluationResult result = CreateResult(order, sandwichState, issues);
+        LogEvaluationResult(order, sandwichState, issues, result);
+        return result;
     }
 
     private void EvaluateBread(OrderDataAsset order, SandwichState sandwichState, List<OrderEvaluationIssue> issues)
@@ -117,6 +133,36 @@ public class OrderEvaluator : MonoBehaviour
         }
     }
 
+    private void EvaluateSauce(OrderDataAsset order, SandwichState sandwichState, List<OrderEvaluationIssue> issues)
+    {
+        SauceType requiredSauce = order.RequiredSauce;
+
+        if (requiredSauce == SauceType.None)
+            return;
+
+        if (!sandwichState.HasSauce)
+        {
+            issues.Add(new OrderEvaluationIssue(
+                OrderEvaluationIssueType.MissingIngredient,
+                IngredientType.Sauce,
+                1,
+                0,
+                $"Не хватает соуса: нужен {GetSauceLabel(requiredSauce)}."));
+            return;
+        }
+
+        SauceType actualSauce = sandwichState.GetSauceType();
+        if (actualSauce != SauceType.None && actualSauce != requiredSauce)
+        {
+            issues.Add(new OrderEvaluationIssue(
+                OrderEvaluationIssueType.WrongSauceType,
+                IngredientType.Sauce,
+                (int)requiredSauce,
+                (int)actualSauce,
+                $"Нужен {GetSauceLabel(requiredSauce)}, а на сендвиче {GetSauceLabel(actualSauce)}."));
+        }
+    }
+
     private void EvaluateIngredients(OrderDataAsset order, SandwichState sandwichState, List<OrderEvaluationIssue> issues)
     {
         Dictionary<IngredientType, int> expectedCounts = BuildExpectedCounts(order);
@@ -147,7 +193,25 @@ public class OrderEvaluator : MonoBehaviour
 
         foreach (KeyValuePair<IngredientType, int> ingredientCount in sandwichState.IngredientCounts)
         {
-            if (ingredientCount.Value <= 0 || expectedCounts.ContainsKey(ingredientCount.Key))
+            if (ingredientCount.Value <= 0)
+                continue;
+
+            if (ingredientCount.Key == IngredientType.Sauce)
+            {
+                if (order.RequiredSauce == SauceType.None)
+                {
+                    issues.Add(new OrderEvaluationIssue(
+                        OrderEvaluationIssueType.ExtraIngredient,
+                        IngredientType.Sauce,
+                        0,
+                        ingredientCount.Value,
+                        "В заказе соус не нужен."));
+                }
+
+                continue;
+            }
+
+            if (expectedCounts.ContainsKey(ingredientCount.Key))
                 continue;
 
             issues.Add(new OrderEvaluationIssue(
@@ -218,9 +282,6 @@ public class OrderEvaluator : MonoBehaviour
     {
         Dictionary<IngredientType, int> expectedCounts = new Dictionary<IngredientType, int>();
 
-        if (order.RequiresSauce)
-            expectedCounts[IngredientType.Sauce] = 1;
-
         OrderIngredientRequirement[] ingredients = order.Ingredients;
         if (ingredients == null)
             return expectedCounts;
@@ -277,6 +338,10 @@ public class OrderEvaluator : MonoBehaviour
                     tips -= wrongCookPenalty;
                     break;
 
+                case OrderEvaluationIssueType.WrongSauceType:
+                    tips -= wrongSaucePenalty;
+                    break;
+
                 case OrderEvaluationIssueType.MissingIngredient:
                     tips -= missingIngredientPenalty * Mathf.Max(1, issue.ExpectedCount - issue.ActualCount);
                     break;
@@ -323,5 +388,129 @@ public class OrderEvaluator : MonoBehaviour
             default:
                 return SandwichCookState.Raw;
         }
+    }
+
+    private static string GetSauceLabel(SauceType sauceType)
+    {
+        return sauceType switch
+        {
+            SauceType.Red => "красный соус",
+            SauceType.White => "белый соус",
+            _ => "соус"
+        };
+    }
+
+    private void LogSandwichSnapshot(string stage, OrderDataAsset order, SandwichState sandwichState)
+    {
+        if (!debugEvaluationLogs)
+            return;
+
+        string orderName = order != null ? order.name : "null";
+        if (sandwichState == null)
+        {
+            Debug.Log($"[OrderEvaluator] {stage}: заказ={orderName}, сендвич=null", this);
+            return;
+        }
+
+        string ingredientSummary = BuildIngredientSummary(sandwichState);
+        Debug.Log(
+            $"[OrderEvaluator] {stage}: заказ={orderName}, " +
+            $"требуется прожарка={order?.RequiredTopToast}, соус={order?.RequiredSauce}, " +
+            $"сендвич={sandwichState.name}, CookState={sandwichState.CookState}, " +
+            $"CookProgress={sandwichState.CookProgressSeconds:F2}s, " +
+            $"нижний хлеб={sandwichState.HasBottomBread}, верхний={sandwichState.HasTopBread}, " +
+            $"соус на сендвиче={sandwichState.GetSauceType()}, " +
+            $"ингредиенты=[{ingredientSummary}], " +
+            $"грязь: плесень={sandwichState.HasFallenMold}, таракан={sandwichState.HasRoachContact}",
+            this);
+    }
+
+    private void LogEvaluationResult(
+        OrderDataAsset order,
+        SandwichState sandwichState,
+        IReadOnlyList<OrderEvaluationIssue> issues,
+        OrderEvaluationResult result)
+    {
+        if (!debugEvaluationLogs)
+            return;
+
+        string orderName = order != null ? order.name : "null";
+        if (issues.Count == 0)
+        {
+            Debug.Log($"[OrderEvaluator] Итог: заказ={orderName}, ошибок нет, чаевые={result.TipAmount}", this);
+            return;
+        }
+
+        System.Text.StringBuilder builder = new System.Text.StringBuilder();
+        builder.AppendLine($"[OrderEvaluator] Итог: заказ={orderName}, ошибок={issues.Count}, чаевые={result.TipAmount}");
+        builder.AppendLine($"  сендвич CookState={sandwichState?.CookState}, прогресс={sandwichState?.CookProgressSeconds:F2}s");
+
+        for (int i = 0; i < issues.Count; i++)
+        {
+            OrderEvaluationIssue issue = issues[i];
+            builder.AppendLine(
+                $"  [{i + 1}] {issue.IssueType}: {issue.Message} " +
+                $"(ожидалось={issue.ExpectedCount}, факт={issue.ActualCount}, штраф≈{GetIssuePenalty(issue)})");
+        }
+
+        Debug.Log(builder.ToString(), this);
+    }
+
+    private int GetIssuePenalty(OrderEvaluationIssue issue)
+    {
+        switch (issue.IssueType)
+        {
+            case OrderEvaluationIssueType.MissingBottomBread:
+            case OrderEvaluationIssueType.MissingTopBread:
+                return missingBreadPenalty;
+
+            case OrderEvaluationIssueType.RawTopBread:
+            case OrderEvaluationIssueType.WrongCookState:
+                return wrongCookPenalty;
+
+            case OrderEvaluationIssueType.WrongSauceType:
+                return wrongSaucePenalty;
+
+            case OrderEvaluationIssueType.MissingIngredient:
+                return missingIngredientPenalty * Mathf.Max(1, issue.ExpectedCount - issue.ActualCount);
+
+            case OrderEvaluationIssueType.ExtraIngredient:
+                return extraIngredientPenalty * Mathf.Max(1, issue.ActualCount - issue.ExpectedCount);
+
+            case OrderEvaluationIssueType.MoldyIngredient:
+            case OrderEvaluationIssueType.FallenMold:
+            case OrderEvaluationIssueType.RoachContamination:
+                return dirtyPenalty;
+
+            case OrderEvaluationIssueType.NoActiveOrder:
+            case OrderEvaluationIssueType.NoSandwich:
+                return defaultMaxTips;
+
+            default:
+                return 0;
+        }
+    }
+
+    private static string BuildIngredientSummary(SandwichState sandwichState)
+    {
+        if (sandwichState == null || sandwichState.IngredientCounts.Count == 0)
+            return "пусто";
+
+        System.Text.StringBuilder builder = new System.Text.StringBuilder();
+        foreach (KeyValuePair<IngredientType, int> pair in sandwichState.IngredientCounts)
+        {
+            if (pair.Value <= 0)
+                continue;
+
+            if (builder.Length > 0)
+                builder.Append(", ");
+
+            if (pair.Key == IngredientType.Sauce)
+                builder.Append($"{pair.Key}({sandwichState.GetSauceType()})x{pair.Value}");
+            else
+                builder.Append($"{pair.Key}x{pair.Value}");
+        }
+
+        return builder.Length > 0 ? builder.ToString() : "пусто";
     }
 }

@@ -155,7 +155,20 @@ public class OrderManager : MonoBehaviour
             customerTimer.StopTimer();
 
         if (ScoreManager.Instance != null)
+        {
+            int tipsBefore = ScoreManager.Instance.TotalTips;
             ScoreManager.Instance.AddTips(tipsEarned);
+            Debug.Log(
+                $"[OrderManager] Заказ #{currentOrderIndex + 1} завершён: +{tipsEarned} чаевых " +
+                $"({tipsBefore} → {ScoreManager.Instance.TotalTips})",
+                this);
+        }
+        else
+        {
+            Debug.LogWarning(
+                $"[OrderManager] Заказ #{currentOrderIndex + 1}: чаевые={tipsEarned}, но ScoreManager отсутствует.",
+                this);
+        }
 
         if (EventBus.Instance != null)
             EventBus.Instance.RaiseOrderCompleted(currentOrderIndex, tipsEarned);

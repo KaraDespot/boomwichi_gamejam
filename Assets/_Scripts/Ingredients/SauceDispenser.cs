@@ -16,6 +16,9 @@ public class SauceDispenser : MonoBehaviour
     [Tooltip("Prefab кляксы соуса, которая появится на хлебе после drop контейнера на сендвич.")]
     [SerializeField] private GameObject saucePrefab;
 
+    [Tooltip("Тип соуса из этого диспенсера. Если None — берётся из prefab кляксы.")]
+    [SerializeField] private SauceType sauceType = SauceType.None;
+
     [Tooltip("Должен ли контейнер автоматически возвращаться на место при неудачном drop.")]
     [SerializeField] private bool returnToStartOnFailedDrop = true;
 
@@ -63,7 +66,7 @@ public class SauceDispenser : MonoBehaviour
         if (sauceIngredient == null)
             sauceIngredient = sauceInstance.AddComponent<IngredientInstance>();
 
-        sauceIngredient.Initialize(IngredientType.Sauce, BreadRole.None);
+        sauceIngredient.Initialize(IngredientType.Sauce, BreadRole.None, ResolveSauceType());
         sauceDraggable.SetFailedDropAction(DragFailedDropAction.DeactivateObject);
         sauceDraggable.SetCanDrag(true);
 
@@ -71,5 +74,20 @@ public class SauceDispenser : MonoBehaviour
             Debug.LogWarning($"{name}: у созданной кляксы соуса нет Collider.", sauceInstance);
 
         return true;
+    }
+
+    private SauceType ResolveSauceType()
+    {
+        if (sauceType != SauceType.None)
+            return sauceType;
+
+        if (saucePrefab != null)
+        {
+            IngredientInstance prefabIngredient = saucePrefab.GetComponent<IngredientInstance>();
+            if (prefabIngredient != null && prefabIngredient.SauceType != SauceType.None)
+                return prefabIngredient.SauceType;
+        }
+
+        return SauceType.Red;
     }
 }

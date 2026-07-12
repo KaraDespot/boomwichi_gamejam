@@ -17,8 +17,8 @@ public class OrderDataAsset : ScriptableObject
     [SerializeField] private string customerPhrase;
 
     [Header("Соус")]
-    [Tooltip("Нужен ли соус в заказе.")]
-    [SerializeField] private bool requiresSauce;
+    [Tooltip("Какой соус нужен в заказе. None — без соуса.")]
+    [SerializeField] private SauceType requiredSauce = SauceType.None;
 
     [Header("Ингредиенты")]
     [Tooltip("Список ингредиентов и их количество. Хлеб (нижний/верхний) добавляется автоматически.")]
@@ -29,7 +29,8 @@ public class OrderDataAsset : ScriptableObject
     [SerializeField] private ToastState requiredTopToast = ToastState.Toasted;
 
     public string CustomerPhrase => customerPhrase;
-    public bool RequiresSauce => requiresSauce;
+    public SauceType RequiredSauce => requiredSauce;
+    public bool RequiresSauce => requiredSauce != SauceType.None;
     public OrderIngredientRequirement[] Ingredients => ingredients;
     public ToastState RequiredTopToast => requiredTopToast;
 

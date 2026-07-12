@@ -24,3 +24,10 @@ public enum BreadRole
     Bottom,
     Top
 }
+
+public enum SauceType
+{
+    None,
+    Red,
+    White
+}

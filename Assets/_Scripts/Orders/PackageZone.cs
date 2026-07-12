@@ -74,6 +74,13 @@ public class PackageZone : MonoBehaviour
 
         SandwichState sandwichState = draggableObject.GetComponent<SandwichState>();
         OrderDataAsset order = GetCurrentOrder();
+        int orderIndex = orderManager != null ? orderManager.CurrentOrderIndex : -1;
+        Debug.Log(
+            $"[PackageZone] Сдача: заказ #{orderIndex + 1} " +
+            $"({(order != null ? order.name : "null")}), сендвич={sandwichState.name}, " +
+            $"CookState={sandwichState.CookState}, прогресс={sandwichState.CookProgressSeconds:F2}s",
+            this);
+
         LastDeliveryResult = orderEvaluator.Evaluate(order, sandwichState);
         HasDeliveryResult = true;
 
@@ -88,7 +95,9 @@ public class PackageZone : MonoBehaviour
             orderManager.CompleteCurrentOrder(LastDeliveryResult.TipAmount);
 
         SandwichDelivered?.Invoke(LastDeliveryResult);
-        Debug.Log($"{name}: заказ сдан. {LastDeliveryResult.Summary}", this);
+        Debug.Log(
+            $"[PackageZone] Заказ сдан. Чаевые={LastDeliveryResult.TipAmount}. {LastDeliveryResult.Summary}",
+            this);
 
         if (deactivateDeliveredSandwich)
             draggableObject.gameObject.SetActive(false);

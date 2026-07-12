@@ -18,8 +18,12 @@ public class IngredientInstance : MonoBehaviour
     [Tooltip("Роль хлеба. Для остальных ингредиентов оставлять None.")]
     [SerializeField] private BreadRole breadRole = BreadRole.None;
 
+    [Tooltip("Вариант соуса. Используется только для IngredientType.Sauce.")]
+    [SerializeField] private SauceType sauceType = SauceType.None;
+
     public IngredientType Type => ingredientType;
     public BreadRole BreadRole => breadRole;
+    public SauceType SauceType => sauceType;
     public bool IsPlacedOnSandwich { get; private set; }
     public bool IsMoldy { get; private set; }
     public bool IsRoachContaminated { get; private set; }
@@ -29,10 +33,11 @@ public class IngredientInstance : MonoBehaviour
     /// <summary> Может ли этот ингредиент получить плесень при спавне. </summary>
     public bool CanBecomeMoldy => ingredientType != IngredientType.Sauce;
 
-    public void Initialize(IngredientType type, BreadRole role)
+    public void Initialize(IngredientType type, BreadRole role, SauceType sauce = SauceType.None)
     {
         ingredientType = type;
         breadRole = role;
+        sauceType = type == IngredientType.Sauce ? sauce : SauceType.None;
         IsPlacedOnSandwich = false;
         IsMoldy = false;
         IsRoachContaminated = false;

@@ -10,13 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e7f8a9b0c1d2435690abcdef12345607, type: 3}
-  m_Name: second order
+  m_Name: Order_04
   m_EditorClassIdentifier: Assembly-CSharp::OrderDataAsset
-  customerPhrase: "\u043E\u043B\u0438\u0432\u043A\u0438 \u0438 \u0441\u044B\u0440"
-  requiresSauce: 0
+  customerPhrase: "\u043E\u043B\u0438\u0432\u043A\u0438 \u0438 \u0441\u044B\u0440
+    \u043C\u0430\u0439\u043E\u043D\u0435\u0437"
+  requiredSauce: 2
   ingredients:
   - type: 3
-    count: 1
+    count: 4
   - type: 5
+    count: 1
+  - type: 4
     count: 1
   requiredTopToast: 0
