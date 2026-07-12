@@ -46,6 +46,18 @@ public class SandwichBoard : MonoBehaviour
     public bool HasTopBread => currentSandwich != null && currentSandwich.HasTopBread;
     public bool IsClosed => currentSandwich != null && currentSandwich.IsClosed;
 
+    /// <summary> Точка на тарелке/сендвиче, к которой должен идти таракан. </summary>
+    public Vector3 GetRoachTargetWorldPoint()
+    {
+        if (currentSandwich != null && currentSandwich.HasBottomBread)
+            return currentSandwich.transform.position;
+
+        if (bottomBreadPoint != null)
+            return bottomBreadPoint.position;
+
+        return transform.position;
+    }
+
     public bool CanAccept(DraggableObject draggableObject)
     {
         if (draggableObject == null)
@@ -298,6 +310,44 @@ public class SandwichBoard : MonoBehaviour
     private int GetTopBreadLayerIndex()
     {
         return currentSandwich.GetHighestIngredientLayerIndex() + 1;
+    }
+
+    /// <summary>
+    /// Позиция для таракана на поверхности сендвича, смещённая к стороне, откуда он подошёл.
+    /// </summary>
+    public bool TryGetCockroachLandPosition(
+        Vector3 approachWorldPoint,
+        out Vector3 worldPosition,
+        out Quaternion worldRotation,
+        float approachBias = 0.72f)
+    {
+        worldPosition = Vector3.zero;
+        worldRotation = Quaternion.identity;
+
+        if (!HasBottomBread || IsClosed || currentSandwich == null)
+            return false;
+
+        Transform root = currentSandwich.transform;
+        Vector3 localApproach = root.InverseTransformPoint(approachWorldPoint);
+        localApproach.y = 0f;
+        localApproach = ClampToBreadBounds(localApproach);
+
+        Vector2 randomCircle = Random.insideUnitCircle;
+        Vector3 localRandom = new Vector3(
+            randomCircle.x * placementHalfExtents.x * 0.75f,
+            0f,
+            randomCircle.y * placementHalfExtents.y * 0.75f);
+        Vector3 localTarget = Vector3.Lerp(localRandom, localApproach, Mathf.Clamp01(approachBias));
+        localTarget = ClampToBreadBounds(localTarget);
+
+        int layerIndex = GetTopBreadLayerIndex();
+        float heightOffset = GetLayerHeightOffset(root, layerIndex);
+        Vector3 horizontalPosition = root.TransformPoint(localTarget);
+        worldPosition = horizontalPosition + root.up * heightOffset;
+
+        float yaw = Mathf.Atan2(localApproach.x, localApproach.z) * Mathf.Rad2Deg;
+        worldRotation = root.rotation * Quaternion.Euler(90f, yaw + Random.Range(-18f, 18f), 0f);
+        return true;
     }
 
     private IEnumerator AnimatePlacement(Transform placedTransform, Vector3 targetPosition)

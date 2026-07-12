@@ -28,6 +28,54 @@ public class CockroachSpawner : MonoBehaviour
     [Tooltip("Радиус зоны раздавливания в мировых единицах.")]
     [SerializeField] private float clickWorldRadius = 0.42f;
 
+    [Header("Движение к тарелке")]
+    [Tooltip("Тарелка/доска, к которой стремятся тараканы.")]
+    [SerializeField] private SandwichBoard sandwichBoard;
+
+    [Tooltip("Насколько сильно таракан тянется к тарелке (0 — блуждание, 1 — почти прямо к цели).")]
+    [Range(0f, 1f)]
+    [SerializeField] private float plateAttractionWeight = 0.75f;
+
+    [Tooltip("На этом расстоянии до тарелки притяжение усиливается до максимума.")]
+    [SerializeField] private float plateApproachRadius = 1.6f;
+
+    [Header("Обход препятствий")]
+    [Tooltip("Слои коллайдеров предметов на столе, которые таракан обходит.")]
+    [SerializeField] private LayerMask obstacleLayerMask;
+
+    [Tooltip("Дальность лучей обнаружения препятствий впереди.")]
+    [SerializeField] private float obstacleAvoidanceDistance = 0.3f;
+
+    [Tooltip("Радиус spherecast для обхода предметов.")]
+    [SerializeField] private float obstacleProbeRadius = 0.065f;
+
+    [Tooltip("Насколько резко таракан уходит в сторону при столкновении.")]
+    [SerializeField] private float obstacleAvoidanceStrength = 2.2f;
+
+    [Header("Контакт с едой")]
+    [Tooltip("Горизонтальная дистанция касания сендвича на тарелке.")]
+    [SerializeField] private float sandwichTouchRadius = 0.28f;
+
+    [Tooltip("Шанс остаться лежать на сендвиче после касания. Иначе — убежать и бродить дальше.")]
+    [Range(0f, 1f)]
+    [SerializeField] private float landOnSandwichChance = 0.45f;
+
+    [Tooltip("Насколько позиция на сендвиче смещается к стороне, откуда подошёл таракан.")]
+    [Range(0f, 1f)]
+    [SerializeField] private float landApproachBias = 0.72f;
+
+    [Tooltip("Сколько секунд таракан убегает после касания.")]
+    [SerializeField] private float fleeDuration = 1.35f;
+
+    [Tooltip("Множитель скорости во время побега.")]
+    [SerializeField] private float fleeSpeedMultiplier = 1.35f;
+
+    [Tooltip("Длительность «падения» таракана на сендвич.")]
+    [SerializeField] private float landAnimationDuration = 0.18f;
+
+    [Tooltip("С какой высоты таракан падает на сендвич.")]
+    [SerializeField] private float landDropHeight = 0.14f;
+
     [Header("Частота")]
     [Tooltip("Интервал между спавнами в начале дня (сек).")]
     [SerializeField] private float minSpawnInterval = 18f;
@@ -51,8 +99,14 @@ public class CockroachSpawner : MonoBehaviour
     [Tooltip("Спавнить только по краям стола, а не в центре.")]
     [SerializeField] private bool spawnAtTableEdges = true;
 
+    [Tooltip("Если включено — только левая и правая стороны стола (не перед/зад).")]
+    [SerializeField] private bool spawnOnLeftRightEdgesOnly = true;
+
     [Tooltip("Ширина полосы у края стола, где появляются тараканы.")]
     [SerializeField] private float spawnBorderWidth = 0.35f;
+
+    [Tooltip("Минимальная дистанция спавна от тарелки/сендвича.")]
+    [SerializeField] private float spawnPlateExclusionRadius = 0.5f;
 
     [Header("Связи")]
     [SerializeField] private DayTimer dayTimer;
@@ -77,6 +131,14 @@ public class CockroachSpawner : MonoBehaviour
 
         if (inputRaycaster == null)
             inputRaycaster = FindFirstObjectByType<InputRaycaster>();
+
+        if (sandwichBoard == null)
+            sandwichBoard = FindFirstObjectByType<SandwichBoard>();
+
+        if (obstacleLayerMask.value == 0)
+        {
+            obstacleLayerMask = LayerMask.GetMask("Draggable", "DropZone", "IngredientContainer");
+        }
 
         spawnParent = new GameObject("Cockroaches_Runtime").transform;
         spawnParent.SetParent(transform, false);
@@ -170,7 +232,24 @@ public class CockroachSpawner : MonoBehaviour
             cockroach = instance.AddComponent<Cockroach>();
 
         Bounds wanderBounds = BuildWanderBounds(tableHeight);
-        cockroach.Initialize(wanderBounds, tableHeight, moveSpeed, directionChangeInterval);
+        CockroachMovementConfig movementConfig = new CockroachMovementConfig
+        {
+            TargetPlate = sandwichBoard,
+            PlateAttractionWeight = plateAttractionWeight,
+            PlateApproachRadius = plateApproachRadius,
+            ObstacleLayerMask = obstacleLayerMask,
+            AvoidanceProbeDistance = obstacleAvoidanceDistance,
+            AvoidanceProbeRadius = obstacleProbeRadius,
+            AvoidanceStrength = obstacleAvoidanceStrength,
+            SandwichTouchRadius = sandwichTouchRadius,
+            LandOnSandwichChance = landOnSandwichChance,
+            LandApproachBias = landApproachBias,
+            FleeDuration = fleeDuration,
+            FleeSpeedMultiplier = fleeSpeedMultiplier,
+            LandAnimationDuration = landAnimationDuration,
+            LandDropHeight = landDropHeight
+        };
+        cockroach.Initialize(wanderBounds, tableHeight, moveSpeed, directionChangeInterval, movementConfig);
         aliveCockroaches.Add(cockroach);
 
         if (EventBus.Instance != null)
@@ -240,10 +319,23 @@ public class CockroachSpawner : MonoBehaviour
 
     private Vector3 GetRandomSpawnPosition()
     {
-        if (spawnAtTableEdges)
-            return GetRandomEdgeSpawnPosition();
+        if (!spawnAtTableEdges)
+            return GetRandomAreaSpawnPosition();
 
-        return GetRandomAreaSpawnPosition();
+        const int maxAttempts = 12;
+        for (int attempt = 0; attempt < maxAttempts; attempt++)
+        {
+            Vector3 candidate = spawnOnLeftRightEdgesOnly
+                ? GetRandomLeftRightEdgeSpawnPosition()
+                : GetRandomEdgeSpawnPosition();
+
+            if (IsFarEnoughFromPlate(candidate))
+                return candidate;
+        }
+
+        return spawnOnLeftRightEdgesOnly
+            ? GetRandomLeftRightEdgeSpawnPosition(forceAwayFromPlate: true)
+            : GetRandomEdgeSpawnPosition();
     }
 
     private Vector3 GetRandomAreaSpawnPosition()
@@ -254,6 +346,72 @@ public class CockroachSpawner : MonoBehaviour
         float x = Random.Range(-innerHalfExtents.x, innerHalfExtents.x);
         float z = Random.Range(-innerHalfExtents.y, innerHalfExtents.y);
         return center + new Vector3(x, 0f, z);
+    }
+
+    private Vector3 GetRandomLeftRightEdgeSpawnPosition(bool forceAwayFromPlate = false)
+    {
+        Vector3 center = spawnAreaCenter != null ? spawnAreaCenter.position : transform.position;
+        Vector2 innerHalfExtents = GetInnerHalfExtents();
+        float border = Mathf.Clamp(
+            spawnBorderWidth,
+            0.05f,
+            Mathf.Max(0.05f, innerHalfExtents.x - 0.01f));
+
+        bool spawnOnLeft = Random.value < 0.5f;
+        float x = spawnOnLeft
+            ? Random.Range(-innerHalfExtents.x, -innerHalfExtents.x + border)
+            : Random.Range(innerHalfExtents.x - border, innerHalfExtents.x);
+
+        float z = forceAwayFromPlate
+            ? GetSpawnZAwayFromPlate(center, innerHalfExtents.y)
+            : GetRandomSpawnZ(center, innerHalfExtents.y);
+
+        return center + new Vector3(x, 0f, z);
+    }
+
+    private float GetRandomSpawnZ(Vector3 areaCenter, float halfExtentZ)
+    {
+        float plateLocalZ = GetPlateLocalZ(areaCenter);
+        float exclusion = Mathf.Max(0.05f, spawnPlateExclusionRadius);
+
+        for (int attempt = 0; attempt < 8; attempt++)
+        {
+            float z = Random.Range(-halfExtentZ, halfExtentZ);
+            if (Mathf.Abs(z - plateLocalZ) >= exclusion)
+                return z;
+        }
+
+        return GetSpawnZAwayFromPlate(areaCenter, halfExtentZ);
+    }
+
+    private float GetSpawnZAwayFromPlate(Vector3 areaCenter, float halfExtentZ)
+    {
+        float plateLocalZ = GetPlateLocalZ(areaCenter);
+        float awaySign = plateLocalZ >= 0f ? -1f : 1f;
+        float outerMin = awaySign * halfExtentZ * 0.4f;
+        float outerMax = awaySign * halfExtentZ;
+        return Random.Range(Mathf.Min(outerMin, outerMax), Mathf.Max(outerMin, outerMax));
+    }
+
+    private float GetPlateLocalZ(Vector3 areaCenter)
+    {
+        if (sandwichBoard == null)
+            return 0f;
+
+        Vector3 platePoint = sandwichBoard.GetRoachTargetWorldPoint();
+        return platePoint.z - areaCenter.z;
+    }
+
+    private bool IsFarEnoughFromPlate(Vector3 worldPosition)
+    {
+        if (sandwichBoard == null || spawnPlateExclusionRadius <= 0f)
+            return true;
+
+        Vector3 platePoint = sandwichBoard.GetRoachTargetWorldPoint();
+        Vector3 delta = worldPosition - platePoint;
+        delta.y = 0f;
+        float radiusSq = spawnPlateExclusionRadius * spawnPlateExclusionRadius;
+        return delta.sqrMagnitude >= radiusSq;
     }
 
     private Vector3 GetRandomEdgeSpawnPosition()
@@ -355,11 +513,31 @@ public class CockroachSpawner : MonoBehaviour
         Gizmos.color = new Color(0.85f, 0.45f, 0.1f, 0.85f);
         float halfX = innerHalfExtents.x;
         float halfZ = innerHalfExtents.y;
+        float border = Mathf.Clamp(
+            spawnBorderWidth,
+            0.05f,
+            Mathf.Max(0.05f, innerHalfExtents.x - 0.01f));
         Vector3 y = Vector3.up * 0.03f;
+
+        if (spawnOnLeftRightEdgesOnly)
+        {
+            float leftX = -halfX + border * 0.5f;
+            float rightX = halfX - border * 0.5f;
+            Gizmos.DrawLine(center + new Vector3(leftX, 0f, -halfZ) + y, center + new Vector3(leftX, 0f, halfZ) + y);
+            Gizmos.DrawLine(center + new Vector3(rightX, 0f, -halfZ) + y, center + new Vector3(rightX, 0f, halfZ) + y);
+            return;
+        }
 
         Gizmos.DrawLine(center + new Vector3(-halfX, 0f, -halfZ) + y, center + new Vector3(-halfX, 0f, halfZ) + y);
         Gizmos.DrawLine(center + new Vector3(halfX, 0f, -halfZ) + y, center + new Vector3(halfX, 0f, halfZ) + y);
         Gizmos.DrawLine(center + new Vector3(-halfX, 0f, -halfZ) + y, center + new Vector3(halfX, 0f, -halfZ) + y);
         Gizmos.DrawLine(center + new Vector3(-halfX, 0f, halfZ) + y, center + new Vector3(halfX, 0f, halfZ) + y);
+
+        if (sandwichBoard != null && spawnPlateExclusionRadius > 0f)
+        {
+            Gizmos.color = new Color(0.9f, 0.2f, 0.2f, 0.25f);
+            Vector3 platePoint = sandwichBoard.GetRoachTargetWorldPoint();
+            Gizmos.DrawWireSphere(platePoint + Vector3.up * 0.03f, spawnPlateExclusionRadius);
+        }
     }
 }

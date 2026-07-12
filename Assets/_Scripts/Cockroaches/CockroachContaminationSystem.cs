@@ -1,8 +1,8 @@
 /*
  * CockroachContaminationSystem
- * Назначение: заражение сендвича на тарелке при контакте с тараканом.
- * Что делает: отслеживает дистанцию таракан ↔ сендвич, включает toxic-FX и флаг грязи.
- * Связи: SandwichBoard, SandwichState, Cockroach, EventBus.
+ * Назначение: визуал заражения сендвича после контакта с тараканом.
+ * Что делает: включает toxic-FX, когда таракан коснулся еды на тарелке.
+ * Связи: SandwichBoard, SandwichState, EventBus.
  * Паттерны: Manager, Observer через EventBus.
  */
 
@@ -14,10 +14,6 @@ public class CockroachContaminationSystem : MonoBehaviour
     [Header("Связи")]
     [Tooltip("Доска/тарелка со сборкой сендвича. Если пусто — ищется SandwichBoard на сцене.")]
     [SerializeField] private SandwichBoard sandwichBoard;
-
-    [Header("Контакт")]
-    [Tooltip("Горизонтальная дистанция, на которой таракан заражает сендвич.")]
-    [SerializeField] private float contaminationRadius = 0.38f;
 
     [Header("FX")]
     [Tooltip("Постоянный toxic-эффект на заражённом сендвиче.")]
@@ -37,78 +33,28 @@ public class CockroachContaminationSystem : MonoBehaviour
             sandwichBoard = FindFirstObjectByType<SandwichBoard>();
     }
 
+    private void OnEnable()
+    {
+        if (EventBus.Instance != null)
+            EventBus.Instance.OnSandwichCockroachContaminated += HandleSandwichContaminated;
+    }
+
     private void OnDisable()
     {
+        if (EventBus.Instance != null)
+            EventBus.Instance.OnSandwichCockroachContaminated -= HandleSandwichContaminated;
+
         ClearAllFx();
     }
 
     private void Update()
     {
         CleanupDestroyedSandwiches();
-
-        if (!IsGameplayActive())
-            return;
-
-        SandwichState sandwichState = GetActiveSandwich();
-        if (sandwichState == null || sandwichState.HasRoachContact)
-            return;
-
-        if (IsCockroachTouchingSandwich(sandwichState))
-            ApplyContamination(sandwichState);
     }
 
-    private bool IsGameplayActive()
+    private void HandleSandwichContaminated(SandwichState sandwichState)
     {
-        if (GameManager.Instance == null)
-            return true;
-
-        if (GameManager.Instance.CurrentState == GameState.Paused)
-            return false;
-
-        DayFlowState dayState = GameManager.Instance.CurrentDayState;
-        return dayState == DayFlowState.PlayingOrder || dayState == DayFlowState.ShowingOrder;
-    }
-
-    private SandwichState GetActiveSandwich()
-    {
-        if (sandwichBoard == null || !sandwichBoard.HasBottomBread)
-            return null;
-
-        return sandwichBoard.CurrentSandwich;
-    }
-
-    private bool IsCockroachTouchingSandwich(SandwichState sandwichState)
-    {
-        Vector3 sandwichPosition = sandwichState.transform.position;
-        float radiusSq = contaminationRadius * contaminationRadius;
-
-        IReadOnlyList<Cockroach> cockroaches = Cockroach.ActiveInstances;
-        for (int i = 0; i < cockroaches.Count; i++)
-        {
-            Cockroach cockroach = cockroaches[i];
-            if (cockroach == null || !cockroach.IsAlive)
-                continue;
-
-            Vector3 delta = cockroach.transform.position - sandwichPosition;
-            delta.y = 0f;
-
-            if (delta.sqrMagnitude <= radiusSq)
-                return true;
-        }
-
-        return false;
-    }
-
-    private void ApplyContamination(SandwichState sandwichState)
-    {
-        if (sandwichState == null || sandwichState.HasRoachContact)
-            return;
-
-        sandwichState.MarkRoachContact();
         EnsureToxicFx(sandwichState);
-
-        if (EventBus.Instance != null)
-            EventBus.Instance.RaiseSandwichCockroachContaminated(sandwichState);
     }
 
     private void EnsureToxicFx(SandwichState sandwichState)
@@ -187,6 +133,6 @@ public class CockroachContaminationSystem : MonoBehaviour
 
         Gizmos.color = new Color(0.45f, 0.85f, 0.2f, 0.35f);
         Vector3 center = sandwichState.transform.position + Vector3.up * 0.04f;
-        Gizmos.DrawWireSphere(center, contaminationRadius);
+        Gizmos.DrawWireSphere(center, 0.28f);
     }
 }
