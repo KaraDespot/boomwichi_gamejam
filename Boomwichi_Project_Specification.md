@@ -348,6 +348,13 @@ public class SandwichState
 
 Проверка запускается после drop сендвича в пакет.
 
+Текущая реализация:
+
+- `PackageZone` принимает root-сендвич и передает его в `OrderEvaluator`;
+- `OrderManager` хранит текущий заказ и переходит к следующему после сдачи;
+- `TipsWallet` получает рассчитанные чаевые;
+- если сервисы не назначены на сцене, пакет создает их рядом с собой в Play Mode.
+
 Проверяются:
 
 - наличие нижнего хлеба;
@@ -368,15 +375,16 @@ public class SandwichState
 
 Возможные ошибки:
 
+- NoActiveOrder;
+- NoSandwich;
 - MissingIngredient;
 - ExtraIngredient;
-- WrongIngredientCount;
 - MoldyIngredient;
 - FallenMold;
 - RoachContamination;
 - MissingTopBread;
 - MissingBottomBread;
-- WrongToastState;
+- WrongCookState;
 - RawTopBread.
 
 ## 16. Плесень

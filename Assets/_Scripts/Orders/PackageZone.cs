@@ -1,34 +1,13 @@
 /*
  * PackageZone
  * Назначение: зона сдачи сендвича клиенту через пакет.
- * Что делает: принимает root-сендвич, фиксирует результат выдачи и убирает сендвич со сцены.
- * Связи: вызывается DropZone типа Package, читает SandwichState для первичной оценки заказа.
+ * Что делает: принимает root-сендвич, запускает OrderEvaluator, начисляет чаевые и завершает текущий заказ.
+ * Связи: вызывается DropZone типа Package, использует OrderManager, OrderEvaluator и TipsWallet.
  * Паттерны: Domain Controller, Event Publisher.
  */
 
 using System;
 using UnityEngine;
-
-public enum SandwichDeliveryRating
-{
-    Positive,
-    Negative
-}
-
-public readonly struct SandwichDeliveryResult
-{
-    public SandwichDeliveryResult(SandwichState sandwichState, SandwichDeliveryRating rating, string reason)
-    {
-        SandwichState = sandwichState;
-        Rating = rating;
-        Reason = reason;
-    }
-
-    public SandwichState SandwichState { get; }
-    public SandwichDeliveryRating Rating { get; }
-    public string Reason { get; }
-    public bool IsPositive => Rating == SandwichDeliveryRating.Positive;
-}
 
 [DisallowMultipleComponent]
 public class PackageZone : MonoBehaviour
@@ -43,24 +22,43 @@ public class PackageZone : MonoBehaviour
     [Tooltip("Отключать сданный сендвич после выдачи заказа.")]
     [SerializeField] private bool deactivateDeliveredSandwich = true;
 
-    [Header("Temporary Rating Rules")]
-    [Tooltip("Без верхнего хлеба сендвич принимается, но получает негативную оценку.")]
-    [SerializeField] private bool requireTopBreadForPositiveRating = true;
+    [Header("Order Services")]
+    [Tooltip("Менеджер текущего заказа. Если пусто, будет найден на сцене или создан рядом с пакетом.")]
+    [SerializeField] private OrderManager orderManager;
 
-    [Tooltip("Без начинки сендвич принимается, но получает негативную оценку.")]
-    [SerializeField] private bool requireFillingForPositiveRating = true;
+    [Tooltip("Сервис проверки заказа. Если пусто, будет найден на сцене или создан рядом с пакетом.")]
+    [SerializeField] private OrderEvaluator orderEvaluator;
 
-    [Tooltip("Сырой сендвич принимается, но получает негативную оценку.")]
-    [SerializeField] private bool requireCookedForPositiveRating = true;
+    [Tooltip("Кошелёк чаевых. Если пусто, будет найден на сцене или создан рядом с пакетом.")]
+    [SerializeField] private TipsWallet tipsWallet;
 
-    public event Action<SandwichDeliveryResult> SandwichDelivered;
+    [Tooltip("Создавать недостающие сервисы на этом объекте в Play Mode, чтобы пакет работал без ручной настройки сцены.")]
+    [SerializeField] private bool createRuntimeServicesIfMissing = true;
+
+    public event Action<OrderEvaluationResult> SandwichDelivered;
 
     public bool HasDeliveryResult { get; private set; }
-    public SandwichDeliveryResult LastDeliveryResult { get; private set; }
+    public OrderEvaluationResult LastDeliveryResult { get; private set; }
+
+    private void Awake()
+    {
+        ResolveServices();
+    }
 
     public bool CanAccept(DraggableObject draggableObject)
     {
-        return draggableObject != null && draggableObject.GetComponent<SandwichState>() != null;
+        if (draggableObject == null)
+            return false;
+
+        ResolveServices();
+        if (orderEvaluator == null)
+            return false;
+
+        SandwichState sandwichState = draggableObject.GetComponent<SandwichState>();
+        return sandwichState != null &&
+            sandwichState.HasBottomBread &&
+            !sandwichState.IsDelivered &&
+            !sandwichState.IsInGrill;
     }
 
     public bool Accept(DraggableObject draggableObject)
@@ -73,8 +71,13 @@ public class PackageZone : MonoBehaviour
         if (!CanAccept(draggableObject))
             return false;
 
+        ResolveServices();
+        if (orderEvaluator == null)
+            return false;
+
         SandwichState sandwichState = draggableObject.GetComponent<SandwichState>();
-        LastDeliveryResult = EvaluateSandwich(sandwichState);
+        OrderDefinition order = GetCurrentOrder();
+        LastDeliveryResult = orderEvaluator.Evaluate(order, sandwichState);
         HasDeliveryResult = true;
 
         Vector3 targetPosition = GetSnapPosition();
@@ -84,8 +87,14 @@ public class PackageZone : MonoBehaviour
         draggableObject.SetPhysicsLocked(true);
         sandwichState.MarkDelivered();
 
+        if (tipsWallet != null)
+            tipsWallet.AddTips(LastDeliveryResult.TipAmount);
+
+        if (orderManager != null)
+            orderManager.CompleteCurrentOrder(LastDeliveryResult);
+
         SandwichDelivered?.Invoke(LastDeliveryResult);
-        Debug.Log($"{name}: сендвич сдан. Оценка: {LastDeliveryResult.Rating}. Причина: {LastDeliveryResult.Reason}.", this);
+        Debug.Log($"{name}: заказ сдан. {LastDeliveryResult.Summary}", this);
 
         if (deactivateDeliveredSandwich)
             draggableObject.gameObject.SetActive(false);
@@ -99,17 +108,35 @@ public class PackageZone : MonoBehaviour
         return basePosition + snapOffset;
     }
 
-    private SandwichDeliveryResult EvaluateSandwich(SandwichState sandwichState)
+    private void ResolveServices()
     {
-        if (requireTopBreadForPositiveRating && !sandwichState.HasTopBread)
-            return new SandwichDeliveryResult(sandwichState, SandwichDeliveryRating.Negative, "Нет верхнего хлеба.");
+        if (orderManager == null)
+            orderManager = OrderManager.Instance != null ? OrderManager.Instance : FindFirstObjectByType<OrderManager>();
 
-        if (requireFillingForPositiveRating && sandwichState.IngredientCount == 0)
-            return new SandwichDeliveryResult(sandwichState, SandwichDeliveryRating.Negative, "Нет начинки.");
+        if (orderEvaluator == null)
+            orderEvaluator = FindFirstObjectByType<OrderEvaluator>();
 
-        if (requireCookedForPositiveRating && sandwichState.CookState == SandwichCookState.Raw)
-            return new SandwichDeliveryResult(sandwichState, SandwichDeliveryRating.Negative, "Сендвич сырой.");
+        if (tipsWallet == null)
+            tipsWallet = TipsWallet.Instance != null ? TipsWallet.Instance : FindFirstObjectByType<TipsWallet>();
 
-        return new SandwichDeliveryResult(sandwichState, SandwichDeliveryRating.Positive, "Сендвич принят.");
+        if (!createRuntimeServicesIfMissing)
+            return;
+
+        if (orderManager == null)
+            orderManager = gameObject.AddComponent<OrderManager>();
+
+        if (orderEvaluator == null)
+            orderEvaluator = gameObject.AddComponent<OrderEvaluator>();
+
+        if (tipsWallet == null)
+            tipsWallet = gameObject.AddComponent<TipsWallet>();
+    }
+
+    private OrderDefinition GetCurrentOrder()
+    {
+        if (orderManager != null && orderManager.TryGetCurrentOrder(out OrderDefinition order))
+            return order;
+
+        return null;
     }
 }

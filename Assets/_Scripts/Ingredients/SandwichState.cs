@@ -1,8 +1,8 @@
 /*
  * SandwichState
  * Назначение: состояние текущего собранного сендвича, живущее на нижнем хлебе-root.
- * Что делает: хранит нижний хлеб, верхний хлеб, список слоёв и сообщает доске, когда root-сендвич исчезает.
- * Связи: создаётся SandwichBoard на нижнем хлебе, читается будущими зонами грильницы/упаковки/оценки заказа.
+ * Что делает: хранит хлеб, слои, прожарку и флаги грязи активного root-сендвича.
+ * Связи: создаётся SandwichBoard на нижнем хлебе, читается грильницей, пакетом и OrderEvaluator.
  * Паттерны: Aggregate Root State.
  */
 
@@ -36,6 +36,9 @@ public class SandwichState : MonoBehaviour
     public bool IsClosed => HasTopBread;
     public bool IsDelivered { get; private set; }
     public bool IsInGrill { get; private set; }
+    public bool HasFallenMold { get; private set; }
+    public bool HasRoachContact { get; private set; }
+    public bool IsDirty => HasFallenMold || HasRoachContact || HasDirtyIngredients();
     public SandwichCookState CookState { get; private set; }
     public float CookProgressSeconds { get; private set; }
     public int IngredientCount => ingredients.Count;
@@ -47,6 +50,8 @@ public class SandwichState : MonoBehaviour
         topBread = null;
         IsDelivered = false;
         IsInGrill = false;
+        HasFallenMold = false;
+        HasRoachContact = false;
         CookState = SandwichCookState.Raw;
         CookProgressSeconds = 0f;
         ingredients.Clear();
@@ -173,6 +178,26 @@ public class SandwichState : MonoBehaviour
         CookProgressSeconds += Mathf.Max(0f, seconds);
     }
 
+    public void MarkFallenMold()
+    {
+        HasFallenMold = true;
+    }
+
+    public void ClearFallenMold()
+    {
+        HasFallenMold = false;
+    }
+
+    public void MarkRoachContact()
+    {
+        HasRoachContact = true;
+    }
+
+    public void ClearRoachContact()
+    {
+        HasRoachContact = false;
+    }
+
     public void DetachFromBoard()
     {
         if (ownerBoard != null)
@@ -206,5 +231,22 @@ public class SandwichState : MonoBehaviour
         BreadCookVisual cookVisual = ingredient.GetComponent<BreadCookVisual>();
         if (cookVisual != null)
             cookVisual.Apply(CookState);
+    }
+
+    private bool HasDirtyIngredients()
+    {
+        if (bottomBread != null && bottomBread.IsDirty)
+            return true;
+
+        if (topBread != null && topBread.IsDirty)
+            return true;
+
+        for (int i = 0; i < ingredients.Count; i++)
+        {
+            if (ingredients[i] != null && ingredients[i].IsDirty)
+                return true;
+        }
+
+        return false;
     }
 }

@@ -1,8 +1,8 @@
 /*
  * IngredientInstance
  * Назначение: runtime-данные конкретного созданного ингредиента.
- * Что делает: хранит тип, роль хлеба и факт размещения на сендвиче.
- * Связи: создаётся IngredientContainer, читается SandwichBoard.
+ * Что делает: хранит тип, роль хлеба, факт размещения на сендвиче и флаги грязи.
+ * Связи: создаётся IngredientContainer, читается SandwichBoard и OrderEvaluator.
  * Паттерны: Data Component.
  */
 
@@ -21,6 +21,9 @@ public class IngredientInstance : MonoBehaviour
     public IngredientType Type => ingredientType;
     public BreadRole BreadRole => breadRole;
     public bool IsPlacedOnSandwich { get; private set; }
+    public bool IsMoldy { get; private set; }
+    public bool IsRoachContaminated { get; private set; }
+    public bool IsDirty => IsMoldy || IsRoachContaminated;
     public SandwichState SandwichState { get; private set; }
 
     public void Initialize(IngredientType type, BreadRole role)
@@ -28,6 +31,8 @@ public class IngredientInstance : MonoBehaviour
         ingredientType = type;
         breadRole = role;
         IsPlacedOnSandwich = false;
+        IsMoldy = false;
+        IsRoachContaminated = false;
         SandwichState = null;
     }
 
@@ -40,5 +45,25 @@ public class IngredientInstance : MonoBehaviour
     {
         SandwichState = sandwichState;
         IsPlacedOnSandwich = true;
+    }
+
+    public void SetMoldy(bool isMoldy)
+    {
+        IsMoldy = isMoldy;
+    }
+
+    public void ClearMold()
+    {
+        IsMoldy = false;
+    }
+
+    public void MarkRoachContaminated()
+    {
+        IsRoachContaminated = true;
+    }
+
+    public void ClearRoachContamination()
+    {
+        IsRoachContaminated = false;
     }
 }
