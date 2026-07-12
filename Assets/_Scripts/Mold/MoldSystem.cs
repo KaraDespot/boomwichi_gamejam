@@ -61,6 +61,15 @@ public class MoldSystem : MonoBehaviour
     [Tooltip("Сколько секунд ждать перед уничтожением отцепленного shake-FX после завершения тряски.")]
     [SerializeField] private float shakeFxReleaseLifetime = 2f;
 
+    [Tooltip("Множитель масштаба mold-toxic FX. Чуть меньше 1 — компактнее облако.")]
+    [SerializeField] private float moldToxicFxScaleMultiplier = 0.88f;
+
+    [Tooltip("Размер частиц mold-toxic в local space.")]
+    [SerializeField] private float moldToxicFxParticleSize = 0.34f;
+
+    [Tooltip("Множитель масштаба FX_mold_spread при тряске. Не трогает toxic.")]
+    [SerializeField] private float moldSpreadFxScaleMultiplier = 1f;
+
     private readonly Dictionary<IngredientInstance, GameObject> idleFxByIngredient = new();
 
     private IngredientInstance shakeIngredient;
@@ -313,8 +322,14 @@ public class MoldSystem : MonoBehaviour
         if (idleFxByIngredient.TryGetValue(ingredient, out GameObject existingFx) && existingFx != null)
             return;
 
-        GameObject instance = AttachFx(moldIdleFxPrefab, ingredient.transform, idleFxLocalOffset);
-        ConfigureParticleSystems(instance, forceIdleFxLoop, true);
+        GameObject instance = IngredientFxUtility.Attach(
+            moldIdleFxPrefab,
+            ingredient.transform,
+            idleFxLocalOffset,
+            moldToxicFxScaleMultiplier,
+            loop: forceIdleFxLoop,
+            playOnAttach: true,
+            particleStartSize: moldToxicFxParticleSize);
         idleFxByIngredient[ingredient] = instance;
     }
 
@@ -340,8 +355,14 @@ public class MoldSystem : MonoBehaviour
         if (activeShakeFx != null)
             return;
 
-        activeShakeFx = AttachFx(moldShakeFxPrefab, ingredient.transform, shakeFxLocalOffset);
-        ConfigureParticleSystems(activeShakeFx, false, true);
+        activeShakeFx = IngredientFxUtility.Attach(
+            moldShakeFxPrefab,
+            ingredient.transform,
+            shakeFxLocalOffset,
+            moldSpreadFxScaleMultiplier,
+            loop: false,
+            playOnAttach: true,
+            particleStartSize: null);
     }
 
     private void StopShakeFx(bool releaseParticles)
@@ -366,57 +387,8 @@ public class MoldSystem : MonoBehaviour
         GameObject fx = activeShakeFx;
         activeShakeFx = null;
         fx.transform.SetParent(null, true);
-        StopEmitting(fx);
+        IngredientFxUtility.StopEmitting(fx);
         Destroy(fx, shakeFxReleaseLifetime);
-    }
-
-    private static GameObject AttachFx(GameObject prefab, Transform parent, Vector3 localOffset)
-    {
-        GameObject instance = Instantiate(prefab, parent);
-        instance.transform.localPosition = localOffset;
-        instance.transform.localRotation = Quaternion.identity;
-        instance.transform.localScale = Vector3.one;
-        return instance;
-    }
-
-    private static void ConfigureParticleSystems(GameObject fxRoot, bool loop, bool playOnAttach)
-    {
-        if (fxRoot == null)
-            return;
-
-        ParticleSystem[] particleSystems = fxRoot.GetComponentsInChildren<ParticleSystem>(true);
-        for (int i = 0; i < particleSystems.Length; i++)
-        {
-            ParticleSystem particleSystem = particleSystems[i];
-            if (particleSystem == null)
-                continue;
-
-            ParticleSystem.MainModule main = particleSystem.main;
-            main.simulationSpace = ParticleSystemSimulationSpace.Local;
-
-            if (loop)
-                main.loop = true;
-
-            if (playOnAttach)
-            {
-                particleSystem.Clear(true);
-                particleSystem.Play(true);
-            }
-        }
-    }
-
-    private static void StopEmitting(GameObject fxRoot)
-    {
-        if (fxRoot == null)
-            return;
-
-        ParticleSystem[] particleSystems = fxRoot.GetComponentsInChildren<ParticleSystem>(true);
-        for (int i = 0; i < particleSystems.Length; i++)
-        {
-            ParticleSystem particleSystem = particleSystems[i];
-            if (particleSystem != null)
-                particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-        }
     }
 
     private void ResetShakeProgress()

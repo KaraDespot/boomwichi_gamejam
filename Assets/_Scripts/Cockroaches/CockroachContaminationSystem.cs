@@ -25,6 +25,12 @@ public class CockroachContaminationSystem : MonoBehaviour
     [Tooltip("Заставить toxic-частицы зациклиться в рантайме.")]
     [SerializeField] private bool forceToxicFxLoop = true;
 
+    [Tooltip("Множитель масштаба toxic-FX на сендвиче.")]
+    [SerializeField] private float toxicFxScaleMultiplier = 0.88f;
+
+    [Tooltip("Размер частиц toxic-FX.")]
+    [SerializeField] private float toxicFxParticleSize = 0.34f;
+
     private readonly Dictionary<SandwichState, GameObject> toxicFxBySandwich = new();
 
     private void Awake()
@@ -65,34 +71,15 @@ public class CockroachContaminationSystem : MonoBehaviour
         if (toxicFxBySandwich.ContainsKey(sandwichState))
             return;
 
-        GameObject fxInstance = Instantiate(sandwichToxicFxPrefab, sandwichState.transform);
-        fxInstance.transform.localPosition = toxicFxLocalOffset;
-        fxInstance.transform.localRotation = Quaternion.identity;
-        ConfigureLoopingParticles(fxInstance);
+        GameObject fxInstance = IngredientFxUtility.Attach(
+            sandwichToxicFxPrefab,
+            sandwichState.transform,
+            toxicFxLocalOffset,
+            toxicFxScaleMultiplier,
+            loop: forceToxicFxLoop,
+            playOnAttach: true,
+            particleStartSize: toxicFxParticleSize);
         toxicFxBySandwich[sandwichState] = fxInstance;
-    }
-
-    private void ConfigureLoopingParticles(GameObject fxRoot)
-    {
-        if (fxRoot == null)
-            return;
-
-        ParticleSystem[] particleSystems = fxRoot.GetComponentsInChildren<ParticleSystem>(true);
-        for (int i = 0; i < particleSystems.Length; i++)
-        {
-            ParticleSystem particleSystem = particleSystems[i];
-            if (particleSystem == null)
-                continue;
-
-            ParticleSystem.MainModule main = particleSystem.main;
-            main.simulationSpace = ParticleSystemSimulationSpace.Local;
-
-            if (forceToxicFxLoop)
-                main.loop = true;
-
-            particleSystem.Clear(true);
-            particleSystem.Play(true);
-        }
     }
 
     private void ClearAllFx()
