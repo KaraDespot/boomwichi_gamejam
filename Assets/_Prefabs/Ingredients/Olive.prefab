@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2854966154225865014}
   - component: {fileID: 5119895438536736940}
   - component: {fileID: 620000000000000004}
+  - component: {fileID: 620000000000000900}
   m_Layer: 7
   m_Name: Olive
   m_TagString: Untagged
@@ -44,7 +45,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b4a7c1e2d3f84b0c9a1e2d3c4b5a6f7e, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::DraggableObject
   dragHeight: 0.4
   failedDropAction: 1
@@ -66,6 +67,22 @@ MonoBehaviour:
   ingredientType: 3
   breadRole: 0
   sauceType: 0
+--- !u!114 &620000000000000900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3520120277094894129}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8c9d0e1f2a3456789012abcdef00002, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::MoldVisual
+  targetRenderers: []
+  cleanMaterial: {fileID: 2100000, guid: 97e6bfd97cd5f55458b72daf0f967780, type: 2}
+  moldyMaterial: {fileID: 2100000, guid: 5131485e655e8e748a2573ce6a4a4eae, type: 2}
+  moldyTexture: {fileID: 0}
 --- !u!1001 &4955628162511888905
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -117,7 +134,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: f168dd74029dd9c4b92cf62252a3224b, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 5131485e655e8e748a2573ce6a4a4eae, type: 2}
+      objectReference: {fileID: 2100000, guid: 97e6bfd97cd5f55458b72daf0f967780, type: 2}
     - target: {fileID: 919132149155446097, guid: f168dd74029dd9c4b92cf62252a3224b, type: 3}
       propertyPath: m_Name
       value: oliva
