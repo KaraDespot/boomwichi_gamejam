@@ -40,6 +40,7 @@ public enum CockroachBehaviorState
 public class Cockroach : MonoBehaviour
 {
     private static readonly List<Cockroach> activeInstances = new();
+    private static readonly Collider[] obstacleOverlapBuffer = new Collider[8];
 
     public static IReadOnlyList<Cockroach> ActiveInstances => activeInstances;
 
@@ -240,6 +241,13 @@ public class Cockroach : MonoBehaviour
         nextPosition = ResolveMovementCollision(currentPosition, nextPosition);
         nextPosition = ClampToBounds(nextPosition);
         nextPosition.y = tableHeight;
+
+        if (IsBlockedByObstacle(nextPosition))
+        {
+            nextPosition = currentPosition;
+            PickNewWanderDirection(biasTowardPlate: HasFoodTarget());
+        }
+
         transform.position = nextPosition;
 
         if (rotateToMovement && moveDirection.sqrMagnitude > 0.001f)
@@ -505,6 +513,28 @@ public class Cockroach : MonoBehaviour
         SandwichBoard board = collider.GetComponentInParent<SandwichBoard>();
         if (board != null && board == targetPlate)
             return true;
+
+        return false;
+    }
+
+    private bool IsBlockedByObstacle(Vector3 position)
+    {
+        if (obstacleLayerMask.value == 0)
+            return false;
+
+        Vector3 origin = GetProbeOrigin(position);
+        int hitCount = Physics.OverlapSphereNonAlloc(
+            origin,
+            avoidanceProbeRadius,
+            obstacleOverlapBuffer,
+            obstacleLayerMask,
+            QueryTriggerInteraction.Ignore);
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            if (!ShouldIgnoreObstacle(obstacleOverlapBuffer[i]))
+                return true;
+        }
 
         return false;
     }
