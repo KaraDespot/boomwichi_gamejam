@@ -50,6 +50,8 @@ public class TutorialUI : MonoBehaviour
         ValidateReferences();
     }
 
+    private bool tutorialCuePlayed;
+
     private void OnEnable()
     {
         if (EventBus.Instance != null)
@@ -96,7 +98,17 @@ public class TutorialUI : MonoBehaviour
         if (tutorialPanel == null)
             return;
 
-        tutorialPanel.SetActive(state == DayFlowState.Tutorial);
+        bool shouldShow = state == DayFlowState.Tutorial;
+        tutorialPanel.SetActive(shouldShow);
+
+        if (shouldShow && !tutorialCuePlayed)
+        {
+            tutorialCuePlayed = true;
+            AudioManager.Instance?.PlaySfx(AudioCue.DayStarted);
+        }
+
+        if (!shouldShow)
+            tutorialCuePlayed = false;
     }
 
     private void HandleStartDayClicked()

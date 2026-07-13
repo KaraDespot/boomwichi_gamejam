@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 /*
  * GameSettings
@@ -25,6 +26,8 @@ public static class GameSettings
     public const float DefaultSound = 1f;
     public const float DefaultMusic = 1f;
     public const int DefaultFullscreen = 1;
+
+    public static event Action<Data> OnSettingsApplied;
 
     public struct Data
     {
@@ -56,6 +59,7 @@ public static class GameSettings
         ApplySound(data.Sound, soundSources);
         ApplyMusic(data.Music, musicSources);
         ApplyFullscreen(data.Fullscreen);
+        OnSettingsApplied?.Invoke(data);
     }
 
     /// <summary>
@@ -69,6 +73,7 @@ public static class GameSettings
         data.Sound = Mathf.Clamp01(value);
         Save(data);
         ApplySound(data.Sound, soundSources);
+        OnSettingsApplied?.Invoke(data);
     }
 
     /// <summary>
@@ -82,6 +87,7 @@ public static class GameSettings
         data.Music = Mathf.Clamp01(value);
         Save(data);
         ApplyMusic(data.Music, musicSources);
+        OnSettingsApplied?.Invoke(data);
     }
 
     /// <summary>
@@ -95,6 +101,7 @@ public static class GameSettings
         data.Fullscreen = value;
         Save(data);
         ApplyFullscreen(data.Fullscreen);
+        OnSettingsApplied?.Invoke(data);
     }
 
     private static void Save(Data data)
@@ -132,7 +139,7 @@ public static class GameSettings
             return;
         }
 
-        AudioSource[] sceneSources = Object.FindObjectsByType<AudioSource>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        AudioSource[] sceneSources = UnityEngine.Object.FindObjectsByType<AudioSource>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         for (int i = 0; i < sceneSources.Length; i++)
         {
             AudioSource source = sceneSources[i];

@@ -51,6 +51,8 @@ public class PackageZone : MonoBehaviour
         if (orderEvaluator == null)
             return false;
 
+        AudioManager.Instance?.PlaySfx(AudioCue.Package);
+
         SandwichState sandwichState = draggableObject.GetComponent<SandwichState>();
         return sandwichState != null &&
             sandwichState.HasBottomBread &&

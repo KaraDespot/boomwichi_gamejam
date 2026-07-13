@@ -36,6 +36,8 @@ public class PauseSettingsBinder : MonoBehaviour
 
     private bool suppressCallbacks;
     private bool duplicateWarningLogged;
+    private float lastAudioPreviewTime = -999f;
+    private const float AudioPreviewCooldown = 0.12f;
 
     private void Awake()
     {
@@ -107,6 +109,7 @@ public class PauseSettingsBinder : MonoBehaviour
             return;
 
         GameSettings.SetSound(value, soundSources);
+        PlaySettingsPreview();
     }
 
     private void HandleMusicChanged(float value)
@@ -115,6 +118,16 @@ public class PauseSettingsBinder : MonoBehaviour
             return;
 
         GameSettings.SetMusic(value, musicSources);
+        PlaySettingsPreview();
+    }
+
+    private void PlaySettingsPreview()
+    {
+        if (Time.unscaledTime - lastAudioPreviewTime < AudioPreviewCooldown)
+            return;
+
+        lastAudioPreviewTime = Time.unscaledTime;
+        AudioManager.Instance?.PlaySfx(AudioCue.Settings);
     }
 
     private void HandleFullscreenChanged(bool value)

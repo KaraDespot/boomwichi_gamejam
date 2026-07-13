@@ -23,10 +23,10 @@ public class MoldSystem : MonoBehaviour
     [SerializeField] private float requiredShakeDuration = 1.2f;
 
     [Tooltip("Минимальная скорость движения мыши (пикс/сек), чтобы считать жест тряской.")]
-    [SerializeField] private float minShakeSpeedPixelsPerSecond = 500f;
+    [SerializeField] private float minShakeSpeedPixelsPerSecond = 700f;
 
     [Tooltip("Минимальное движение за кадр (пикс), иначе кадр не считается тряской.")]
-    [SerializeField] private float minShakeMovementPerFrame = 3f;
+    [SerializeField] private float minShakeMovementPerFrame = 6f;
 
     [Tooltip("Пауза без тряски (сек), после которой прогресс сбрасывается.")]
     [SerializeField] private float shakeResetDelay = 0.25f;
@@ -36,6 +36,12 @@ public class MoldSystem : MonoBehaviour
 
     [Tooltip("Минимальный угол между сменами направления (градусы). 90 = только резкие рывки туда-сюда.")]
     [SerializeField] private float minDirectionChangeAngle = 90f;
+
+    [Tooltip("Звук тряски стартует только после короткого подтверждения жеста, чтобы не срабатывать от обычного drag из контейнера.")]
+    [SerializeField] private float minShakeAudioDelay = 0.18f;
+
+    [Tooltip("Минимум смен направления перед стартом звука тряски.")]
+    [SerializeField] private int minShakeAudioDirectionChanges = 2;
 
     [Header("Связи")]
     [SerializeField] private DayTimer dayTimer;
@@ -224,6 +230,12 @@ public class MoldSystem : MonoBehaviour
             shakeActiveTime += Time.deltaTime;
             timeSinceLastShakeInput = 0f;
             EnsureShakeFx(ingredient);
+
+            if (shakeActiveTime >= minShakeAudioDelay &&
+                directionChanges >= minShakeAudioDirectionChanges)
+            {
+                AudioManager.Instance?.StartMoldShakeLoop();
+            }
         }
         else
         {
@@ -271,6 +283,8 @@ public class MoldSystem : MonoBehaviour
 
     private void ProcessMoldRemoval(IngredientInstance ingredient, Vector2 screenPosition)
     {
+        AudioManager.Instance?.StopMoldShakeLoop();
+
         if (TryGetSandwichUnderPointer(screenPosition, out SandwichState sandwichState))
         {
             ApplyFallenMold(ingredient, sandwichState);
@@ -367,6 +381,8 @@ public class MoldSystem : MonoBehaviour
 
     private void StopShakeFx(bool releaseParticles)
     {
+        AudioManager.Instance?.StopMoldShakeLoop();
+
         if (activeShakeFx == null)
             return;
 
@@ -377,6 +393,8 @@ public class MoldSystem : MonoBehaviour
             Destroy(activeShakeFx);
             activeShakeFx = null;
         }
+
+        AudioManager.Instance?.StopMoldShakeLoop();
     }
 
     private void ReleaseShakeFx()
@@ -389,6 +407,7 @@ public class MoldSystem : MonoBehaviour
         fx.transform.SetParent(null, true);
         IngredientFxUtility.StopEmitting(fx);
         Destroy(fx, shakeFxReleaseLifetime);
+        AudioManager.Instance?.StopMoldShakeLoop();
     }
 
     private void ResetShakeProgress()

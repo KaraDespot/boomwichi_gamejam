@@ -187,6 +187,8 @@ public class GameplayHUDController : MonoBehaviour
 
     private void HandlePauseClicked()
     {
+        AudioManager.Instance?.PlaySfx(AudioCue.Button);
+
         if (GameManager.Instance != null)
             GameManager.Instance.Pause();
     }

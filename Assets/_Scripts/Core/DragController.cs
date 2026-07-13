@@ -81,6 +81,7 @@ public class DragController : MonoBehaviour
             EventBus.Instance.RaiseFirstPlayerAction();
 
         currentDraggable = draggableObject;
+        AudioManager.Instance?.PlaySfx(AudioCue.IngredientTake);
 
         if (!inputRaycaster.TryGetTablePoint(screenPosition, out Vector3 tablePoint))
         {
@@ -122,6 +123,7 @@ public class DragController : MonoBehaviour
         }
 
         currentDraggable.HandleFailedDrop();
+        AudioManager.Instance?.PlaySfx(AudioCue.IngredientFall);
 
         currentDraggable = null;
     }

@@ -156,12 +156,16 @@ public class ResultsUI : MonoBehaviour
 
     private void HandleRestartDayClicked()
     {
+        AudioManager.Instance?.PlaySfx(AudioCue.Button);
+
         if (GameManager.Instance != null)
             GameManager.Instance.RestartGameScene();
     }
 
     private void HandleMainMenuClicked()
     {
+        AudioManager.Instance?.PlaySfx(AudioCue.Button);
+
         if (GameManager.Instance != null)
             GameManager.Instance.GoToMenu();
     }

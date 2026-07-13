@@ -43,6 +43,8 @@ public class SettingsPanelController : MonoBehaviour
     [SerializeField] private AudioSource[] musicSources;
 
     private bool suppressCallbacks;
+    private float lastAudioPreviewTime = -999f;
+    private const float AudioPreviewCooldown = 0.12f;
 
     public event Action OnSettingsClosed;
 
@@ -82,6 +84,7 @@ public class SettingsPanelController : MonoBehaviour
         if (settingsPanel == null)
             return;
 
+        AudioManager.Instance?.PlaySfx(AudioCue.Button);
         SyncUiFromSavedSettings();
         settingsPanel.SetActive(true);
     }
@@ -91,6 +94,7 @@ public class SettingsPanelController : MonoBehaviour
         if (settingsPanel == null)
             return;
 
+        AudioManager.Instance?.PlaySfx(AudioCue.Button);
         settingsPanel.SetActive(false);
         OnSettingsClosed?.Invoke();
     }
@@ -153,6 +157,7 @@ public class SettingsPanelController : MonoBehaviour
             return;
 
         GameSettings.SetSound(value, soundSources);
+        PlaySettingsPreview();
     }
 
     private void HandleMusicSliderChanged(float value)
@@ -161,6 +166,16 @@ public class SettingsPanelController : MonoBehaviour
             return;
 
         GameSettings.SetMusic(value, musicSources);
+        PlaySettingsPreview();
+    }
+
+    private void PlaySettingsPreview()
+    {
+        if (Time.unscaledTime - lastAudioPreviewTime < AudioPreviewCooldown)
+            return;
+
+        lastAudioPreviewTime = Time.unscaledTime;
+        AudioManager.Instance?.PlaySfx(AudioCue.Settings);
     }
 
     private void HandleFullscreenToggleChanged(bool isFullscreen)

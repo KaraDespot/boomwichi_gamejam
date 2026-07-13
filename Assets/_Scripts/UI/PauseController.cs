@@ -154,12 +154,16 @@ public class PauseController : MonoBehaviour
 
     private void OnResumeClicked()
     {
+        AudioManager.Instance?.PlaySfx(AudioCue.Button);
+
         if (GameManager.Instance != null)
             GameManager.Instance.Resume();
     }
 
     private void OnMainMenuClicked()
     {
+        AudioManager.Instance?.PlaySfx(AudioCue.Button);
+
         if (GameManager.Instance != null)
             GameManager.Instance.GoToMenu();
     }
@@ -167,7 +171,10 @@ public class PauseController : MonoBehaviour
     private void HandlePausePressed()
     {
         if (GameManager.Instance != null && GameManager.Instance.CanPause())
+        {
+            AudioManager.Instance?.PlaySfx(AudioCue.Button);
             GameManager.Instance.Pause();
+        }
     }
 
     private void HandleCancelPressed()

@@ -173,6 +173,7 @@ public class SandwichBoard : MonoBehaviour
 
         Place(draggableObject, ingredient, point.position, point.rotation, draggableObject.transform);
         draggableObject.SetCanDrag(true);
+        AudioManager.Instance?.PlaySfx(AudioCue.IngredientPlaced);
     }
 
     private void PlaceIngredient(DraggableObject draggableObject, IngredientInstance ingredient, Vector3 dropWorldPoint)
@@ -183,6 +184,7 @@ public class SandwichBoard : MonoBehaviour
 
         Place(draggableObject, ingredient, targetPosition, root.rotation, root, true);
         currentSandwich.RegisterIngredient(ingredient);
+        AudioManager.Instance?.PlaySfx(AudioCue.IngredientPlaced);
     }
 
     private void PlaceSauce(DraggableObject draggableObject, IngredientInstance ingredient, Vector3 dropWorldPoint)
@@ -193,6 +195,7 @@ public class SandwichBoard : MonoBehaviour
 
         Place(draggableObject, ingredient, targetPosition, root.rotation, root, true);
         currentSandwich.RegisterIngredient(ingredient);
+        AudioManager.Instance?.PlaySfx(AudioCue.Sauce);
     }
 
     private void PlaceTopBread(DraggableObject draggableObject, IngredientInstance ingredient)
@@ -204,6 +207,7 @@ public class SandwichBoard : MonoBehaviour
         ingredient.AssignBreadRole(BreadRole.Top);
         Place(draggableObject, ingredient, targetPosition, root.rotation, root, true);
         currentSandwich.RegisterTopBread(ingredient);
+        AudioManager.Instance?.PlaySfx(AudioCue.IngredientPlaced);
     }
 
     private void RepositionCurrentSandwich(DraggableObject draggableObject)
@@ -214,6 +218,7 @@ public class SandwichBoard : MonoBehaviour
         draggableObject.SetCanDrag(true);
         draggableObject.SetFailedDropAction(DragFailedDropAction.ReturnToStart);
         draggableObject.SetPhysicsLocked(true);
+        AudioManager.Instance?.PlaySfx(AudioCue.IngredientPlaced);
     }
 
     private void PlaceExistingSandwich(DraggableObject draggableObject, SandwichState sandwichState)

@@ -50,18 +50,23 @@ public class MainMenuController : MonoBehaviour
 
     private static void HandleNewGameClicked()
     {
+        AudioManager.Instance?.PlaySfx(AudioCue.Button);
+
         if (GameManager.Instance != null)
             GameManager.Instance.StartGame();
     }
 
     private static void HandleContinueClicked()
     {
+        AudioManager.Instance?.PlaySfx(AudioCue.Button);
+
         if (GameManager.Instance != null)
             GameManager.Instance.StartGame();
     }
 
     private static void HandleExitClicked()
     {
+        AudioManager.Instance?.PlaySfx(AudioCue.Button);
         Application.Quit();
     }
 

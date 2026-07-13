@@ -34,6 +34,7 @@ public class BootstrapManager : MonoBehaviour
         CreateSceneLoader();
         CreateEventBus();
         CreateInputManager();
+        CreateAudioManager();
 
     }
 
@@ -128,6 +129,20 @@ public class BootstrapManager : MonoBehaviour
                 "Убедитесь, что файл InputSystem_Actions.inputactions лежит в папке Assets/Resources/");
         }
 
+        DontDestroyOnLoad(go);
+    }
+
+    private static void CreateAudioManager()
+    {
+        AudioManager existing = FindFirstObjectByType<AudioManager>();
+        if (existing != null)
+        {
+            DontDestroyOnLoad(existing.gameObject);
+            return;
+        }
+
+        GameObject go = new GameObject("AudioManager");
+        go.AddComponent<AudioManager>();
         DontDestroyOnLoad(go);
     }
 }
