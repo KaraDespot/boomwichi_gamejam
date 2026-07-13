@@ -1,42 +1,45 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 /*
  * SettingsPanelController
- * Назначение: контроллер отдельного окна настроек (MainMenu-сценарий: Open/Close/Back).
- * Роль в игре: даёт игроку доступ к sound/music в формате отдельной панели.
- * Связи: объект панели, UI-контролы, GameSettings, опционально явные массивы AudioSource.
- * Как используется: вешается на объект окна настроек, все ссылки задаются в Inspector.
- * Идеи расширения:
- * - Добавить кнопку "Сброс по умолчанию".
- * - Добавить режим "Apply/Cancel" для отложенного применения.
- * - Добавить локализацию подписей внутри окна.
- * Практические советы:
- * - Канонический путь: ссылки назначены вручную; автопоиск — только запасной сценарий.
- * - Если Back не работает, сначала проверьте ссылку backButton и active state settingsPanel.
+ * Назначение: отдельный экран настроек (главное меню или оверлей).
+ * Что делает: два слайдера sound/music как в паузе и кнопка «Назад» в меню.
+ * Связи: GameSettings, MainMenuController, опционально AudioSource.
+ * Паттерны: UI Controller.
+ *
+ * Настройка в сцене:
+ * - Повесь компонент на свой Canvas/Panel настроек.
+ * - Назначь settingsScreen, soundSlider, musicSlider, backButton в Inspector.
+ * - Экран по умолчанию должен быть выключен в иерархии.
+ * - В MainMenuController укажи ссылку на этот компонент.
  */
+[DisallowMultipleComponent]
 public class SettingsPanelController : MonoBehaviour
 {
-    [Header("Окно настроек")]
-    [Tooltip("Корневой объект отдельной панели настроек. Если не задан, используется текущий объект как резервный путь.")]
-    [SerializeField] private GameObject settingsPanel;
+    [Header("Экран настроек")]
+    [Tooltip("Корневой объект экрана: Panel или Canvas с настройками.")]
+    [FormerlySerializedAs("settingsPanel")]
+    [SerializeField] private GameObject settingsScreen;
 
-    [Header("UI-контролы")]
-    [Tooltip("Слайдер громкости звуковых эффектов (sound).")]
+    [Header("Слайдеры")]
+    [Tooltip("Громкость звуковых эффектов.")]
     [SerializeField] private Slider soundSlider;
 
-    [Tooltip("Слайдер громкости музыки (music).")]
+    [Tooltip("Громкость музыки.")]
     [SerializeField] private Slider musicSlider;
 
-    [Tooltip("Кнопка \"Назад\" для закрытия панели.")]
+    [Header("Кнопки")]
+    [Tooltip("Кнопка «Назад» — закрывает экран настроек и возвращает в меню.")]
     [SerializeField] private Button backButton;
 
     [Header("Аудио-источники (опционально)")]
-    [Tooltip("Явные источники для канала sound. Рекомендуется назначать вручную; иначе используется резервный путь по loop=false.")]
+    [Tooltip("Явные источники sound. Если пусто — резервный поиск по loop=false.")]
     [SerializeField] private AudioSource[] soundSources;
 
-    [Tooltip("Явные источники для канала music. Рекомендуется назначать вручную; иначе используется резервный путь по loop=true.")]
+    [Tooltip("Явные источники music. Если пусто — резервный поиск по loop=true.")]
     [SerializeField] private AudioSource[] musicSources;
 
     private bool suppressCallbacks;
@@ -45,25 +48,19 @@ public class SettingsPanelController : MonoBehaviour
 
     public event Action OnSettingsClosed;
 
-    public bool IsOpen => settingsPanel != null && settingsPanel.activeSelf;
+    public bool IsOpen => settingsScreen != null && settingsScreen.activeSelf;
 
     private void Awake()
     {
-        if (settingsPanel == null)
-        {
-            settingsPanel = gameObject;
-            Debug.LogWarning($"{name}: settingsPanel не назначен. Использую текущий объект как резервный путь.", this);
-        }
-
-        ResolveReferencesIfMissing();
+        ValidateReferences();
+        HideSettingsScreen();
     }
 
-    /// <summary>
-    /// Контракт: при активации окна синхронизирует UI из сохранённых значений,
-    /// применяет значения в текущую сцену и только потом подписывает обработчики.
-    /// Почему так: предотвращаем рекурсивные callback'и и гарантируем актуальные значения в UI.
-    /// Как дебажить: если при открытии окна слайдеры показывают не то, проверьте PlayerPrefs и suppressCallbacks.
-    /// </summary>
+    private void Start()
+    {
+        HideSettingsScreen();
+    }
+
     private void OnEnable()
     {
         SyncUiFromSavedSettings();
@@ -78,21 +75,21 @@ public class SettingsPanelController : MonoBehaviour
 
     public void OpenPanel()
     {
-        if (settingsPanel == null)
+        if (settingsScreen == null)
             return;
 
         AudioManager.Instance?.PlaySfx(AudioCue.Button);
         SyncUiFromSavedSettings();
-        settingsPanel.SetActive(true);
+        settingsScreen.SetActive(true);
     }
 
     public void ClosePanel()
     {
-        if (settingsPanel == null)
+        if (settingsScreen == null)
             return;
 
         AudioManager.Instance?.PlaySfx(AudioCue.Button);
-        settingsPanel.SetActive(false);
+        HideSettingsScreen();
         OnSettingsClosed?.Invoke();
     }
 
@@ -105,7 +102,7 @@ public class SettingsPanelController : MonoBehaviour
             musicSlider.onValueChanged.AddListener(HandleMusicSliderChanged);
 
         if (backButton != null)
-            backButton.onClick.AddListener(ClosePanel);
+            backButton.onClick.AddListener(HandleBackClicked);
     }
 
     private void UnbindUiHandlers()
@@ -117,14 +114,14 @@ public class SettingsPanelController : MonoBehaviour
             musicSlider.onValueChanged.RemoveListener(HandleMusicSliderChanged);
 
         if (backButton != null)
-            backButton.onClick.RemoveListener(ClosePanel);
+            backButton.onClick.RemoveListener(HandleBackClicked);
     }
 
-    /// <summary>
-    /// Контракт: выставляет значения UI без вызова слушателей и без повторного сохранения в PlayerPrefs.
-    /// Почему так: это исключает зацикливание "загрузка -> callback -> сохранение".
-    /// Как дебажить: если callback всё равно стреляет, проверьте, что используются SetValueWithoutNotify/SetIsOnWithoutNotify.
-    /// </summary>
+    private void HandleBackClicked()
+    {
+        ClosePanel();
+    }
+
     private void SyncUiFromSavedSettings()
     {
         GameSettings.Data data = GameSettings.Load();
@@ -166,50 +163,24 @@ public class SettingsPanelController : MonoBehaviour
         AudioManager.Instance?.PlaySfx(AudioCue.Settings);
     }
 
-    /// <summary>
-    /// Резервный путь: восстанавливает ссылки, если их забыли назначить в Inspector.
-    /// В учебном каноне это не основной путь, а страховка от падения сцены.
-    /// </summary>
-    private void ResolveReferencesIfMissing()
+    private void HideSettingsScreen()
     {
-        if (settingsPanel == null)
-            return;
+        if (settingsScreen != null)
+            settingsScreen.SetActive(false);
+    }
 
-        if (soundSlider != null && musicSlider != null && backButton != null)
-            return;
+    private void ValidateReferences()
+    {
+        if (settingsScreen == null)
+            Debug.LogWarning($"{name}: назначь settingsScreen (Canvas/Panel) в Inspector.", this);
 
-        Debug.LogWarning($"{name}: ссылки окна настроек назначены не полностью. Выполняю резервный автопоиск.", this);
+        if (soundSlider == null)
+            Debug.LogWarning($"{name}: назначь soundSlider в Inspector.", this);
 
-        if (soundSlider == null || musicSlider == null)
-        {
-            Slider[] sliders = settingsPanel.GetComponentsInChildren<Slider>(true);
-            if (soundSlider == null && sliders.Length > 0)
-                soundSlider = sliders[0];
-            if (musicSlider == null && sliders.Length > 1)
-                musicSlider = sliders[1];
-        }
+        if (musicSlider == null)
+            Debug.LogWarning($"{name}: назначь musicSlider в Inspector.", this);
 
         if (backButton == null)
-        {
-            Button[] buttons = settingsPanel.GetComponentsInChildren<Button>(true);
-            for (int i = 0; i < buttons.Length; i++)
-            {
-                if (buttons[i] == null)
-                    continue;
-
-                string buttonName = buttons[i].name.ToLowerInvariant();
-                if (buttonName.Contains("back") || buttonName.Contains("назад"))
-                {
-                    backButton = buttons[i];
-                    break;
-                }
-            }
-        }
-
-        if (soundSlider == null || musicSlider == null)
-            Debug.LogError($"{name}: не удалось автоматически найти все обязательные контролы (sound/music). Назначьте ссылки в Inspector.", this);
-
-        if (backButton == null)
-            Debug.LogWarning($"{name}: backButton не найден. Панель будет открываться, но закрытие кнопкой \"Назад\" не сработает.", this);
+            Debug.LogWarning($"{name}: назначь backButton в Inspector.", this);
     }
 }
