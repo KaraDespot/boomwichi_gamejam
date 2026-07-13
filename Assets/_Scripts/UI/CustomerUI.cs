@@ -17,6 +17,10 @@ public class CustomerUI : MonoBehaviour
 
     [SerializeField] private TMP_Text orderPhraseText;
 
+    [Header("Портрет клиента")]
+    [Tooltip("Image на сцене. Спрайт берётся из Order Data Asset при старте заказа. Лучше не делать дочерним orderBubblePanel — портрет остаётся на экране во время готовки.")]
+    [SerializeField] private Image customerPortraitImage;
+
     [Header("Кнопка")]
     [SerializeField] private Button hideOrderButton;
 
@@ -58,8 +62,20 @@ public class CustomerUI : MonoBehaviour
         if (orderPhraseText != null && order != null)
             orderPhraseText.text = order.CustomerPhrase;
 
+        ApplyCustomerPortrait(order);
+
         if (orderBubblePanel != null)
             orderBubblePanel.SetActive(true);
+    }
+
+    private void ApplyCustomerPortrait(OrderDataAsset order)
+    {
+        if (customerPortraitImage == null)
+            return;
+
+        Sprite portrait = order != null ? order.CustomerPortrait : null;
+        customerPortraitImage.sprite = portrait;
+        customerPortraitImage.enabled = portrait != null;
     }
 
     private void HandleFirstPlayerAction()

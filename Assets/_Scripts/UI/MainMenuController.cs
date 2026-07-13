@@ -1,15 +1,21 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
+ * MainMenuController
+ * Назначение: кнопки главного меню и открытие экрана настроек.
+ * Связи: GameManager, SettingsPanelController.
+ */
 public class MainMenuController : MonoBehaviour
 {
-    [Header("Main Menu Buttons")]
+    [Header("Кнопки главного меню")]
     [SerializeField] private Button buttonNewGame;
     [SerializeField] private Button buttonContinue;
     [SerializeField] private Button buttonSettings;
     [SerializeField] private Button buttonExit;
 
-    [Header("Settings")]
+    [Header("Экран настроек")]
+    [Tooltip("Компонент на Canvas настроек со слайдерами и кнопкой «Назад».")]
     [SerializeField] private SettingsPanelController settingsPanelController;
 
     private void Start()

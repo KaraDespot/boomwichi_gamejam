@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 /*
  * PauseController
- * Назначение: управляет показом/скрытием паузы и действиями Resume/Main Menu.
+ * Назначение: управляет показом/скрытием паузы и действиями Resume / Restart Day / Main Menu.
  * Роль в игре: обслуживает только pause-flow, без логики панели настроек.
  * Связи: EventBus (события паузы), InputManager (клавиши), GameManager (смена состояния), UI-кнопки.
  * Как используется: висит в игровой сцене, ссылки на pausePanel и кнопки назначаются в Inspector.
@@ -15,7 +15,7 @@ using UnityEngine.UI;
  * - Добавить анимацию появления/скрытия панели.
  * Практические советы:
  * - Если пауза не открывается с клавиши, проверить InputManager.Instance, EventBus.Instance и action Gameplay/Pause в Console/Inspector.
- * - Если кнопки молчат, проверить назначение buttonResume/buttonMainMenu в Inspector.
+ * - Если кнопки молчат, проверить назначение buttonResume/buttonRestartDay/buttonMainMenu в Inspector.
  */
 public class PauseController : MonoBehaviour
 {
@@ -25,6 +25,9 @@ public class PauseController : MonoBehaviour
 
     [Tooltip("Кнопка продолжения игры.")]
     [SerializeField] private Button buttonResume;
+
+    [Tooltip("Кнопка «Начать сначала» — перезапуск смены с туториала.")]
+    [SerializeField] private Button buttonRestartDay;
 
     [Tooltip("Кнопка возврата в главное меню.")]
     [SerializeField] private Button buttonMainMenu;
@@ -57,6 +60,9 @@ public class PauseController : MonoBehaviour
         if (buttonResume != null)
             buttonResume.onClick.AddListener(OnResumeClicked);
 
+        if (buttonRestartDay != null)
+            buttonRestartDay.onClick.AddListener(OnRestartDayClicked);
+
         if (buttonMainMenu != null)
             buttonMainMenu.onClick.AddListener(OnMainMenuClicked);
     }
@@ -74,6 +80,9 @@ public class PauseController : MonoBehaviour
         if (buttonResume != null)
             buttonResume.onClick.RemoveListener(OnResumeClicked);
 
+        if (buttonRestartDay != null)
+            buttonRestartDay.onClick.RemoveListener(OnRestartDayClicked);
+
         if (buttonMainMenu != null)
             buttonMainMenu.onClick.RemoveListener(OnMainMenuClicked);
     }
@@ -88,6 +97,14 @@ public class PauseController : MonoBehaviour
 
         if (buttonMainMenu == null)
             Debug.LogWarning($"{name}: buttonMainMenu не назначен.", this);
+    }
+
+    private void OnRestartDayClicked()
+    {
+        AudioManager.Instance?.PlaySfx(AudioCue.Button);
+
+        if (GameManager.Instance != null)
+            GameManager.Instance.RestartGameScene();
     }
 
     /// <summary>
