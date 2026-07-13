@@ -39,12 +39,17 @@ public class GameplayHUDController : MonoBehaviour
     [Tooltip("Опционально: показывает текущий DayFlowState для отладки.")]
     [SerializeField] private TMP_Text dayStateDebugText;
 
+    [Header("Видимость HUD")]
+    [Tooltip("Canvas игрового HUD. Если пусто — берётся Canvas на этом объекте. Скрывается при туториале, заказе, паузе и результатах.")]
+    [SerializeField] private Canvas hudCanvas;
+
     [Header("Цвета таймера клиента")]
     [SerializeField] private Color customerTimerNormalColor = Color.white;
     [SerializeField] private Color customerTimerWarningColor = new Color(1f, 0.35f, 0.35f);
 
     private Coroutine bindingRoutine;
     private bool eventBusBound;
+    private bool isPaused;
     private CustomerTimer customerTimer;
 
     private void Awake()
@@ -53,7 +58,12 @@ public class GameplayHUDController : MonoBehaviour
             dayTimer = FindFirstObjectByType<DayTimer>();
 
         customerTimer = FindFirstObjectByType<CustomerTimer>();
+
+        if (hudCanvas == null)
+            hudCanvas = GetComponent<Canvas>();
+
         ValidateReferences();
+        RefreshHudVisibility();
     }
 
     private void OnEnable()
@@ -90,6 +100,8 @@ public class GameplayHUDController : MonoBehaviour
                 EventBus.Instance.OnCustomerTimeUpdated += HandleCustomerTimeUpdated;
                 EventBus.Instance.OnOrderStarted += HandleOrderStarted;
                 EventBus.Instance.OnTipsChanged += HandleTipsChanged;
+                EventBus.Instance.OnGamePaused += HandleGamePaused;
+                EventBus.Instance.OnGameResumed += HandleGameResumed;
                 eventBusBound = true;
                 SyncFromCurrentState();
             }
@@ -115,6 +127,8 @@ public class GameplayHUDController : MonoBehaviour
         EventBus.Instance.OnCustomerTimeUpdated -= HandleCustomerTimeUpdated;
         EventBus.Instance.OnOrderStarted -= HandleOrderStarted;
         EventBus.Instance.OnTipsChanged -= HandleTipsChanged;
+        EventBus.Instance.OnGamePaused -= HandleGamePaused;
+        EventBus.Instance.OnGameResumed -= HandleGameResumed;
         eventBusBound = false;
     }
 
@@ -127,6 +141,11 @@ public class GameplayHUDController : MonoBehaviour
 
         if (ScoreManager.Instance != null)
             HandleTipsChanged(ScoreManager.Instance.TotalTips);
+
+        if (GameManager.Instance != null)
+            isPaused = GameManager.Instance.CurrentState == GameState.Paused;
+
+        RefreshHudVisibility();
     }
 
     private void ValidateReferences()
@@ -151,6 +170,43 @@ public class GameplayHUDController : MonoBehaviour
 
         if (state == DayFlowState.Tutorial)
             SetDayTimerLabel(GetStartClockLabel());
+
+        RefreshHudVisibility(state);
+    }
+
+    private void HandleGamePaused()
+    {
+        isPaused = true;
+        RefreshHudVisibility();
+    }
+
+    private void HandleGameResumed()
+    {
+        isPaused = false;
+        RefreshHudVisibility();
+    }
+
+    private void RefreshHudVisibility()
+    {
+        DayFlowState state = GameManager.Instance != null
+            ? GameManager.Instance.CurrentDayState
+            : DayFlowState.None;
+
+        RefreshHudVisibility(state);
+    }
+
+    private void RefreshHudVisibility(DayFlowState state)
+    {
+        if (hudCanvas == null)
+            return;
+
+        bool hideForOverlay =
+            isPaused
+            || state == DayFlowState.Tutorial
+            || state == DayFlowState.ShowingOrder
+            || state == DayFlowState.DayFinished;
+
+        hudCanvas.enabled = !hideForOverlay;
     }
 
     private void HandleDayTimeExpired()
