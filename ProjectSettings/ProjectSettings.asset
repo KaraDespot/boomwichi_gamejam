@@ -91,7 +91,7 @@ PlayerSettings:
   deferSystemGesturesMode: 0
   hideHomeButton: 0
   submitAnalytics: 1
-  usePlayerLog: 1
+  usePlayerLog: 0
   dedicatedServerOptimizations: 1
   bakeCollisionMeshes: 0
   forceSingleInstance: 0
@@ -802,8 +802,8 @@ PlayerSettings:
   blurSplashScreenBackground: 1
   spritePackerPolicy: 
   webGLMemorySize: 32
-  webGLExceptionSupport: 1
-  webGLNameFilesAsHashes: 0
+  webGLExceptionSupport: 0
+  webGLNameFilesAsHashes: 1
   webGLShowDiagnostics: 0
   webGLDataCaching: 1
   webGLDebugSymbols: 0
@@ -812,12 +812,12 @@ PlayerSettings:
   webGLTemplate: APPLICATION:Default
   webGLAnalyzeBuildSize: 0
   webGLUseEmbeddedResources: 0
-  webGLCompressionFormat: 0
+  webGLCompressionFormat: 1
   webGLWasmArithmeticExceptions: 0
   webGLLinkerTarget: 1
   webGLThreadsSupport: 0
-  webGLDecompressionFallback: 0
-  webGLInitialMemorySize: 32
+  webGLDecompressionFallback: 1
+  webGLInitialMemorySize: 64
   webGLMaximumMemorySize: 2048
   webGLMemoryGrowthMode: 2
   webGLMemoryLinearGrowthStep: 16
