@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OrderDataAsset
   customerPhrase: "\u043E\u043B\u0438\u0432\u043A\u0438 \u0438 \u0441\u044B\u0440
     \u043C\u0430\u0439\u043E\u043D\u0435\u0437"
+  customerPortrait: {fileID: 21300000, guid: 3b79da3aa5e51fa45bf72ba76bbcf9a2, type: 3}
   requiredSauce: 2
   ingredients:
   - type: 3
