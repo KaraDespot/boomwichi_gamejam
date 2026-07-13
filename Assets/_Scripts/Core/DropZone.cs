@@ -115,6 +115,8 @@ public class DropZone : MonoBehaviour
 
             case DropZoneAction.DeactivateObject:
                 draggableObject.CompleteDrop(draggableObject.transform.position);
+                if (zoneType == DropZoneType.Trash)
+                    AudioManager.Instance?.PlaySfx(AudioCue.IngredientFall);
                 draggableObject.gameObject.SetActive(false);
                 break;
         }

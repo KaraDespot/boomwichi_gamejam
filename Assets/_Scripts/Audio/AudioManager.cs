@@ -95,6 +95,8 @@ public class AudioManager : MonoBehaviour
     {
         if (!eventBusBound)
             TryBindEventBus();
+
+        RefreshCockroachRunLoopState();
     }
 
     public void PlaySfx(AudioCue cue, float volumeScale = 1f)
@@ -319,7 +321,17 @@ public class AudioManager : MonoBehaviour
 
     private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        StopAllCockroachRunLoops();
         ApplySettings(GameSettings.Load());
+    }
+
+    private void RefreshCockroachRunLoopState()
+    {
+        if (aliveCockroachSoundCount <= 0)
+            return;
+
+        if (Cockroach.ActiveInstances == null || Cockroach.ActiveInstances.Count == 0)
+            StopAllCockroachRunLoops();
     }
 
     private void HandleOrderStarted(int orderIndex, OrderDataAsset order)
