@@ -40,7 +40,7 @@ public class GameplayHUDController : MonoBehaviour
     [SerializeField] private TMP_Text dayStateDebugText;
 
     [Header("Видимость HUD")]
-    [Tooltip("Canvas игрового HUD. Если пусто — берётся Canvas на этом объекте. Скрывается при туториале, заказе, паузе и результатах.")]
+    [Tooltip("Canvas игрового HUD. Если пусто — берётся Canvas на этом объекте. Появляется только после принятия первого заказа; скрывается на оверлеях.")]
     [SerializeField] private Canvas hudCanvas;
 
     [Header("Цвета таймера клиента")]
@@ -50,6 +50,8 @@ public class GameplayHUDController : MonoBehaviour
     private Coroutine bindingRoutine;
     private bool eventBusBound;
     private bool isPaused;
+    /// <summary>HUD включаем только после первого «принял заказ» (PlayingOrder).</summary>
+    private bool hasAcceptedFirstOrder;
     private CustomerTimer customerTimer;
 
     private void Awake()
@@ -143,7 +145,16 @@ public class GameplayHUDController : MonoBehaviour
             HandleTipsChanged(ScoreManager.Instance.TotalTips);
 
         if (GameManager.Instance != null)
+        {
             isPaused = GameManager.Instance.CurrentState == GameState.Paused;
+            DayFlowState state = GameManager.Instance.CurrentDayState;
+            if (state == DayFlowState.PlayingOrder
+                || state == DayFlowState.EvaluatingOrder
+                || state == DayFlowState.CustomerReaction)
+            {
+                hasAcceptedFirstOrder = true;
+            }
+        }
 
         RefreshHudVisibility();
     }
@@ -168,8 +179,15 @@ public class GameplayHUDController : MonoBehaviour
         if (dayStateDebugText != null)
             dayStateDebugText.text = state.ToString();
 
-        if (state == DayFlowState.Tutorial)
+        if (state == DayFlowState.Tutorial || state == DayFlowState.None)
+        {
+            hasAcceptedFirstOrder = false;
             SetDayTimerLabel(GetStartClockLabel());
+        }
+        else if (state == DayFlowState.PlayingOrder)
+        {
+            hasAcceptedFirstOrder = true;
+        }
 
         RefreshHudVisibility(state);
     }
@@ -200,8 +218,10 @@ public class GameplayHUDController : MonoBehaviour
         if (hudCanvas == null)
             return;
 
+        // До принятия первого заказа HUD скрыт (туториал / DayStarting / облако заказа).
         bool hideForOverlay =
-            isPaused
+            !hasAcceptedFirstOrder
+            || isPaused
             || state == DayFlowState.Tutorial
             || state == DayFlowState.ShowingOrder
             || state == DayFlowState.DayFinished;
