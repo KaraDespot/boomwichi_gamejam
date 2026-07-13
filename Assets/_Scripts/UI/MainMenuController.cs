@@ -96,6 +96,6 @@ public class MainMenuController : MonoBehaviour
     private void HandleDevelopersClicked()
     {
         if (developersCanvasController != null)
-            developersCanvasController.OpenCanvas();
+            developersCanvasController.OpenPanel();
     }
 }

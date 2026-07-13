@@ -1123,6 +1123,7 @@ GameObject:
   - component: {fileID: 955563477}
   - component: {fileID: 955563476}
   - component: {fileID: 955563478}
+  - component: {fileID: 955563479}
   m_Layer: 0
   m_Name: MainMenuController
   m_TagString: Untagged
@@ -1148,7 +1149,7 @@ MonoBehaviour:
   buttonDevelopers: {fileID: 131905396}
   buttonExit: {fileID: 0}
   settingsPanelController: {fileID: 955563478}
-  developersCanvasController: {fileID: 0}
+  developersCanvasController: {fileID: 955563479}
 --- !u!4 &955563477
 Transform:
   m_ObjectHideFlags: 0
@@ -1182,6 +1183,20 @@ MonoBehaviour:
   backButton: {fileID: 1088769428}
   soundSources: []
   musicSources: []
+--- !u!114 &955563479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 955563475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59e10217d5f17a04a966ed4dcf0a58d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  developersCanvas: {fileID: 1320151458}
+  backButton: {fileID: 185227085}
 --- !u!1 &1007163920
 GameObject:
   m_ObjectHideFlags: 0
@@ -2045,7 +2060,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1320151455
 RectTransform:
   m_ObjectHideFlags: 0

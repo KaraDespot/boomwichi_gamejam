@@ -5,12 +5,12 @@ using UnityEngine.UI;
 /*
  * DevelopersCanvasController
  * Назначение: экран «Разработчики» в главном меню.
- * Что делает: включает отдельный Canvas разработчиков и возвращает назад по кнопке.
+ * Что делает: открывает Canvas разработчиков и возвращает в меню по кнопке «Назад».
  * Связи: MainMenuController.
- * Паттерны: UI Controller.
+ * Паттерны: UI Controller (тот же контракт, что у SettingsPanelController).
  *
  * Настройка в сцене:
- * - Повесь компонент на MainMenuController или другой постоянный объект меню.
+ * - Повесь компонент на MainMenuController (рядом с SettingsPanelController).
  * - Назначь developersCanvas и backButton в Inspector.
  * - Canvas разработчиков по умолчанию должен быть выключен в иерархии.
  * - В MainMenuController укажи кнопку и ссылку на этот компонент.
@@ -19,11 +19,11 @@ using UnityEngine.UI;
 public class DevelopersCanvasController : MonoBehaviour
 {
     [Header("Canvas разработчиков")]
-    [Tooltip("Отдельный Canvas с титрами. Перетащи сюда компонент Canvas, не Panel.")]
+    [Tooltip("Отдельный Canvas с титрами. Перетащи сюда компонент Canvas.")]
     [SerializeField] private Canvas developersCanvas;
 
     [Header("Кнопки")]
-    [Tooltip("Кнопка «Назад» на Canvas разработчиков — закрывает экран.")]
+    [Tooltip("Кнопка «Назад в меню» на Canvas разработчиков.")]
     [SerializeField] private Button backButton;
 
     public event Action OnDevelopersClosed;
@@ -43,17 +43,15 @@ public class DevelopersCanvasController : MonoBehaviour
 
     private void OnEnable()
     {
-        if (backButton != null)
-            backButton.onClick.AddListener(HandleBackClicked);
+        BindUiHandlers();
     }
 
     private void OnDisable()
     {
-        if (backButton != null)
-            backButton.onClick.RemoveListener(HandleBackClicked);
+        UnbindUiHandlers();
     }
 
-    public void OpenCanvas()
+    public void OpenPanel()
     {
         if (developersCanvas == null)
             return;
@@ -62,7 +60,7 @@ public class DevelopersCanvasController : MonoBehaviour
         developersCanvas.gameObject.SetActive(true);
     }
 
-    public void CloseCanvas()
+    public void ClosePanel()
     {
         if (developersCanvas == null)
             return;
@@ -72,9 +70,21 @@ public class DevelopersCanvasController : MonoBehaviour
         OnDevelopersClosed?.Invoke();
     }
 
+    private void BindUiHandlers()
+    {
+        if (backButton != null)
+            backButton.onClick.AddListener(HandleBackClicked);
+    }
+
+    private void UnbindUiHandlers()
+    {
+        if (backButton != null)
+            backButton.onClick.RemoveListener(HandleBackClicked);
+    }
+
     private void HandleBackClicked()
     {
-        CloseCanvas();
+        ClosePanel();
     }
 
     private void HideDevelopersCanvas()
