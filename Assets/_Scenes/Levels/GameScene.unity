@@ -699,8 +699,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2d3e4f5a6b7489012345678abcdef02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cockroachPrefab: {fileID: 141014, guid: e8a98f96516902e4384263b5d25a25c6, type: 3}
-  spawnScale: 0.08
+  cockroachPrefab: {fileID: 141014, guid: 0e36a1e4bca350a4d89d2413093c24c3, type: 3}
+  spawnScale: 0.035
   moveSpeed: 0.55
   directionChangeInterval: {x: 0.6, y: 1.4}
   clickWorldRadius: 0.05
@@ -719,7 +719,7 @@ MonoBehaviour:
   fleeDuration: 1.35
   fleeSpeedMultiplier: 1.35
   landAnimationDuration: 0.18
-  landDropHeight: 0.14
+  landDropHeight: 0.06
   minSpawnInterval: 18
   maxSpawnInterval: 7
   maxAliveCockroaches: 3

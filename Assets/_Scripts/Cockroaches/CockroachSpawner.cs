@@ -16,7 +16,7 @@ public class CockroachSpawner : MonoBehaviour
     [SerializeField] private GameObject cockroachPrefab;
 
     [Tooltip("Масштаб инстанса префаба.")]
-    [SerializeField] private float spawnScale = 0.12f;
+    [SerializeField] private float spawnScale = 0.035f;
 
     [Header("Поведение")]
     [Tooltip("Скорость бега тараканов по столу.")]
@@ -74,7 +74,7 @@ public class CockroachSpawner : MonoBehaviour
     [SerializeField] private float landAnimationDuration = 0.18f;
 
     [Tooltip("С какой высоты таракан падает на сендвич.")]
-    [SerializeField] private float landDropHeight = 0.14f;
+    [SerializeField] private float landDropHeight = 0.06f;
 
     [Header("Частота")]
     [Tooltip("Интервал между спавнами в начале дня (сек).")]
