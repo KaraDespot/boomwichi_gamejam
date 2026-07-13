@@ -83,6 +83,8 @@ public class EventBus : MonoBehaviour
     /// </summary>
     public event Action<float, float> OnCustomerTimeUpdated;
 
+    public event Action OnCustomerTimeWarning;
+
     /// <summary>
     /// Таймер ожидания клиента истёк.
     /// </summary>
@@ -219,6 +221,11 @@ public class EventBus : MonoBehaviour
     public void RaiseCustomerTimeUpdated(float remaining, float total)
     {
         OnCustomerTimeUpdated?.Invoke(remaining, total);
+    }
+
+    public void RaiseCustomerTimeWarning()
+    {
+        OnCustomerTimeWarning?.Invoke();
     }
 
     public void RaiseCustomerTimeExpired()

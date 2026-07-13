@@ -21,6 +21,7 @@ public class CustomerTimer : MonoBehaviour
     private float elapsedWaitTime;
     private bool isRunning;
     private bool isExpired;
+    private bool warningRaised;
 
     public float CustomerWaitDuration => customerWaitDuration;
     public float RemainingTime => Mathf.Max(0f, customerWaitDuration - elapsedWaitTime);
@@ -39,6 +40,7 @@ public class CustomerTimer : MonoBehaviour
 
         elapsedWaitTime += Time.deltaTime;
         PublishTimeUpdated();
+        TryPublishTimeWarning();
 
         if (!isExpired && elapsedWaitTime >= customerWaitDuration)
         {
@@ -54,6 +56,7 @@ public class CustomerTimer : MonoBehaviour
     {
         elapsedWaitTime = 0f;
         isExpired = false;
+        warningRaised = false;
         isRunning = true;
         PublishTimeUpdated();
     }
@@ -67,6 +70,7 @@ public class CustomerTimer : MonoBehaviour
     {
         elapsedWaitTime = 0f;
         isExpired = false;
+        warningRaised = false;
         isRunning = false;
         PublishTimeUpdated();
     }
@@ -75,5 +79,15 @@ public class CustomerTimer : MonoBehaviour
     {
         if (EventBus.Instance != null)
             EventBus.Instance.RaiseCustomerTimeUpdated(RemainingTime, customerWaitDuration);
+    }
+
+    private void TryPublishTimeWarning()
+    {
+        if (warningRaised || warningThreshold <= 0f || RemainingTime > warningThreshold)
+            return;
+
+        warningRaised = true;
+        if (EventBus.Instance != null)
+            EventBus.Instance.RaiseCustomerTimeWarning();
     }
 }

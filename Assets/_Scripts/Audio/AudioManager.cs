@@ -19,6 +19,11 @@ public enum AudioCue
     MoldFall,
     CockroachRun,
     CockroachDeath,
+    CockroachTouchFood,
+    CustomerHappy,
+    CustomerSad,
+    Tips,
+    TimerAlmostGone,
     DayFinished
 }
 
@@ -52,6 +57,11 @@ public class AudioManager : MonoBehaviour
     private AudioClip moldFallClip;
     private AudioClip cockroachRunClip;
     private AudioClip cockroachDeathClip;
+    private AudioClip cockroachTouchFoodClip;
+    private AudioClip customerHappyClip;
+    private AudioClip customerSadClip;
+    private AudioClip tipsClip;
+    private AudioClip timerAlmostGoneClip;
     private AudioClip dayFinishedClip;
 
     private int nextSfxSourceIndex;
@@ -203,6 +213,11 @@ public class AudioManager : MonoBehaviour
         moldFallClip = LoadSfx("mold_fall");
         cockroachRunClip = LoadSfx("cockroach_run");
         cockroachDeathClip = LoadSfx("cockroach_death");
+        cockroachTouchFoodClip = LoadSfx("cockroach_touch_food");
+        customerHappyClip = LoadSfx("customer_happy");
+        customerSadClip = LoadSfx("customer_sad");
+        tipsClip = LoadSfx("tips");
+        timerAlmostGoneClip = LoadSfx("timer_almost_gone");
         dayFinishedClip = LoadSfx("day_finished2");
     }
 
@@ -240,6 +255,11 @@ public class AudioManager : MonoBehaviour
             AudioCue.MoldFall => moldFallClip,
             AudioCue.CockroachRun => cockroachRunClip,
             AudioCue.CockroachDeath => cockroachDeathClip,
+            AudioCue.CockroachTouchFood => cockroachTouchFoodClip,
+            AudioCue.CustomerHappy => customerHappyClip,
+            AudioCue.CustomerSad => customerSadClip,
+            AudioCue.Tips => tipsClip,
+            AudioCue.TimerAlmostGone => timerAlmostGoneClip,
             AudioCue.DayFinished => dayFinishedClip,
             _ => null
         };
@@ -292,10 +312,14 @@ public class AudioManager : MonoBehaviour
             return;
 
         EventBus.Instance.OnOrderStarted += HandleOrderStarted;
+        EventBus.Instance.OnOrderCompleted += HandleOrderCompleted;
+        EventBus.Instance.OnOrderFailed += HandleOrderFailed;
         EventBus.Instance.OnDayFinished += HandleDayFinished;
+        EventBus.Instance.OnCustomerTimeWarning += HandleCustomerTimeWarning;
         EventBus.Instance.OnCockroachSpawned += HandleCockroachSpawned;
         EventBus.Instance.OnCockroachKilled += HandleCockroachKilled;
         EventBus.Instance.OnMoldFallenOnSandwich += HandleMoldFallenOnSandwich;
+        EventBus.Instance.OnSandwichCockroachContaminated += HandleSandwichCockroachContaminated;
         EventBus.Instance.OnGamePaused += HandleGamePaused;
         EventBus.Instance.OnGameResumed += HandleGameResumed;
         eventBusBound = true;
@@ -310,10 +334,14 @@ public class AudioManager : MonoBehaviour
         }
 
         EventBus.Instance.OnOrderStarted -= HandleOrderStarted;
+        EventBus.Instance.OnOrderCompleted -= HandleOrderCompleted;
+        EventBus.Instance.OnOrderFailed -= HandleOrderFailed;
         EventBus.Instance.OnDayFinished -= HandleDayFinished;
+        EventBus.Instance.OnCustomerTimeWarning -= HandleCustomerTimeWarning;
         EventBus.Instance.OnCockroachSpawned -= HandleCockroachSpawned;
         EventBus.Instance.OnCockroachKilled -= HandleCockroachKilled;
         EventBus.Instance.OnMoldFallenOnSandwich -= HandleMoldFallenOnSandwich;
+        EventBus.Instance.OnSandwichCockroachContaminated -= HandleSandwichCockroachContaminated;
         EventBus.Instance.OnGamePaused -= HandleGamePaused;
         EventBus.Instance.OnGameResumed -= HandleGameResumed;
         eventBusBound = false;
@@ -339,6 +367,28 @@ public class AudioManager : MonoBehaviour
         PlaySfx(AudioCue.NewOrder);
     }
 
+    private void HandleOrderCompleted(int orderIndex, int tipsEarned)
+    {
+        if (tipsEarned > 0)
+        {
+            PlaySfx(AudioCue.CustomerHappy);
+            PlaySfx(AudioCue.Tips);
+            return;
+        }
+
+        PlaySfx(AudioCue.CustomerSad);
+    }
+
+    private void HandleOrderFailed(int orderIndex)
+    {
+        PlaySfx(AudioCue.CustomerSad);
+    }
+
+    private void HandleCustomerTimeWarning()
+    {
+        PlaySfx(AudioCue.TimerAlmostGone);
+    }
+
     private void HandleDayFinished()
     {
         StopAllCockroachRunLoops();
@@ -360,6 +410,11 @@ public class AudioManager : MonoBehaviour
     private void HandleMoldFallenOnSandwich(SandwichState sandwichState)
     {
         PlaySfx(AudioCue.MoldFall);
+    }
+
+    private void HandleSandwichCockroachContaminated(SandwichState sandwichState)
+    {
+        PlaySfx(AudioCue.CockroachTouchFood);
     }
 
     private void HandleGamePaused()
