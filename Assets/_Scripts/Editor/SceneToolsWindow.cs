@@ -12,7 +12,6 @@ public class SceneToolsWindow : EditorWindow
     {
         "Bootstrap",
         "MainMenu",
-        "Loading",
         "GameScene"
     };
 
@@ -41,9 +40,6 @@ public class SceneToolsWindow : EditorWindow
 
     [MenuItem("Tools/Scene Tools/Open MainMenu", priority = 21)]
     private static void OpenMainMenuFromMenu() => OpenSceneByName("MainMenu");
-
-    [MenuItem("Tools/Scene Tools/Open Loading", priority = 22)]
-    private static void OpenLoadingFromMenu() => OpenSceneByName("Loading");
 
     [MenuItem("Tools/Scene Tools/Open GameScene", priority = 23)]
     private static void OpenGameSceneFromMenu() => OpenSceneByName("GameScene");

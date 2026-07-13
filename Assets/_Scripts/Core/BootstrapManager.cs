@@ -8,7 +8,6 @@
 
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections;
 
 public class BootstrapManager : MonoBehaviour
 {
@@ -40,15 +39,7 @@ public class BootstrapManager : MonoBehaviour
 
     private void Start()
     {
-        // Стартовый flow урока: Bootstrap -> Loading -> MainMenu.
-        SceneLoader.Instance.LoadMainMenuWithLoading(PreloadBeforeMainMenu);
-    }
-
-    private IEnumerator PreloadBeforeMainMenu()
-    {
-        // Простая точка расширения: сюда добавляем обязательную подгрузку
-        // (настройки, сохранения, локализация и т.п.) по мере роста проекта.
-        yield return null;
+        SceneLoader.Instance.Load(SceneNames.MainMenu);
     }
 
     /// <summary>
