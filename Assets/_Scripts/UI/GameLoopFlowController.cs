@@ -2,6 +2,13 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+/*
+ * GameLoopFlowController
+ * Назначение: переключение win/lose/pause UI в GameScene.
+ * Что делает: показывает панели поражения/победы и открывает паузу по кнопке.
+ * Связи: GameManager, PauseController (Escape), EventBus.
+ * Паттерны: UI Controller.
+ */
 public class GameLoopFlowController : MonoBehaviour
 {
     [Header("Lose UI")]
@@ -14,7 +21,11 @@ public class GameLoopFlowController : MonoBehaviour
     [SerializeField] private Button winMenuButton;
     [SerializeField] private Button winNextLevelButton;
 
-    [Header("Common UI")]
+    [Header("Пауза")]
+    [Tooltip("Кнопка открытия панели паузы. Escape по-прежнему обрабатывается PauseController.")]
+    [SerializeField] private Button pauseOpenButton;
+
+    [Tooltip("Ссылка на панель паузы для скрытия при win/lose. Если пусто — не используется.")]
     [SerializeField] private GameObject pausePanel;
 
     public event UnityAction OnNextWaveRequested;
@@ -39,6 +50,9 @@ public class GameLoopFlowController : MonoBehaviour
 
         if (winNextLevelButton != null)
             winNextLevelButton.onClick.AddListener(HandleMenuClicked);
+
+        if (pauseOpenButton != null)
+            pauseOpenButton.onClick.AddListener(HandlePauseOpenClicked);
     }
 
     private void OnDisable()
@@ -54,6 +68,9 @@ public class GameLoopFlowController : MonoBehaviour
 
         if (winNextLevelButton != null)
             winNextLevelButton.onClick.RemoveListener(HandleMenuClicked);
+
+        if (pauseOpenButton != null)
+            pauseOpenButton.onClick.RemoveListener(HandlePauseOpenClicked);
     }
 
     public bool RequestWinFromExit(Vector3 levelExitPosition)
@@ -119,5 +136,14 @@ public class GameLoopFlowController : MonoBehaviour
             GameManager.Instance.GoToMenu();
         else
             OnNextWaveRequested?.Invoke();
+    }
+
+    private void HandlePauseOpenClicked()
+    {
+        if (GameManager.Instance == null || !GameManager.Instance.CanPause())
+            return;
+
+        AudioManager.Instance?.PlaySfx(AudioCue.Button);
+        GameManager.Instance.Pause();
     }
 }
