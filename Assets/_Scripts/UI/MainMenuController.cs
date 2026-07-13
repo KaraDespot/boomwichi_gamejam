@@ -3,8 +3,8 @@ using UnityEngine.UI;
 
 /*
  * MainMenuController
- * Назначение: кнопки главного меню и открытие экрана настроек.
- * Связи: GameManager, SettingsPanelController.
+ * Назначение: кнопки главного меню и открытие экранов настроек и разработчиков.
+ * Связи: GameManager, SettingsPanelController, DevelopersCanvasController.
  */
 public class MainMenuController : MonoBehaviour
 {
@@ -12,11 +12,16 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private Button buttonNewGame;
     [SerializeField] private Button buttonContinue;
     [SerializeField] private Button buttonSettings;
+    [SerializeField] private Button buttonDevelopers;
     [SerializeField] private Button buttonExit;
 
     [Header("Экран настроек")]
     [Tooltip("Компонент на Canvas настроек со слайдерами и кнопкой «Назад».")]
     [SerializeField] private SettingsPanelController settingsPanelController;
+
+    [Header("Canvas разработчиков")]
+    [Tooltip("Контроллер отдельного Canvas разработчиков с кнопкой «Назад».")]
+    [SerializeField] private DevelopersCanvasController developersCanvasController;
 
     private void Start()
     {
@@ -37,6 +42,9 @@ public class MainMenuController : MonoBehaviour
 
         if (buttonSettings != null)
             buttonSettings.onClick.AddListener(HandleSettingsClicked);
+
+        if (buttonDevelopers != null)
+            buttonDevelopers.onClick.AddListener(HandleDevelopersClicked);
     }
 
     private void OnDisable()
@@ -52,6 +60,9 @@ public class MainMenuController : MonoBehaviour
 
         if (buttonSettings != null)
             buttonSettings.onClick.RemoveListener(HandleSettingsClicked);
+
+        if (buttonDevelopers != null)
+            buttonDevelopers.onClick.RemoveListener(HandleDevelopersClicked);
     }
 
     private static void HandleNewGameClicked()
@@ -80,5 +91,11 @@ public class MainMenuController : MonoBehaviour
     {
         if (settingsPanelController != null)
             settingsPanelController.OpenPanel();
+    }
+
+    private void HandleDevelopersClicked()
+    {
+        if (developersCanvasController != null)
+            developersCanvasController.OpenCanvas();
     }
 }
