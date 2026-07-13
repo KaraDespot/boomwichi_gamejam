@@ -59,11 +59,11 @@ public class CockroachSpawner : MonoBehaviour
 
     [Header("Контакт с едой")]
     [Tooltip("Горизонтальная дистанция касания сендвича на тарелке.")]
-    [SerializeField] private float sandwichTouchRadius = 0.28f;
+    [SerializeField] private float sandwichTouchRadius = 0.45f;
 
     [Tooltip("Шанс остаться лежать на сендвиче после касания. Иначе — убежать и бродить дальше.")]
     [Range(0f, 1f)]
-    [SerializeField] private float landOnSandwichChance = 0.45f;
+    [SerializeField] private float landOnSandwichChance = 1f;
 
     [Tooltip("Насколько позиция на сендвиче смещается к стороне, откуда подошёл таракан.")]
     [Range(0f, 1f)]
@@ -142,7 +142,7 @@ public class CockroachSpawner : MonoBehaviour
 
         if (obstacleLayerMask.value == 0)
         {
-            obstacleLayerMask = LayerMask.GetMask("Draggable", "DropZone", "IngredientContainer", "CockroachObstacle");
+            obstacleLayerMask = LayerMask.GetMask("Draggable", "IngredientContainer", "CockroachObstacle");
         }
 
         spawnParent = new GameObject("Cockroaches_Runtime").transform;
