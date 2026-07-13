@@ -207,7 +207,7 @@ public class GrillZone : MonoBehaviour
         isClosed = true;
         canOpen = false;
         ApplyLidState(true);
-        AudioManager.Instance?.PlaySfx(AudioCue.GrillOpenClose);
+        AudioManager.Instance?.PlaySfx(AudioCue.GrillClose);
         UpdateTimerVisual();
     }
 
@@ -215,7 +215,7 @@ public class GrillZone : MonoBehaviour
     {
         isClosed = false;
         ApplyLidState(false);
-        AudioManager.Instance?.PlaySfx(AudioCue.GrillOpenClose);
+        AudioManager.Instance?.PlaySfx(AudioCue.GrillOpen);
         UpdateTimerVisual();
     }
 

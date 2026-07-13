@@ -13,7 +13,8 @@ public enum AudioCue
     IngredientFall,
     Sauce,
     Package,
-    GrillOpenClose,
+    GrillOpen,
+    GrillClose,
     MoldShake,
     MoldFall,
     CockroachRun,
@@ -45,7 +46,8 @@ public class AudioManager : MonoBehaviour
     private AudioClip ingredientFallClip;
     private AudioClip sauceClip;
     private AudioClip packageClip;
-    private AudioClip grillOpenCloseClip;
+    private AudioClip grillOpenClip;
+    private AudioClip grillCloseClip;
     private AudioClip moldShakeClip;
     private AudioClip moldFallClip;
     private AudioClip cockroachRunClip;
@@ -193,7 +195,8 @@ public class AudioManager : MonoBehaviour
         ingredientFallClip = LoadSfx("ingredient_fall");
         sauceClip = LoadSfx("sauce");
         packageClip = LoadSfx("package");
-        grillOpenCloseClip = LoadSfx("grill_closed");
+        grillOpenClip = LoadSfx("grill_open");
+        grillCloseClip = LoadSfx("grill_closed");
         moldShakeClip = LoadSfx("mold_shake");
         moldFallClip = LoadSfx("mold_fall");
         cockroachRunClip = LoadSfx("cockroach_run");
@@ -229,7 +232,8 @@ public class AudioManager : MonoBehaviour
             AudioCue.IngredientFall => ingredientFallClip,
             AudioCue.Sauce => sauceClip,
             AudioCue.Package => packageClip,
-            AudioCue.GrillOpenClose => grillOpenCloseClip,
+            AudioCue.GrillOpen => grillOpenClip,
+            AudioCue.GrillClose => grillCloseClip,
             AudioCue.MoldShake => moldShakeClip,
             AudioCue.MoldFall => moldFallClip,
             AudioCue.CockroachRun => cockroachRunClip,
