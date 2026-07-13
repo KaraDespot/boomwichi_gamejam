@@ -33,6 +33,7 @@ public class AudioManager : MonoBehaviour
     public static AudioManager Instance { get; private set; }
 
     private const string SfxResourcePath = "Audio/SFX/";
+    private const string MusicResourcePath = "Audio/Music/";
 
     [Header("Sources")]
     [SerializeField] private int sfxSourcePoolSize = 8;
@@ -63,6 +64,8 @@ public class AudioManager : MonoBehaviour
     private AudioClip tipsClip;
     private AudioClip timerAlmostGoneClip;
     private AudioClip dayFinishedClip;
+    private AudioClip menuMusicClip;
+    private AudioClip gameplayMusicClip;
 
     private int nextSfxSourceIndex;
     private int aliveCockroachSoundCount;
@@ -127,6 +130,9 @@ public class AudioManager : MonoBehaviour
     public void PlayMusic(AudioClip clip, bool loop = true)
     {
         if (musicSource == null || clip == null)
+            return;
+
+        if (musicSource.isPlaying && musicSource.clip == clip && musicSource.loop == loop)
             return;
 
         musicSource.clip = clip;
@@ -219,11 +225,18 @@ public class AudioManager : MonoBehaviour
         tipsClip = LoadSfx("tips");
         timerAlmostGoneClip = LoadSfx("timer_almost_gone");
         dayFinishedClip = LoadSfx("day_finished2");
+        menuMusicClip = LoadMusic("menu_music");
+        gameplayMusicClip = LoadMusic("gameplay_music");
     }
 
     private static AudioClip LoadSfx(string clipName)
     {
         return Resources.Load<AudioClip>(SfxResourcePath + clipName);
+    }
+
+    private static AudioClip LoadMusic(string clipName)
+    {
+        return Resources.Load<AudioClip>(MusicResourcePath + clipName);
     }
 
     private AudioSource GetNextSfxSource()
@@ -351,6 +364,24 @@ public class AudioManager : MonoBehaviour
     {
         StopAllCockroachRunLoops();
         ApplySettings(GameSettings.Load());
+        PlaySceneMusic(scene.name);
+    }
+
+    private void PlaySceneMusic(string sceneName)
+    {
+        if (sceneName == SceneNames.MainMenu)
+        {
+            PlayMusic(menuMusicClip);
+            return;
+        }
+
+        if (sceneName == SceneNames.GameScene)
+        {
+            PlayMusic(gameplayMusicClip);
+            return;
+        }
+
+        StopMusic();
     }
 
     private void RefreshCockroachRunLoopState()
