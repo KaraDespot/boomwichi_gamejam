@@ -5,7 +5,7 @@ using UnityEngine.UI;
 /*
  * SettingsPanelController
  * Назначение: контроллер отдельного окна настроек (MainMenu-сценарий: Open/Close/Back).
- * Роль в игре: даёт игроку доступ к sound/music/fullscreen в формате отдельной панели.
+ * Роль в игре: даёт игроку доступ к sound/music в формате отдельной панели.
  * Связи: объект панели, UI-контролы, GameSettings, опционально явные массивы AudioSource.
  * Как используется: вешается на объект окна настроек, все ссылки задаются в Inspector.
  * Идеи расширения:
@@ -28,9 +28,6 @@ public class SettingsPanelController : MonoBehaviour
 
     [Tooltip("Слайдер громкости музыки (music).")]
     [SerializeField] private Slider musicSlider;
-
-    [Tooltip("Тоггл полноэкранного режима.")]
-    [SerializeField] private Toggle fullscreenToggle;
 
     [Tooltip("Кнопка \"Назад\" для закрытия панели.")]
     [SerializeField] private Button backButton;
@@ -107,9 +104,6 @@ public class SettingsPanelController : MonoBehaviour
         if (musicSlider != null)
             musicSlider.onValueChanged.AddListener(HandleMusicSliderChanged);
 
-        if (fullscreenToggle != null)
-            fullscreenToggle.onValueChanged.AddListener(HandleFullscreenToggleChanged);
-
         if (backButton != null)
             backButton.onClick.AddListener(ClosePanel);
     }
@@ -121,9 +115,6 @@ public class SettingsPanelController : MonoBehaviour
 
         if (musicSlider != null)
             musicSlider.onValueChanged.RemoveListener(HandleMusicSliderChanged);
-
-        if (fullscreenToggle != null)
-            fullscreenToggle.onValueChanged.RemoveListener(HandleFullscreenToggleChanged);
 
         if (backButton != null)
             backButton.onClick.RemoveListener(ClosePanel);
@@ -144,9 +135,6 @@ public class SettingsPanelController : MonoBehaviour
 
         if (musicSlider != null)
             musicSlider.SetValueWithoutNotify(data.Music);
-
-        if (fullscreenToggle != null)
-            fullscreenToggle.SetIsOnWithoutNotify(data.Fullscreen);
 
         suppressCallbacks = false;
     }
@@ -178,14 +166,6 @@ public class SettingsPanelController : MonoBehaviour
         AudioManager.Instance?.PlaySfx(AudioCue.Settings);
     }
 
-    private void HandleFullscreenToggleChanged(bool isFullscreen)
-    {
-        if (suppressCallbacks)
-            return;
-
-        GameSettings.SetFullscreen(isFullscreen);
-    }
-
     /// <summary>
     /// Резервный путь: восстанавливает ссылки, если их забыли назначить в Inspector.
     /// В учебном каноне это не основной путь, а страховка от падения сцены.
@@ -195,7 +175,7 @@ public class SettingsPanelController : MonoBehaviour
         if (settingsPanel == null)
             return;
 
-        if (soundSlider != null && musicSlider != null && fullscreenToggle != null && backButton != null)
+        if (soundSlider != null && musicSlider != null && backButton != null)
             return;
 
         Debug.LogWarning($"{name}: ссылки окна настроек назначены не полностью. Выполняю резервный автопоиск.", this);
@@ -208,9 +188,6 @@ public class SettingsPanelController : MonoBehaviour
             if (musicSlider == null && sliders.Length > 1)
                 musicSlider = sliders[1];
         }
-
-        if (fullscreenToggle == null)
-            fullscreenToggle = settingsPanel.GetComponentInChildren<Toggle>(true);
 
         if (backButton == null)
         {
@@ -229,8 +206,8 @@ public class SettingsPanelController : MonoBehaviour
             }
         }
 
-        if (soundSlider == null || musicSlider == null || fullscreenToggle == null)
-            Debug.LogError($"{name}: не удалось автоматически найти все обязательные контролы (sound/music/fullscreen). Назначьте ссылки в Inspector.", this);
+        if (soundSlider == null || musicSlider == null)
+            Debug.LogError($"{name}: не удалось автоматически найти все обязательные контролы (sound/music). Назначьте ссылки в Inspector.", this);
 
         if (backButton == null)
             Debug.LogWarning($"{name}: backButton не найден. Панель будет открываться, но закрытие кнопкой \"Назад\" не сработает.", this);

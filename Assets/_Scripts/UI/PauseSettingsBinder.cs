@@ -3,35 +3,24 @@ using UnityEngine.UI;
 
 /*
  * PauseSettingsBinder
- * Назначение: связать существующие контролы в Pause с общей системой настроек.
- * Роль в игре: реализует встроенные настройки в паузе без отдельного окна и без кнопки Back.
- * Связи: слайдеры/тоггл в Pause, GameSettings, опционально явные массивы AudioSource.
- * Как используется: вешается на объект Pause (или дочерний Settings) в UIRootCanvas, ссылки задаются в Inspector.
- * Идеи расширения:
- * - Добавить отображение числовых значений громкости рядом со слайдерами.
- * - Добавить кнопку "Сбросить по умолчанию" внутри Pause.
- * Практические советы:
- * - Канонический путь: все ссылки назначены вручную; автопоиск нужен только как страховка.
- * - Если звук реагирует не так, назначьте soundSources/musicSources явно, не полагайтесь на резервный путь.
+ * Purpose: binds the pause menu sound/music sliders to the shared settings system.
+ * Notes: browser build settings only expose audio controls.
  */
 [DisallowMultipleComponent]
 public class PauseSettingsBinder : MonoBehaviour
 {
-    [Header("Контролы настроек в паузе")]
-    [Tooltip("Слайдер громкости звуковых эффектов (sound).")]
+    [Header("Pause Settings Controls")]
+    [Tooltip("Sound effects volume slider.")]
     [SerializeField] private Slider soundSlider;
 
-    [Tooltip("Слайдер громкости музыки (music).")]
+    [Tooltip("Music volume slider.")]
     [SerializeField] private Slider musicSlider;
 
-    [Tooltip("Тоггл полноэкранного режима.")]
-    [SerializeField] private Toggle fullscreenToggle;
-
-    [Header("Аудио-источники (опционально)")]
-    [Tooltip("Явные источники для канала sound. Рекомендуется назначать вручную; иначе используется резервный путь по loop=false.")]
+    [Header("Audio Sources (Optional)")]
+    [Tooltip("Explicit sources for the sound channel. If empty, GameSettings uses the loop=false fallback.")]
     [SerializeField] private AudioSource[] soundSources;
 
-    [Tooltip("Явные источники для канала music. Рекомендуется назначать вручную; иначе используется резервный путь по loop=true.")]
+    [Tooltip("Explicit sources for the music channel. If empty, GameSettings uses the loop=true fallback.")]
     [SerializeField] private AudioSource[] musicSources;
 
     private bool suppressCallbacks;
@@ -44,11 +33,6 @@ public class PauseSettingsBinder : MonoBehaviour
         ResolveReferencesIfMissing();
     }
 
-    /// <summary>
-    /// Контракт: порядок строго sync -> apply -> bind listeners.
-    /// Почему так: сначала безопасно выставляем UI без рекурсии, затем применяем значения в сцену, и только потом слушаем ввод игрока.
-    /// Как дебажить: если при открытии паузы значения "прыгают", проверьте suppressCallbacks и дубли биндеров.
-    /// </summary>
     private void OnEnable()
     {
         WarnIfDuplicateBinders();
@@ -69,9 +53,6 @@ public class PauseSettingsBinder : MonoBehaviour
 
         if (musicSlider != null)
             musicSlider.onValueChanged.AddListener(HandleMusicChanged);
-
-        if (fullscreenToggle != null)
-            fullscreenToggle.onValueChanged.AddListener(HandleFullscreenChanged);
     }
 
     private void UnbindUiHandlers()
@@ -81,9 +62,6 @@ public class PauseSettingsBinder : MonoBehaviour
 
         if (musicSlider != null)
             musicSlider.onValueChanged.RemoveListener(HandleMusicChanged);
-
-        if (fullscreenToggle != null)
-            fullscreenToggle.onValueChanged.RemoveListener(HandleFullscreenChanged);
     }
 
     private void SyncUiFromSavedSettings()
@@ -96,9 +74,6 @@ public class PauseSettingsBinder : MonoBehaviour
 
         if (musicSlider != null)
             musicSlider.SetValueWithoutNotify(data.Music);
-
-        if (fullscreenToggle != null)
-            fullscreenToggle.SetIsOnWithoutNotify(data.Fullscreen);
 
         suppressCallbacks = false;
     }
@@ -130,39 +105,21 @@ public class PauseSettingsBinder : MonoBehaviour
         AudioManager.Instance?.PlaySfx(AudioCue.Settings);
     }
 
-    private void HandleFullscreenChanged(bool value)
-    {
-        if (suppressCallbacks)
-            return;
-
-        GameSettings.SetFullscreen(value);
-    }
-
-    /// <summary>
-    /// Резервный путь: пробует найти ссылки в дочерних объектах, если их забыли назначить в Inspector.
-    /// Основной путь в teacher-repo: ссылки выставляются вручную.
-    /// </summary>
     private void ResolveReferencesIfMissing()
     {
-        if (soundSlider != null && musicSlider != null && fullscreenToggle != null)
+        if (soundSlider != null && musicSlider != null)
             return;
 
-        Debug.LogWarning($"{name}: ссылки настроек Pause не полностью назначены. Выполняю резервный автопоиск.", this);
+        Debug.LogWarning($"{name}: pause settings references are incomplete. Trying fallback lookup.", this);
+
+        Slider[] sliders = GetComponentsInChildren<Slider>(true);
+        if (soundSlider == null && sliders.Length > 0)
+            soundSlider = sliders[0];
+        if (musicSlider == null && sliders.Length > 1)
+            musicSlider = sliders[1];
 
         if (soundSlider == null || musicSlider == null)
-        {
-            Slider[] sliders = GetComponentsInChildren<Slider>(true);
-            if (soundSlider == null && sliders.Length > 0)
-                soundSlider = sliders[0];
-            if (musicSlider == null && sliders.Length > 1)
-                musicSlider = sliders[1];
-        }
-
-        if (fullscreenToggle == null)
-            fullscreenToggle = GetComponentInChildren<Toggle>(true);
-
-        if (soundSlider == null || musicSlider == null || fullscreenToggle == null)
-            Debug.LogError($"{name}: PauseSettingsBinder не смог восстановить все ссылки. Назначьте sound/music/fullscreen в Inspector.", this);
+            Debug.LogError($"{name}: PauseSettingsBinder could not restore all references. Assign sound/music in Inspector.", this);
     }
 
     private void WarnIfDuplicateBinders()
@@ -174,7 +131,7 @@ public class PauseSettingsBinder : MonoBehaviour
         if (binders.Length > 1)
         {
             duplicateWarningLogged = true;
-            Debug.LogWarning($"{name}: найдено несколько PauseSettingsBinder ({binders.Length}). Проверьте, что в сцене/префабе остался один активный биндер.", this);
+            Debug.LogWarning($"{name}: found multiple PauseSettingsBinder components ({binders.Length}). Keep one active binder in the scene/prefab.", this);
         }
     }
 }

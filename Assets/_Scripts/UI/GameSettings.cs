@@ -3,11 +3,11 @@ using UnityEngine;
 
 /*
  * GameSettings
- * Назначение: единая статическая точка хранения, загрузки и применения настроек sound/music/fullscreen.
+ * Назначение: единая статическая точка хранения, загрузки и применения настроек sound/music.
  * Роль в игре: обеспечивает одинаковое поведение настроек в MainMenu и в игровых сценах.
- * Связи: PlayerPrefs (сохранение), Screen (fullscreen), AudioSource в активной сцене.
+ * Связи: PlayerPrefs (сохранение), AudioSource в активной сцене.
  * Как используется:
- * - UI-контроллеры вызывают SetSound/SetMusic/SetFullscreen при изменении контролов.
+ * - UI-контроллеры вызывают SetSound/SetMusic при изменении контролов.
  * - SettingsBootstrapper вызывает Load + Apply при старте и после загрузки каждой сцены.
  * Идеи расширения:
  * - Перенести громкости в AudioMixer-группы.
@@ -21,11 +21,9 @@ public static class GameSettings
 {
     public const string SoundPrefKey = "settings_sound";
     public const string MusicPrefKey = "settings_music";
-    public const string FullscreenPrefKey = "settings_fullscreen";
 
     public const float DefaultSound = 1f;
     public const float DefaultMusic = 1f;
-    public const int DefaultFullscreen = 1;
 
     public static event Action<Data> OnSettingsApplied;
 
@@ -33,7 +31,6 @@ public static class GameSettings
     {
         public float Sound;
         public float Music;
-        public bool Fullscreen;
     }
 
     /// <summary>
@@ -44,8 +41,7 @@ public static class GameSettings
         return new Data
         {
             Sound = Mathf.Clamp01(PlayerPrefs.GetFloat(SoundPrefKey, DefaultSound)),
-            Music = Mathf.Clamp01(PlayerPrefs.GetFloat(MusicPrefKey, DefaultMusic)),
-            Fullscreen = PlayerPrefs.GetInt(FullscreenPrefKey, DefaultFullscreen) == 1
+            Music = Mathf.Clamp01(PlayerPrefs.GetFloat(MusicPrefKey, DefaultMusic))
         };
     }
 
@@ -58,7 +54,6 @@ public static class GameSettings
     {
         ApplySound(data.Sound, soundSources);
         ApplyMusic(data.Music, musicSources);
-        ApplyFullscreen(data.Fullscreen);
         OnSettingsApplied?.Invoke(data);
     }
 
@@ -90,25 +85,10 @@ public static class GameSettings
         OnSettingsApplied?.Invoke(data);
     }
 
-    /// <summary>
-    /// Контракт: сохраняет и сразу применяет fullscreen-режим.
-    /// Почему так: это платформенная настройка, игрок ожидает моментальный результат.
-    /// Как дебажить: если режим не меняется, проверьте, не блокирует ли ОС/платформа смену полноэкранного режима.
-    /// </summary>
-    public static void SetFullscreen(bool value)
-    {
-        Data data = Load();
-        data.Fullscreen = value;
-        Save(data);
-        ApplyFullscreen(data.Fullscreen);
-        OnSettingsApplied?.Invoke(data);
-    }
-
     private static void Save(Data data)
     {
         PlayerPrefs.SetFloat(SoundPrefKey, Mathf.Clamp01(data.Sound));
         PlayerPrefs.SetFloat(MusicPrefKey, Mathf.Clamp01(data.Music));
-        PlayerPrefs.SetInt(FullscreenPrefKey, data.Fullscreen ? 1 : 0);
         PlayerPrefs.Save();
     }
 
@@ -148,8 +128,4 @@ public static class GameSettings
         }
     }
 
-    private static void ApplyFullscreen(bool isFullscreen)
-    {
-        Screen.fullScreen = isFullscreen;
-    }
 }
