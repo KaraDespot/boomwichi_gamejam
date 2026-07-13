@@ -40,6 +40,7 @@ public enum CockroachBehaviorState
 public class Cockroach : MonoBehaviour
 {
     private static readonly List<Cockroach> activeInstances = new();
+    private static readonly Collider[] obstacleOverlapBuffer = new Collider[8];
 
     public static IReadOnlyList<Cockroach> ActiveInstances => activeInstances;
 
@@ -69,6 +70,7 @@ public class Cockroach : MonoBehaviour
     private float plateAttractionWeight = 0.72f;
     private float plateApproachRadius = 1.6f;
     private LayerMask obstacleLayerMask;
+    private LayerMask hardObstacleLayerMask;
     private float avoidanceProbeDistance = 0.3f;
     private float avoidanceProbeRadius = 0.065f;
     private float avoidanceStrength = 2.2f;
@@ -89,6 +91,7 @@ public class Cockroach : MonoBehaviour
     private const float ProbeHeight = 0.05f;
     private const float FarChaosWeight = 0.28f;
     private const float NearChaosWeight = 0.08f;
+    private const float FinalApproachDistanceMultiplier = 0.55f;
 
     public bool IsAlive => isAlive;
     public CockroachBehaviorState BehaviorState => behaviorState;
@@ -135,6 +138,7 @@ public class Cockroach : MonoBehaviour
         plateAttractionWeight = Mathf.Clamp01(movementConfig.PlateAttractionWeight);
         plateApproachRadius = Mathf.Max(0.05f, movementConfig.PlateApproachRadius);
         obstacleLayerMask = movementConfig.ObstacleLayerMask;
+        hardObstacleLayerMask = LayerMask.GetMask("CockroachObstacle");
         avoidanceProbeDistance = Mathf.Max(0.05f, movementConfig.AvoidanceProbeDistance);
         avoidanceProbeRadius = Mathf.Max(0.01f, movementConfig.AvoidanceProbeRadius);
         avoidanceStrength = Mathf.Max(0.1f, movementConfig.AvoidanceStrength);
@@ -209,8 +213,9 @@ public class Cockroach : MonoBehaviour
             PickNewWanderDirection(biasTowardPlate: HasFoodTarget());
 
         Vector3 desiredDirection = ComputeDesiredDirection();
-        desiredDirection = ApplyObstacleAvoidance(desiredDirection, GetHorizontalDistanceToPlateTarget());
-        ApplyMovement(desiredDirection, moveSpeed);
+        float distanceToPlate = GetHorizontalDistanceToPlateTarget();
+        desiredDirection = ApplyObstacleAvoidance(desiredDirection, distanceToPlate);
+        ApplyMovement(desiredDirection, moveSpeed, distanceToPlate);
     }
 
     private void UpdateFleeingMovement()
@@ -225,10 +230,10 @@ public class Cockroach : MonoBehaviour
 
         Vector3 desiredDirection = fleeDirection;
         desiredDirection = ApplyObstacleAvoidance(desiredDirection, float.MaxValue);
-        ApplyMovement(desiredDirection, moveSpeed * fleeSpeedMultiplier);
+        ApplyMovement(desiredDirection, moveSpeed * fleeSpeedMultiplier, float.MaxValue);
     }
 
-    private void ApplyMovement(Vector3 desiredDirection, float speed)
+    private void ApplyMovement(Vector3 desiredDirection, float speed, float distanceToPlate)
     {
         if (desiredDirection.sqrMagnitude < 0.0001f)
             PickNewWanderDirection(biasTowardPlate: HasFoodTarget());
@@ -237,9 +242,16 @@ public class Cockroach : MonoBehaviour
 
         Vector3 currentPosition = transform.position;
         Vector3 nextPosition = currentPosition + moveDirection * (speed * Time.deltaTime);
-        nextPosition = ResolveMovementCollision(currentPosition, nextPosition);
+        nextPosition = ResolveMovementCollision(currentPosition, nextPosition, distanceToPlate);
         nextPosition = ClampToBounds(nextPosition);
-        nextPosition.y = tableHeight;
+        nextPosition.y = GetMovementSurfaceHeight(distanceToPlate);
+
+        if (IsBlockedByObstacle(nextPosition, distanceToPlate))
+        {
+            nextPosition = currentPosition;
+            PickNewWanderDirection(biasTowardPlate: HasFoodTarget());
+        }
+
         transform.position = nextPosition;
 
         if (rotateToMovement && moveDirection.sqrMagnitude > 0.001f)
@@ -370,6 +382,9 @@ public class Cockroach : MonoBehaviour
         }
 
         float distanceToPlate = GetHorizontalDistanceToPlateTarget();
+        if (HasFoodTarget() && distanceToPlate <= plateApproachRadius * FinalApproachDistanceMultiplier)
+            return toPlate;
+
         float approachFactor = 1f - Mathf.Clamp01(distanceToPlate / plateApproachRadius);
         float chaosWeight = Mathf.Lerp(FarChaosWeight, NearChaosWeight, approachFactor);
         float seekWeight = 1f - chaosWeight;
@@ -384,7 +399,8 @@ public class Cockroach : MonoBehaviour
 
     private Vector3 ApplyObstacleAvoidance(Vector3 desiredDirection, float distanceToPlate)
     {
-        if (obstacleLayerMask.value == 0 || desiredDirection.sqrMagnitude < 0.0001f)
+        LayerMask activeObstacleMask = GetActiveObstacleMask(distanceToPlate);
+        if (activeObstacleMask.value == 0 || desiredDirection.sqrMagnitude < 0.0001f)
             return desiredDirection;
 
         Vector3 origin = GetProbeOrigin();
@@ -392,21 +408,21 @@ public class Cockroach : MonoBehaviour
         Vector3 avoidance = Vector3.zero;
         int hitCount = 0;
 
-        if (TryGetObstacleHit(origin, direction, out RaycastHit centerHit))
+        if (TryGetObstacleHit(origin, direction, activeObstacleMask, out RaycastHit centerHit))
         {
             avoidance += GetAvoidanceVector(centerHit, direction);
             hitCount++;
         }
 
         Vector3 leftDirection = Quaternion.Euler(0f, -35f, 0f) * direction;
-        if (TryGetObstacleHit(origin, leftDirection, out RaycastHit leftHit))
+        if (TryGetObstacleHit(origin, leftDirection, activeObstacleMask, out RaycastHit leftHit))
         {
             avoidance += GetAvoidanceVector(leftHit, direction);
             hitCount++;
         }
 
         Vector3 rightDirection = Quaternion.Euler(0f, 35f, 0f) * direction;
-        if (TryGetObstacleHit(origin, rightDirection, out RaycastHit rightHit))
+        if (TryGetObstacleHit(origin, rightDirection, activeObstacleMask, out RaycastHit rightHit))
         {
             avoidance += GetAvoidanceVector(rightHit, direction);
             hitCount++;
@@ -423,11 +439,12 @@ public class Cockroach : MonoBehaviour
         return adjusted.sqrMagnitude > 0.0001f ? adjusted.normalized : direction;
     }
 
-    private Vector3 ResolveMovementCollision(Vector3 currentPosition, Vector3 targetPosition)
+    private Vector3 ResolveMovementCollision(Vector3 currentPosition, Vector3 targetPosition, float distanceToPlate)
     {
         Vector3 delta = targetPosition - currentPosition;
         float distance = delta.magnitude;
-        if (distance <= 0.0001f || obstacleLayerMask.value == 0)
+        LayerMask activeObstacleMask = GetActiveObstacleMask(distanceToPlate);
+        if (distance <= 0.0001f || activeObstacleMask.value == 0)
             return targetPosition;
 
         Vector3 origin = GetProbeOrigin(currentPosition);
@@ -439,7 +456,7 @@ public class Cockroach : MonoBehaviour
                 direction,
                 out RaycastHit hit,
                 distance,
-                obstacleLayerMask,
+                activeObstacleMask,
                 QueryTriggerInteraction.Ignore) ||
             ShouldIgnoreObstacle(hit.collider))
         {
@@ -453,7 +470,7 @@ public class Cockroach : MonoBehaviour
         return currentPosition + slideDelta.normalized * Mathf.Min(distance, slideDelta.magnitude);
     }
 
-    private bool TryGetObstacleHit(Vector3 origin, Vector3 direction, out RaycastHit hit)
+    private bool TryGetObstacleHit(Vector3 origin, Vector3 direction, LayerMask activeObstacleMask, out RaycastHit hit)
     {
         if (Physics.SphereCast(
                 origin,
@@ -461,7 +478,7 @@ public class Cockroach : MonoBehaviour
                 direction,
                 out hit,
                 avoidanceProbeDistance,
-                obstacleLayerMask,
+                activeObstacleMask,
                 QueryTriggerInteraction.Ignore))
         {
             return !ShouldIgnoreObstacle(hit.collider);
@@ -507,6 +524,45 @@ public class Cockroach : MonoBehaviour
             return true;
 
         return false;
+    }
+
+    private bool IsBlockedByObstacle(Vector3 position, float distanceToPlate)
+    {
+        LayerMask activeObstacleMask = GetActiveObstacleMask(distanceToPlate);
+        if (activeObstacleMask.value == 0)
+            return false;
+
+        Vector3 origin = GetProbeOrigin(position);
+        int hitCount = Physics.OverlapSphereNonAlloc(
+            origin,
+            avoidanceProbeRadius,
+            obstacleOverlapBuffer,
+            activeObstacleMask,
+            QueryTriggerInteraction.Ignore);
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            if (!ShouldIgnoreObstacle(obstacleOverlapBuffer[i]))
+                return true;
+        }
+
+        return false;
+    }
+
+    private LayerMask GetActiveObstacleMask(float distanceToPlate)
+    {
+        if (HasFoodTarget() && distanceToPlate <= plateApproachRadius * FinalApproachDistanceMultiplier)
+            return hardObstacleLayerMask;
+
+        return obstacleLayerMask;
+    }
+
+    private float GetMovementSurfaceHeight(float distanceToPlate)
+    {
+        if (HasFoodTarget() && distanceToPlate <= plateApproachRadius * FinalApproachDistanceMultiplier)
+            return Mathf.Max(tableHeight, GetPlateTargetPosition().y);
+
+        return tableHeight;
     }
 
     private Vector3 GetDirectionToPlateTarget()

@@ -11,12 +11,14 @@ using UnityEngine;
 
 public class CockroachSpawner : MonoBehaviour
 {
+    private static readonly Collider[] spawnOverlapBuffer = new Collider[8];
+
     [Header("Префаб")]
     [Tooltip("Визуал таракана. Если пусто — создаётся простая капсула для теста.")]
     [SerializeField] private GameObject cockroachPrefab;
 
     [Tooltip("Масштаб инстанса префаба.")]
-    [SerializeField] private float spawnScale = 0.12f;
+    [SerializeField] private float spawnScale = 0.035f;
 
     [Header("Поведение")]
     [Tooltip("Скорость бега тараканов по столу.")]
@@ -31,6 +33,9 @@ public class CockroachSpawner : MonoBehaviour
     [Header("Движение к тарелке")]
     [Tooltip("Тарелка/доска, к которой стремятся тараканы.")]
     [SerializeField] private SandwichBoard sandwichBoard;
+
+    [Tooltip("Слой поверхности стола, на которой тараканам разрешено появляться.")]
+    [SerializeField] private LayerMask tableLayerMask = 1 << 6;
 
     [Tooltip("Насколько сильно таракан тянется к тарелке (0 — блуждание, 1 — почти прямо к цели).")]
     [Range(0f, 1f)]
@@ -47,18 +52,18 @@ public class CockroachSpawner : MonoBehaviour
     [SerializeField] private float obstacleAvoidanceDistance = 0.3f;
 
     [Tooltip("Радиус spherecast для обхода предметов.")]
-    [SerializeField] private float obstacleProbeRadius = 0.065f;
+    [SerializeField] private float obstacleProbeRadius = 0.09f;
 
     [Tooltip("Насколько резко таракан уходит в сторону при столкновении.")]
     [SerializeField] private float obstacleAvoidanceStrength = 2.2f;
 
     [Header("Контакт с едой")]
     [Tooltip("Горизонтальная дистанция касания сендвича на тарелке.")]
-    [SerializeField] private float sandwichTouchRadius = 0.28f;
+    [SerializeField] private float sandwichTouchRadius = 0.45f;
 
     [Tooltip("Шанс остаться лежать на сендвиче после касания. Иначе — убежать и бродить дальше.")]
     [Range(0f, 1f)]
-    [SerializeField] private float landOnSandwichChance = 0.45f;
+    [SerializeField] private float landOnSandwichChance = 1f;
 
     [Tooltip("Насколько позиция на сендвиче смещается к стороне, откуда подошёл таракан.")]
     [Range(0f, 1f)]
@@ -74,7 +79,7 @@ public class CockroachSpawner : MonoBehaviour
     [SerializeField] private float landAnimationDuration = 0.18f;
 
     [Tooltip("С какой высоты таракан падает на сендвич.")]
-    [SerializeField] private float landDropHeight = 0.14f;
+    [SerializeField] private float landDropHeight = 0.06f;
 
     [Header("Частота")]
     [Tooltip("Интервал между спавнами в начале дня (сек).")]
@@ -137,7 +142,7 @@ public class CockroachSpawner : MonoBehaviour
 
         if (obstacleLayerMask.value == 0)
         {
-            obstacleLayerMask = LayerMask.GetMask("Draggable", "DropZone", "IngredientContainer");
+            obstacleLayerMask = LayerMask.GetMask("Draggable", "IngredientContainer", "CockroachObstacle");
         }
 
         spawnParent = new GameObject("Cockroaches_Runtime").transform;
@@ -213,7 +218,9 @@ public class CockroachSpawner : MonoBehaviour
 
     private void SpawnCockroach()
     {
-        Vector3 spawnPosition = GetRandomSpawnPosition();
+        if (!TryGetRandomSpawnPosition(out Vector3 spawnPosition))
+            return;
+
         float tableHeight = GetTableHeight(spawnPosition);
 
         GameObject instance = CreateCockroachInstance(spawnPosition);
@@ -317,10 +324,10 @@ public class CockroachSpawner : MonoBehaviour
         clickCollider.radius = radius / uniformScale;
     }
 
-    private Vector3 GetRandomSpawnPosition()
+    private bool TryGetRandomSpawnPosition(out Vector3 spawnPosition)
     {
         if (!spawnAtTableEdges)
-            return GetRandomAreaSpawnPosition();
+            return TryGetRandomValidAreaSpawnPosition(out spawnPosition);
 
         const int maxAttempts = 12;
         for (int attempt = 0; attempt < maxAttempts; attempt++)
@@ -329,13 +336,31 @@ public class CockroachSpawner : MonoBehaviour
                 ? GetRandomLeftRightEdgeSpawnPosition()
                 : GetRandomEdgeSpawnPosition();
 
-            if (IsFarEnoughFromPlate(candidate))
-                return candidate;
+            if (IsValidSpawnPosition(candidate))
+            {
+                spawnPosition = candidate;
+                return true;
+            }
         }
 
-        return spawnOnLeftRightEdgesOnly
-            ? GetRandomLeftRightEdgeSpawnPosition(forceAwayFromPlate: true)
-            : GetRandomEdgeSpawnPosition();
+        return TryGetRandomValidAreaSpawnPosition(out spawnPosition);
+    }
+
+    private bool TryGetRandomValidAreaSpawnPosition(out Vector3 spawnPosition)
+    {
+        const int maxAttempts = 32;
+        for (int attempt = 0; attempt < maxAttempts; attempt++)
+        {
+            Vector3 candidate = GetRandomAreaSpawnPosition();
+            if (IsValidSpawnPosition(candidate))
+            {
+                spawnPosition = candidate;
+                return true;
+            }
+        }
+
+        spawnPosition = default;
+        return false;
     }
 
     private Vector3 GetRandomAreaSpawnPosition()
@@ -414,6 +439,54 @@ public class CockroachSpawner : MonoBehaviour
         return delta.sqrMagnitude >= radiusSq;
     }
 
+    private bool IsValidSpawnPosition(Vector3 worldPosition)
+    {
+        return IsFarEnoughFromPlate(worldPosition) &&
+               TryGetTableHeightAtPosition(worldPosition, out _) &&
+               !IsSpawnBlocked(worldPosition);
+    }
+
+    private bool IsSpawnBlocked(Vector3 worldPosition)
+    {
+        if (obstacleLayerMask.value == 0)
+            return false;
+
+        float tableHeight = TryGetTableHeightAtPosition(worldPosition, out float hitTableHeight)
+            ? hitTableHeight
+            : fallbackTableHeight;
+        Vector3 origin = new Vector3(worldPosition.x, tableHeight + 0.05f, worldPosition.z);
+        int hitCount = Physics.OverlapSphereNonAlloc(
+            origin,
+            obstacleProbeRadius,
+            spawnOverlapBuffer,
+            obstacleLayerMask,
+            QueryTriggerInteraction.Ignore);
+
+        return hitCount > 0;
+    }
+
+    private bool TryGetTableHeightAtPosition(Vector3 worldPosition, out float tableY)
+    {
+        const float rayStartHeight = 4f;
+        const float rayDistance = 8f;
+
+        Vector3 rayOrigin = new Vector3(worldPosition.x, fallbackTableHeight + rayStartHeight, worldPosition.z);
+        if (Physics.Raycast(
+                rayOrigin,
+                Vector3.down,
+                out RaycastHit hit,
+                rayDistance,
+                tableLayerMask,
+                QueryTriggerInteraction.Ignore))
+        {
+            tableY = hit.point.y;
+            return true;
+        }
+
+        tableY = fallbackTableHeight;
+        return false;
+    }
+
     private Vector3 GetRandomEdgeSpawnPosition()
     {
         Vector3 center = spawnAreaCenter != null ? spawnAreaCenter.position : transform.position;
@@ -454,6 +527,9 @@ public class CockroachSpawner : MonoBehaviour
 
     private float GetTableHeight(Vector3 worldPosition)
     {
+        if (TryGetTableHeightAtPosition(worldPosition, out float tableY))
+            return tableY;
+
         Camera camera = Camera.main;
         if (inputRaycaster != null && camera != null)
         {
