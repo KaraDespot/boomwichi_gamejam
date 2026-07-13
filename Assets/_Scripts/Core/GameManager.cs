@@ -278,7 +278,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
 
         if (SceneLoader.Instance != null)
-            SceneLoader.Instance.LoadWithLoading(sceneName);
+            SceneLoader.Instance.Load(sceneName);
         else
             SceneManager.LoadScene(sceneName);
 

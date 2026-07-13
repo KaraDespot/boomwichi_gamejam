@@ -1,7 +1,7 @@
 ﻿/*
  * SceneLoader
  * Назначение: единая точка для загрузки сцен.
- * Что делает: синхронно и асинхронно загружает сцены Unity, логирует прогресс при асинхронной загрузке.
+ * Что делает: загружает сцены Unity напрямую и показывает Loading только перед MainMenu.
  * Связи: используется GameManager и BootstrapManager при переходах между сценами.
  * Паттерны: Singleton, Facade над UnityEngine.SceneManagement.
  */
@@ -16,7 +16,6 @@ public class SceneLoader : MonoBehaviour
 
     [SerializeField, Min(0f)] private float minimumLoadingDuration = 3.2f;
 
-    private string _pendingSceneName;
     private bool _waitForLoadingScene;
     private Func<IEnumerator> _pendingPreloadRoutine;
 
@@ -38,10 +37,6 @@ public class SceneLoader : MonoBehaviour
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
-    /// <summary>
-    /// Асинхронно загружает сцену по имени.
-    /// Подходит для простых переходов, когда не нужен прогресс загрузки.
-    /// </summary>
     public void Load(string sceneName)
     {
         Debug.Log($"Loading scene: {sceneName}");
@@ -49,33 +44,11 @@ public class SceneLoader : MonoBehaviour
     }
 
     /// <summary>
-    /// Запускает асинхронную загрузку сцены.
-    /// Можно расширить для показа экрана загрузки/прогресса.
+    /// Стартовый переход Bootstrap -> Loading -> MainMenu.
+    /// Игровые сцены загружаются напрямую через Load, без промежуточного Loading.
     /// </summary>
-    public void LoadAsync(string sceneName)
+    public void LoadMainMenuWithLoading(Func<IEnumerator> preloadRoutine = null)
     {
-        StartCoroutine(LoadSceneAsyncCoroutine(sceneName));
-    }
-
-    /// <summary>
-    /// Переход в целевую сцену через Loading:
-    /// сначала открываем Loading, затем уже из неё асинхронно грузим целевую сцену.
-    /// </summary>
-    public void LoadWithLoading(string targetSceneName, Func<IEnumerator> preloadRoutine = null)
-    {
-        if (string.IsNullOrWhiteSpace(targetSceneName))
-        {
-            Debug.LogError("SceneLoader: target scene name is empty.");
-            return;
-        }
-
-        if (targetSceneName == SceneNames.Loading)
-        {
-            Load(targetSceneName);
-            return;
-        }
-
-        _pendingSceneName = targetSceneName;
         _pendingPreloadRoutine = preloadRoutine;
         _waitForLoadingScene = true;
         Load(SceneNames.Loading);
@@ -121,16 +94,10 @@ public class SceneLoader : MonoBehaviour
 
         _waitForLoadingScene = false;
 
-        if (string.IsNullOrWhiteSpace(_pendingSceneName))
-        {
-            Debug.LogError("SceneLoader: pending scene is empty after Loading scene opened.");
-            return;
-        }
-
-        StartCoroutine(LoadPendingSceneFlow());
+        StartCoroutine(LoadMainMenuAfterLoadingFlow());
     }
 
-    private IEnumerator LoadPendingSceneFlow()
+    private IEnumerator LoadMainMenuAfterLoadingFlow()
     {
         // Даем Loading сцене гарантированно отрисоваться хотя бы один кадр.
         yield return null;
@@ -140,10 +107,8 @@ public class SceneLoader : MonoBehaviour
             yield return StartCoroutine(_pendingPreloadRoutine.Invoke());
         }
 
-        string sceneToLoad = _pendingSceneName;
-        _pendingSceneName = null;
         _pendingPreloadRoutine = null;
 
-        yield return StartCoroutine(LoadSceneAsyncCoroutine(sceneToLoad));
+        yield return StartCoroutine(LoadSceneAsyncCoroutine(SceneNames.MainMenu));
     }
 }

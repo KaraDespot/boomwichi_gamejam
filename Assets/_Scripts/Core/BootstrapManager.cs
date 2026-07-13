@@ -41,7 +41,7 @@ public class BootstrapManager : MonoBehaviour
     private void Start()
     {
         // Стартовый flow урока: Bootstrap -> Loading -> MainMenu.
-        SceneLoader.Instance.LoadWithLoading(SceneNames.MainMenu, PreloadBeforeMainMenu);
+        SceneLoader.Instance.LoadMainMenuWithLoading(PreloadBeforeMainMenu);
     }
 
     private IEnumerator PreloadBeforeMainMenu()
