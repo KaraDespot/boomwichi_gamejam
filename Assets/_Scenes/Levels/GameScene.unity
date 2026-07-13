@@ -6403,6 +6403,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 85145917}
     - target: {fileID: 759114883167708310, guid: c37094a239fae814285e7199903e244f, type: 3}
+      propertyPath: hudCanvas
+      value: 
+      objectReference: {fileID: 9100000000000000002}
+    - target: {fileID: 759114883167708310, guid: c37094a239fae814285e7199903e244f, type: 3}
+      propertyPath: pauseButton
+      value: 
+      objectReference: {fileID: 375458179}
+    - target: {fileID: 759114883167708310, guid: c37094a239fae814285e7199903e244f, type: 3}
       propertyPath: playerStats
       value: 
       objectReference: {fileID: 0}
@@ -6418,6 +6426,10 @@ PrefabInstance:
       propertyPath: customerTimerText
       value: 
       objectReference: {fileID: 1962634713}
+    - target: {fileID: 759114883167708310, guid: c37094a239fae814285e7199903e244f, type: 3}
+      propertyPath: dayStateDebugText
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 759114883167708310, guid: c37094a239fae814285e7199903e244f, type: 3}
       propertyPath: playerProgression
       value: 
@@ -6463,6 +6475,11 @@ PrefabInstance:
 --- !u!224 &9100000000000000001 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8816718853742505282, guid: c37094a239fae814285e7199903e244f, type: 3}
+  m_PrefabInstance: {fileID: 9100000000000000000}
+  m_PrefabAsset: {fileID: 0}
+--- !u!223 &9100000000000000002 stripped
+Canvas:
+  m_CorrespondingSourceObject: {fileID: 121738867208809239, guid: c37094a239fae814285e7199903e244f, type: 3}
   m_PrefabInstance: {fileID: 9100000000000000000}
   m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
