@@ -1,0 +1,19 @@
+{
+  "unity": "6000.3.19f1",
+  "bridgeVersion": "2.3.0",
+  "bridgeCommit": "7bb1a42f1840f822f999d81e8c021da6e32b8a8d",
+  "compileErrors": [],
+  "initialization": { "bridgeReady": true, "storageLoaded": true, "scene": "MainMenu", "frameObserved": 114 },
+  "pauseAndAudioChecks": { "passed": 10, "frameObserved": 217, "runner": "PublishingChecks.Run()" },
+  "rewardedConfirmedSequence": {
+    "events": ["Rewarded", "Rewarded", "Closed", "Closed"],
+    "callbackCount": 1, "confirmed": true, "manualPausePreserved": true
+  },
+  "rewardedFailedSequence": {
+    "events": ["Failed", "Closed"], "callbackCount": 1, "confirmed": false, "adInProgress": false
+  },
+  "limitations": [
+    "Editor mock plus explicit SDK event injection verifies the C# event handler invariants, not real advertising inventory.",
+    "No money, extra time, shop or rewarded product UI was added; the reward is pending economy design."
+  ]
+}

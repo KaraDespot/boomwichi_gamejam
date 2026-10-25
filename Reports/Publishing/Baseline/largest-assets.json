@@ -1,0 +1,62 @@
+[
+  {
+    "asset": "Assets/_Art/2D/в движок/New order/Characters/Skater boy/Skater boy normal.png",
+    "bytes": 11276744.0
+  },
+  {
+    "asset": "Assets/_Art/2D/в движок/New order/Characters/Cosplayer/Cosplayer happy.png",
+    "bytes": 11276720.0
+  },
+  {
+    "asset": "Assets/_Art/2D/в движок/New order/Characters/Chika/Chika normal.png",
+    "bytes": 11275916.0
+  },
+  {
+    "asset": "Assets/_Art/2D/в движок/New order/Characters/Businesswoman/Businesswoman happy.png",
+    "bytes": 11275256.0
+  },
+  {
+    "asset": "Assets/_Art/2D/в движок/New order/Characters/Businesswoman/Businesswoman normal.png",
+    "bytes": 11274424.0
+  },
+  {
+    "asset": "Assets/_Art/2D/в движок/New order/composition guide new order.png",
+    "bytes": 7047792.0
+  },
+  {
+    "asset": "Assets/_Art/2D/в движок/Credits/reseipt template under text.png",
+    "bytes": 6141312.0
+  },
+  {
+    "asset": "Assets/_Art/2D/в движок/New order/dialogue bubble.png",
+    "bytes": 5801760.0
+  },
+  {
+    "asset": "Assets/_Art/Models/Ingredients/cucumber/cucumber_Tex/q_DefaultMaterial_Normal.png",
+    "bytes": 5592568.0
+  },
+  {
+    "asset": "Assets/_Art/Textures/conteiner_base_color.png",
+    "bytes": 5592564.0
+  },
+  {
+    "asset": "Assets/_Art/Textures/final_map_base_color.png",
+    "bytes": 5592564.0
+  },
+  {
+    "asset": "Assets/_Art/Textures/items_base_color.png",
+    "bytes": 5592560.0
+  },
+  {
+    "asset": "Assets/_Art/Textures/dicer_base_color.png",
+    "bytes": 5592560.0
+  },
+  {
+    "asset": "Assets/_Art/Models/Environment/Room/stena_base_color.png",
+    "bytes": 5592560.0
+  },
+  {
+    "asset": "Assets/_Art/2D/в движок/main menu/start button.png",
+    "bytes": 5519076.0
+  }
+]

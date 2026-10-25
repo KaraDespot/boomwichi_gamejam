@@ -1,0 +1,21 @@
+{
+  "url": "http://127.0.0.1:8082/",
+  "environment": "Codex in-app browser; fresh localhost origin; Cache-Control: no-store; no network throttling",
+  "menuReadyMs": 6583.7,
+  "resourceTransferBytes": 88824000,
+  "resourceEncodedBodyBytes": 88822200,
+  "resources": [
+    { "file": "TemplateData/style.css", "transferBytes": 1748, "bodyBytes": 1448 },
+    { "file": "Build/d0ba41877fcc2ba1a101bbba66771157.loader.js", "transferBytes": 48405, "bodyBytes": 48105 },
+    { "file": "Build/e907bf7ab69ac53e69a74c2a07cc7001.framework.js.unityweb", "transferBytes": 78442, "bodyBytes": 78142 },
+    { "file": "Build/18b40c85719aabe5112338f495b81035.wasm.unityweb", "transferBytes": 9385832, "bodyBytes": 9385532 },
+    { "file": "TemplateData/favicon.ico", "transferBytes": 2605, "bodyBytes": 2305 },
+    { "file": "Build/afb5219b090acb6e2e994b03912bd4df.data.unityweb", "transferBytes": 79306968, "bodyBytes": 79306668 }
+  ],
+  "notes": [
+    "Menu readiness marker: two animation frames after MainMenu transition log; menu also verified visually.",
+    "Resource Timing excludes the HTML navigation itself. The local instrumentation also changes HTML bytes slightly.",
+    "Unity decompression fallback decompresses .unityweb inside JavaScript, so Resource Timing decodedBodySize equals compressed body size. See file-sizes.json for decompressed payload sizes.",
+    "Repeated pre-existing startup logs: Trying to get length of sound which is not loaded yet."
+  ]
+}

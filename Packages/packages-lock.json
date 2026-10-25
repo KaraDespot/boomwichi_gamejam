@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.playgama.bridge": {
+      "version": "https://github.com/Playgama/bridge-unity.git#7bb1a42f1840f822f999d81e8c021da6e32b8a8d",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "7bb1a42f1840f822f999d81e8c021da6e32b8a8d"
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,

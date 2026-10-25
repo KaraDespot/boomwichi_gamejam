@@ -1,0 +1,111 @@
+{
+  "root": "D:\\GIT\\boomwichi_GJ\\Builds\\PublishingBaseline",
+  "measuredAt": "2026-10-25T13:25:53.494Z",
+  "fileBytes": 88838094,
+  "decodedBytes": 126690641,
+  "files": [
+    {
+      "file": "Build/afb5219b090acb6e2e994b03912bd4df.data.unityweb",
+      "bytes": 79306668,
+      "decodedBytes": 97812254,
+      "compression": "gzip"
+    },
+    {
+      "file": "Build/18b40c85719aabe5112338f495b81035.wasm.unityweb",
+      "bytes": 9385532,
+      "decodedBytes": 28479352,
+      "compression": "gzip"
+    },
+    {
+      "file": "Build/e907bf7ab69ac53e69a74c2a07cc7001.framework.js.unityweb",
+      "bytes": 78142,
+      "decodedBytes": 331283,
+      "compression": "gzip"
+    },
+    {
+      "file": "Build/d0ba41877fcc2ba1a101bbba66771157.loader.js",
+      "bytes": 48105,
+      "decodedBytes": 48105,
+      "compression": "none"
+    },
+    {
+      "file": "index.html",
+      "bytes": 5751,
+      "decodedBytes": 5751,
+      "compression": "none"
+    },
+    {
+      "file": "TemplateData/unity-logo-light.png",
+      "bytes": 3077,
+      "decodedBytes": 3077,
+      "compression": "none"
+    },
+    {
+      "file": "TemplateData/unity-logo-dark.png",
+      "bytes": 3042,
+      "decodedBytes": 3042,
+      "compression": "none"
+    },
+    {
+      "file": "TemplateData/favicon.ico",
+      "bytes": 2305,
+      "decodedBytes": 2305,
+      "compression": "none"
+    },
+    {
+      "file": "TemplateData/webmemd-icon.png",
+      "bytes": 1670,
+      "decodedBytes": 1670,
+      "compression": "none"
+    },
+    {
+      "file": "TemplateData/style.css",
+      "bytes": 1448,
+      "decodedBytes": 1448,
+      "compression": "none"
+    },
+    {
+      "file": "TemplateData/unity-logo-title-footer.png",
+      "bytes": 1151,
+      "decodedBytes": 1151,
+      "compression": "none"
+    },
+    {
+      "file": "TemplateData/MemoryProfiler.png",
+      "bytes": 665,
+      "decodedBytes": 665,
+      "compression": "none"
+    },
+    {
+      "file": "TemplateData/fullscreen-button.png",
+      "bytes": 175,
+      "decodedBytes": 175,
+      "compression": "none"
+    },
+    {
+      "file": "TemplateData/progress-bar-empty-light.png",
+      "bytes": 109,
+      "decodedBytes": 109,
+      "compression": "none"
+    },
+    {
+      "file": "TemplateData/progress-bar-empty-dark.png",
+      "bytes": 96,
+      "decodedBytes": 96,
+      "compression": "none"
+    },
+    {
+      "file": "TemplateData/progress-bar-full-light.png",
+      "bytes": 84,
+      "decodedBytes": 84,
+      "compression": "none"
+    },
+    {
+      "file": "TemplateData/progress-bar-full-dark.png",
+      "bytes": 74,
+      "decodedBytes": 74,
+      "compression": "none"
+    }
+  ],
+  "note": "File totals are not browser transfer totals. Symbols/debug artifacts, when present, are listed but may not be requested."
+}
