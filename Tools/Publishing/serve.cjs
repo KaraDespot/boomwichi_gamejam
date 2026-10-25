@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const root = path.resolve(process.argv[2] || 'Builds/PublishingBaseline');
 const port = Number(process.argv[3] || 8080);
-const instrumentation = `<script>
+let instrumentation = `<script>
 performance.setResourceTimingBufferSize(2000);
 window.__publishingMessages=[];
 for(const level of ['log','warn','error']) {
@@ -42,6 +42,7 @@ addEventListener('DOMContentLoaded',()=>{
  },1000);
 });
 </script>`;
+instrumentation += '<script>' + fs.readFileSync(path.join(__dirname, 'local-qa.js'), 'utf8') + '</script>';
 http.createServer((req,res)=>{
  let url;
  try { url=decodeURIComponent(new URL(req.url,'http://localhost').pathname); } catch {res.writeHead(400).end();return;}

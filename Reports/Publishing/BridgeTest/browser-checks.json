@@ -1,0 +1,31 @@
+{
+  "environment": "Local WebGL Development/Generic build; official Bridge qa_tool adapter; Tools/Publishing/local-qa.js drives the public QA postMessage protocol",
+  "url": "http://127.0.0.1:8085/?publishingTest=1&localQa=1&platform_id=qa_tool",
+  "realAdvertisingInventoryTested": false,
+  "mockMenuReadyMs": 5506.2,
+  "qaMenuReadyMs": 4136.4,
+  "checks": [
+    { "name": "manual resume while platform paused", "observed": "Platform; timeScale=0; audioPaused=True; ad=False", "passed": true },
+    { "name": "rewarded confirmed twice then closed", "observed": ["Loading", "Opened", "Rewarded", "Closed", "Diagnostic rewarded confirmed=True"], "confirmationCallbacks": 1, "passed": true },
+    { "name": "manual pause survives rewarded close", "observed": "Manual; timeScale=0; audioPaused=True; ad=False", "passed": true },
+    { "name": "rewarded closed without confirmation", "observed": "Diagnostic rewarded confirmed=False", "passed": true },
+    { "name": "rewarded SDK failure", "observed": ["Failed", "Diagnostic rewarded confirmed=False"], "passed": true },
+    { "name": "platform unmute preserves manual pause", "observed": "Manual; timeScale=0; audioPaused=True; ad=False", "passed": true },
+    { "name": "interstitial at results transition", "observed": ["Loading", "Opened", "Advertisement; timeScale=0; audioPaused=True; ad=True", "Closed", "SceneLoader: loading scene GameScene", "None; timeScale=1; audioPaused=False; ad=False"], "passed": true },
+    { "name": "versioned storage document", "observed": { "version": 1, "sound": 1, "music": 1, "tutorialCompleted": false, "bestTips": 0, "bestCompletedOrders": 0 }, "passed": true },
+    { "name": "volume sliders survive browser reload", "observed": { "sound": 0.28238916397094729, "music": 0.4873228967189789 }, "sliderPositionsVerifiedVisually": true, "passed": true },
+    { "name": "tutorial completion saved", "observed": "tutorialCompleted=true after clicking the existing tutorial button", "passed": true },
+    { "name": "interstitial failure continues to next shift", "observed": ["Loading", "Opened", "Failed", "SceneLoader: loading scene GameScene"], "passed": true },
+    { "name": "future save schema is preserved", "observed": ["Save was preserved: Unsupported or invalid save document", "version=999 remains after ending a test shift"], "testOrigin": "http://127.0.0.1:8086/", "testDataRestored": true, "passed": true }
+  ],
+  "existingWarnings": [
+    "UIController: tutorialBodyText is not assigned.",
+    "Multiple PauseSettingsBinder components (2) in the scene/prefab.",
+    "Trying to get length of sound which is not loaded yet."
+  ],
+  "limitations": [
+    "Local QA simulates SDK callbacks; it is not evidence of real ads, fill rate, platform approval or real cloud storage.",
+    "No actual rewarded benefit is issued; product reward remains pending economy design.",
+    "Development build sizes and startup times must not be compared as a release SDK size delta."
+  ]
+}

@@ -1,0 +1,142 @@
+{
+    "status": "completed",
+    "result": "Succeeded",
+    "profile": "Assets/Settings/Build Profiles/Web - Desktop - Release.asset",
+    "subtarget": "DXT",
+    "template": "PROJECT:Bridge",
+    "development": false,
+    "totalSizeBytes": 28024152,
+    "buildTimeMs": 95802.515,
+    "totalWarnings": 1,
+    "totalErrors": 0,
+    "scenes": [
+        "Assets/_Scenes/Bootstrap.unity",
+        "Assets/_Scenes/MainMenu.unity",
+        "Assets/_Scenes/Levels/GameScene.unity"
+    ],
+    "largestAssets": [
+        {
+            "asset": "Assets/Resources/Audio/Music/gameplay_music.mp3",
+            "bytes": 4758803
+        },
+        {
+            "asset": "Assets/_Generated/WebSprites/UI.spriteatlasv2",
+            "bytes": 3230768
+        },
+        {
+            "asset": "Assets/Resources/Audio/Music/menu_music.mp3",
+            "bytes": 2812133
+        },
+        {
+            "asset": "Built-in Texture2D: Splash Screen Unity Logo",
+            "bytes": 2796376
+        },
+        {
+            "asset": "Assets/_Generated/WebSprites/Characters.spriteatlasv2",
+            "bytes": 1383300
+        },
+        {
+            "asset": "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset",
+            "bytes": 1078464
+        },
+        {
+            "asset": "Assets/_Art/Models/Environment/conteiner_with_foods.fbx",
+            "bytes": 966028
+        },
+        {
+            "asset": "Assets/_Generated/WebSprites/OpaqueUI.spriteatlasv2",
+            "bytes": 940672
+        },
+        {
+            "asset": "Packages/com.unity.render-pipelines.universal/Shaders/Lit.shader",
+            "bytes": 667420
+        },
+        {
+            "asset": "Resources/unity_builtin_extra",
+            "bytes": 569664
+        },
+        {
+            "asset": "Assets/_Art/Models/Environment/Room/main_scene_final.fbx",
+            "bytes": 527520
+        },
+        {
+            "asset": "Assets/TextMesh Pro/Fonts/LiberationSans.ttf",
+            "bytes": 352734
+        },
+        {
+            "asset": "Assets/TextMesh Pro/Sprites/EmojiOne.png",
+            "bytes": 349672
+        },
+        {
+            "asset": "Packages/com.unity.render-pipelines.universal/Textures/SMAA/AreaTex.tga",
+            "bytes": 268920
+        },
+        {
+            "asset": "Packages/com.unity.render-pipelines.universal/Textures/FilmGrain/Medium01.png",
+            "bytes": 262264
+        },
+        {
+            "asset": "Packages/com.unity.render-pipelines.universal/Textures/FilmGrain/Medium05.png",
+            "bytes": 262264
+        },
+        {
+            "asset": "Packages/com.unity.render-pipelines.universal/Textures/FilmGrain/Large02.png",
+            "bytes": 262264
+        },
+        {
+            "asset": "Packages/com.unity.render-pipelines.universal/Textures/FilmGrain/Thin01.png",
+            "bytes": 262264
+        },
+        {
+            "asset": "Packages/com.unity.render-pipelines.universal/Textures/FilmGrain/Medium03.png",
+            "bytes": 262264
+        },
+        {
+            "asset": "Packages/com.unity.render-pipelines.universal/Textures/FilmGrain/Medium06.png",
+            "bytes": 262264
+        },
+        {
+            "asset": "Packages/com.unity.render-pipelines.universal/Textures/FilmGrain/Medium04.png",
+            "bytes": 262264
+        },
+        {
+            "asset": "Packages/com.unity.render-pipelines.universal/Textures/FilmGrain/Thin02.png",
+            "bytes": 262264
+        },
+        {
+            "asset": "Packages/com.unity.render-pipelines.universal/Textures/FilmGrain/Medium02.png",
+            "bytes": 262264
+        },
+        {
+            "asset": "Packages/com.unity.render-pipelines.universal/Textures/FilmGrain/Large01.png",
+            "bytes": 262264
+        },
+        {
+            "asset": "Assets/UI pack/Button/Blue outline gradient.png",
+            "bytes": 251712
+        },
+        {
+            "asset": "Assets/UI pack/Button/Green gradient.png",
+            "bytes": 251224
+        },
+        {
+            "asset": "Assets/UI pack/Button/Orange gradient.png",
+            "bytes": 251212
+        },
+        {
+            "asset": "Assets/UI pack/Button/Red gradient.png",
+            "bytes": 251192
+        },
+        {
+            "asset": "Assets/_Art/Textures/dicer_base_color.png",
+            "bytes": 220480
+        },
+        {
+            "asset": "Assets/_Art/Textures/items_base_color.png",
+            "bytes": 203612
+        }
+    ],
+    "warnings": [
+        "UIController: назначь tutorialBodyText (TextMeshPro) в Inspector."
+    ]
+}

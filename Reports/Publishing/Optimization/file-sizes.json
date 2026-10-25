@@ -1,0 +1,57 @@
+{
+  "root": "D:\\GIT\\boomwichi_GJ\\Builds\\PublishingOptimized",
+  "measuredAt": "2026-10-25T15:03:21.216Z",
+  "fileBytes": 28024152,
+  "decodedBytes": 52100647,
+  "files": [
+    {
+      "file": "Build/a3cc83a6444500b4097e28fbd4255583.data.unityweb",
+      "bytes": 21668509,
+      "decodedBytes": 28578558,
+      "compression": "brotli"
+    },
+    {
+      "file": "Build/9e9aa022c002983bf82ddc6427b5f482.wasm.unityweb",
+      "bytes": 5829640,
+      "decodedBytes": 22717934,
+      "compression": "brotli"
+    },
+    {
+      "file": "playgama-bridge.js",
+      "bytes": 307369,
+      "decodedBytes": 307369,
+      "compression": "none"
+    },
+    {
+      "file": "Build/e1b4ee85deb9bd4ea6a3e3ee502a1b6a.loader.js",
+      "bytes": 118132,
+      "decodedBytes": 118132,
+      "compression": "none"
+    },
+    {
+      "file": "Build/bafcc92cda1fdc39b8a22db60b3d96c2.framework.js.unityweb",
+      "bytes": 70890,
+      "decodedBytes": 349042,
+      "compression": "brotli"
+    },
+    {
+      "file": "playgama-bridge-unity.js",
+      "bytes": 27972,
+      "decodedBytes": 27972,
+      "compression": "none"
+    },
+    {
+      "file": "index.html",
+      "bytes": 1243,
+      "decodedBytes": 1243,
+      "compression": "none"
+    },
+    {
+      "file": "playgama-bridge-config.json",
+      "bytes": 397,
+      "decodedBytes": 397,
+      "compression": "none"
+    }
+  ],
+  "note": "File totals are not browser transfer totals. Symbols/debug artifacts, when present, are listed but may not be requested."
+}

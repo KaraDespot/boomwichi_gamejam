@@ -1,0 +1,24 @@
+{
+  "url": "http://127.0.0.1:8088/",
+  "environment": "Fresh localhost origin in Codex in-app browser; no network throttling; Cache-Control: no-store",
+  "menuReadyMs": 5165,
+  "resourceTransferBytes": 88822367,
+  "resourceEncodedBodyBytes": 88820567,
+  "decompressedWasmSha256": "52266613e4cd95bbbcc71f7ae2eb8f87661476a740c01742ecc9eb1452325f83",
+  "decompressedFrameworkSha256": "927a537beb439c6c94fae0673513604aa7e1ff7a3b0a46980aa612480467e1ad",
+  "resources": [
+    { "file": "TemplateData/style.css", "transferBytes": 1748, "bodyBytes": 1448 },
+    { "file": "Build/d0ba41877fcc2ba1a101bbba66771157.loader.js", "transferBytes": 48405, "bodyBytes": 48105 },
+    { "file": "Build/e907bf7ab69ac53e69a74c2a07cc7001.framework.js.unityweb", "transferBytes": 78442, "bodyBytes": 78142 },
+    { "file": "Build/18b40c85719aabe5112338f495b81035.wasm.unityweb", "transferBytes": 9385832, "bodyBytes": 9385532 },
+    { "file": "TemplateData/favicon.ico", "transferBytes": 2605, "bodyBytes": 2305 },
+    { "file": "Build/aa70739ba9cfe0d674a058350c4a1dbe.data.unityweb", "transferBytes": 79305335, "bodyBytes": 79305035 }
+  ],
+  "notes": [
+    "Main menu visually verified. Readiness is the second animation frame after MainMenu transition log.",
+    "Resource Timing excludes HTML navigation. Even this lower bound exceeds the 30000000-byte target.",
+    "Unity decompression fallback decodes .unityweb in JavaScript, so Resource Timing decodedBodySize does not represent the decompressed Unity payload.",
+    "This is the original gameplay code with Default template, built with DXT and release options through BuildPlayerWithProfileOptions. The installed but unused Playgama assembly was absent from ManagedStripped; decompressed wasm/framework SHA-256 hashes match the pre-SDK Generic build.",
+    "This is local startup timing, not a public-host or mobile-network benchmark."
+  ]
+}

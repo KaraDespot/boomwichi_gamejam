@@ -1,0 +1,226 @@
+{
+    "settingsBefore": "compression=Gzip; fallback=True; stripEngine=True; stripping=Minimal; codeGeneration=OptimizeSize; compiler=Master; codeOptimization=DiskSizeLTO; exceptions=None; api=NET_Standard_2_0; colorSpace=Linear; spritePacker=Disabled",
+    "settingsAfter": "compression=Brotli; fallback=True; stripEngine=True; stripping=High; codeGeneration=OptimizeSize; compiler=Master; codeOptimization=DiskSizeLTO; exceptions=ExplicitlyThrownExceptionsOnly; api=NET_Standard_2_0; colorSpace=Linear; spritePacker=SpriteAtlasV2",
+    "textures": [
+        {
+            "path": "Assets/_Art/Models/Environment/Dirt_Botl/Dirt_Botl_Red/1_packet_BaseColor.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Environment/Dirt_Botl_white/1_packet_BaseColor.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Environment/Dirt_Botl_white/1_packet_Roughness.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Environment/Room/stena_base_color.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/bread/Board_Rare_Dirt/bread_Material_BaseColor.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/bread/bread_medium/bread_Material_BaseColor.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/bread/bread_medium_Dirt/bread_Material_BaseColor.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/bread/bread_Rare/bread_Material_BaseColor.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/bread/Bread_Well_Done/bread_Material_BaseColor.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/bread/Bread_Well_Done_Dirt/bread_Material_BaseColor.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/cheese/cheese_Tex/cheese_DefaultMaterial_BaseColor.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/cheese/Cheese_Tex_Dirt/cheese_DefaultMaterial_BaseColor.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/cucumber/cucumber_Tex/q_DefaultMaterial_BaseColor.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/cucumber/cucumber_Tex/q_DefaultMaterial_Emissive.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/cucumber/cucumber_Tex/q_DefaultMaterial_Height.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/cucumber/cucumber_Tex/q_DefaultMaterial_Metallic.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/cucumber/cucumber_Tex/q_DefaultMaterial_Normal.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/cucumber/cucumber_Tex/q_DefaultMaterial_Roughness.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/cucumber/cucumber_Tex_Dirt/q_DefaultMaterial_BaseColor.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/Oliva/oliva_Dirt/oliva_DefaultMaterial_BaseColor.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/onion/Onion_Dirt/onion_Material.018_BaseColor.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/onion/Onion_Dirt/onion_Material.018_Roughness.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/onion/onion_Tex/onion_Material.018_BaseColor.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/sauce/ketchup_Tex/ketchup_DefaultMaterial_BaseColor.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/sauce/ketchup_Tex/ketchup_DefaultMaterial_Height.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/sauce/ketchup_Tex/ketchup_DefaultMaterial_Roughness.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/sauce/white sauce/ketchup_DefaultMaterial_BaseColor.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/sauce/white sauce/ketchup_DefaultMaterial_Height.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/sauce/white sauce/ketchup_DefaultMaterial_Normal.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/sausage/sausage_Tex/sausage_Material.019_BaseColor.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/sausage/Sausage_Tex_Drirt/sausage_Material.019_BaseColor.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/Tomato/tomato_Tex/tomato_DefaultMaterial_BaseColor.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Models/Ingredients/Tomato/Tomato_Tex_Dirt/tomato_DefaultMaterial_BaseColor.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Textures/conteiner_base_color.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Textures/dicer_base_color.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Textures/final_map_base_color.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/Textures/items_base_color.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":1024,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":90,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":1,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/2D/в движок/Gameplay/time button clean.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":4,\"m_TextureCompression\":0,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/2D/в движок/Gameplay/tips counter.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":4,\"m_TextureCompression\":0,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/2D/в движок/main menu/credits button.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":4,\"m_TextureCompression\":0,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/2D/в движок/main menu/Crunchy munchie logo.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":4,\"m_TextureCompression\":0,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/2D/в движок/New order/5379865478399990949.jpg",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":4,\"m_TextureCompression\":0,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/2D/в движок/Pause/ChatGPT Image Jul 13, 2026, 10_02_44 PM.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":4,\"m_TextureCompression\":0,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        },
+        {
+            "path": "Assets/_Art/2D/в движок/Pause/pause text.png",
+            "before": "{\"m_Name\":\"WebGL\",\"m_Overridden\":0,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":-1,\"m_TextureCompression\":1,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}",
+            "after": "{\"m_Name\":\"WebGL\",\"m_Overridden\":1,\"m_IgnorePlatformSupport\":0,\"m_MaxTextureSize\":2048,\"m_ResizeAlgorithm\":0,\"m_TextureFormat\":4,\"m_TextureCompression\":0,\"m_CompressionQuality\":50,\"m_ForceMaximumCompressionQuality_BC6H_BC7\":0,\"m_CrunchedCompression\":0,\"m_AllowsAlphaSplitting\":0,\"m_AndroidETC2FallbackOverride\":0}"
+        }
+    ]
+}

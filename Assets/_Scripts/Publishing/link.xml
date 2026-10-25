@@ -1,0 +1,4 @@
+<linker>
+  <!-- Bridge receives named Unity SendMessage callbacks from JavaScript. -->
+  <assembly fullname="Playgama.Bridge" preserve="all" />
+</linker>

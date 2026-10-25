@@ -219,6 +219,12 @@ public class InputManager : MonoBehaviour
 
     public void EnableGameplayInput()
     {
+        if (GameManager.Instance != null && (GameManager.Instance.CurrentState != GameState.Playing ||
+            GameManager.Instance.CurrentDayState == DayFlowState.DayFinished))
+        {
+            EnableUIInput();
+            return;
+        }
         if (gameplayActionMap != null)
             gameplayActionMap.Enable();
 
@@ -233,6 +239,9 @@ public class InputManager : MonoBehaviour
 
         if (uiActionMap != null)
             uiActionMap.Enable();
+        PrimaryHeld = false;
+        PrimaryPressedThisFrame = false;
+        PrimaryReleasedThisFrame = false;
     }
 
     public void DisableAllInput()

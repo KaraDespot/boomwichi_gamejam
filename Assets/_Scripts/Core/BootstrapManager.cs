@@ -6,6 +6,7 @@
  * Паттерны: Bootstrapper, псевдо‑Singleton (через флаг _initialized), Service Locator (FindFirstObjectByType).
  */
 
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -37,8 +38,14 @@ public class BootstrapManager : MonoBehaviour
 
     }
 
-    private void Start()
+    private IEnumerator Start()
     {
+        var publishing = new GameObject("PublishingServices");
+        var bridge = publishing.AddComponent<PublishingBridgeService>();
+        bridge.Initialize();
+        var saves = publishing.AddComponent<PublishingSaveService>();
+        saves.Load();
+        while (!saves.IsLoaded) yield return null;
         SceneLoader.Instance.Load(SceneNames.MainMenu);
     }
 

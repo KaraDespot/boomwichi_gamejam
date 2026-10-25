@@ -1,0 +1,145 @@
+{
+    "status": "completed",
+    "result": "Failed",
+    "profile": "Assets/Settings/Build Profiles/Web - Desktop - Release.asset",
+    "subtarget": "DXT",
+    "template": "PROJECT:Bridge",
+    "development": false,
+    "totalSizeBytes": 79422257,
+    "buildTimeMs": 614230.9785000001,
+    "totalWarnings": 3,
+    "totalErrors": 1,
+    "scenes": [
+        "Assets/_Scenes/Bootstrap.unity",
+        "Assets/_Scenes/MainMenu.unity",
+        "Assets/_Scenes/Levels/GameScene.unity"
+    ],
+    "largestAssets": [
+        {
+            "asset": "Assets/Resources/Audio/Music/gameplay_music.mp3",
+            "bytes": 4758803
+        },
+        {
+            "asset": "Assets/_Generated/WebSprites/UI.spriteatlasv2",
+            "bytes": 3230768
+        },
+        {
+            "asset": "Assets/Resources/Audio/Music/menu_music.mp3",
+            "bytes": 2812133
+        },
+        {
+            "asset": "Built-in Texture2D: Splash Screen Unity Logo",
+            "bytes": 2796376
+        },
+        {
+            "asset": "Assets/_Generated/WebSprites/Characters.spriteatlasv2",
+            "bytes": 1383300
+        },
+        {
+            "asset": "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset",
+            "bytes": 1078464
+        },
+        {
+            "asset": "Assets/_Art/Models/Environment/conteiner_with_foods.fbx",
+            "bytes": 966028
+        },
+        {
+            "asset": "Assets/_Generated/WebSprites/OpaqueUI.spriteatlasv2",
+            "bytes": 940672
+        },
+        {
+            "asset": "Assets/_Art/Textures/dicer_base_color.png",
+            "bytes": 679948
+        },
+        {
+            "asset": "Assets/_Art/Models/Environment/Dirt_Botl_white/1_packet_BaseColor.png",
+            "bytes": 671132
+        },
+        {
+            "asset": "Packages/com.unity.render-pipelines.universal/Shaders/Lit.shader",
+            "bytes": 667420
+        },
+        {
+            "asset": "Assets/_Art/Models/Environment/Dirt_Botl_white/1_packet_Roughness.png",
+            "bytes": 667344
+        },
+        {
+            "asset": "Assets/_Art/Models/Environment/Dirt_Botl/Dirt_Botl_Red/1_packet_BaseColor.png",
+            "bytes": 616124
+        },
+        {
+            "asset": "Assets/_Art/Textures/items_base_color.png",
+            "bytes": 602348
+        },
+        {
+            "asset": "Assets/_Art/Textures/final_map_base_color.png",
+            "bytes": 580700
+        },
+        {
+            "asset": "Resources/unity_builtin_extra",
+            "bytes": 569664
+        },
+        {
+            "asset": "Assets/_Art/Models/Environment/Room/stena_base_color.png",
+            "bytes": 555412
+        },
+        {
+            "asset": "Assets/_Art/Textures/conteiner_base_color.png",
+            "bytes": 542348
+        },
+        {
+            "asset": "Assets/_Art/Models/Environment/Room/main_scene_final.fbx",
+            "bytes": 527520
+        },
+        {
+            "asset": "Assets/_Art/Models/Ingredients/Tomato/Tomato_Tex_Dirt/tomato_DefaultMaterial_BaseColor.png",
+            "bytes": 468056
+        },
+        {
+            "asset": "Assets/_Art/Models/Ingredients/sausage/Sausage_Tex_Drirt/sausage_Material.019_BaseColor.png",
+            "bytes": 463020
+        },
+        {
+            "asset": "Assets/_Art/Models/Ingredients/onion/Onion_Dirt/onion_Material.018_Roughness.png",
+            "bytes": 421284
+        },
+        {
+            "asset": "Assets/_Art/Models/Ingredients/bread/bread_medium_Dirt/bread_Material_BaseColor.png",
+            "bytes": 406816
+        },
+        {
+            "asset": "Assets/_Art/Models/Ingredients/sauce/white sauce/ketchup_DefaultMaterial_Normal.png",
+            "bytes": 387380
+        },
+        {
+            "asset": "Assets/_Art/Models/Ingredients/sausage/sausage_Tex/sausage_Material.019_BaseColor.png",
+            "bytes": 385716
+        },
+        {
+            "asset": "Assets/_Art/Models/Ingredients/onion/Onion_Dirt/onion_Material.018_BaseColor.png",
+            "bytes": 372700
+        },
+        {
+            "asset": "Assets/_Art/Models/Ingredients/cucumber/cucumber_Tex_Dirt/q_DefaultMaterial_BaseColor.png",
+            "bytes": 369620
+        },
+        {
+            "asset": "Assets/TextMesh Pro/Fonts/LiberationSans.ttf",
+            "bytes": 352734
+        },
+        {
+            "asset": "Assets/TextMesh Pro/Sprites/EmojiOne.png",
+            "bytes": 349672
+        },
+        {
+            "asset": "Assets/_Art/Models/Ingredients/bread/Bread_Well_Done_Dirt/bread_Material_BaseColor.png",
+            "bytes": 337240
+        }
+    ],
+    "warnings": [
+        "Assets\\_Scripts\\Grill\\GrillZone.cs(43,18): warning CS0414: The field 'GrillZone.isSandwichBeingDragged' is assigned but its value is never used",
+        "Assets\\_Scripts\\Player\\PlayerController.cs(30,36): warning CS0414: The field 'PlayerController.sprintMultiplier' is assigned but its value is never used",
+        "UIController: назначь tutorialBodyText (TextMeshPro) в Inspector.",
+        "Building Library\\Bee\\artifacts\\WebGL\\build\\debug_WebGL_wasm\\build.js failed with output:\nD:\\Unity\\Editor\\6000.3.19f1\\Editor\\Data\\PlaybackEngines\\WebGLSupport\\BuildTools\\lib\\lib_webgpu.js:7: #warning \"Firefox browser before version 149 has issues with WebGPU (e.g. https://bugzilla.mozilla.org/show_bug.cgi?id=2023423 )\"\nD:\\Unity\\Editor\\6000.3.19f1\\Editor\\Data\\PlaybackEngines\\WebGLSupport\\BuildTools\\lib\\lib_webgpu.js:7: #warning \"Firefox browser before version 149 has issues with WebGPU (e.g. https://bugzilla.mozilla.org/show_bug.cgi?id=2023423 )\"\nemcc: error: 'D:/Unity/Editor/6000.3.19f1/Editor/Data/PlaybackEngines/WebGLSupport/BuildTools/Emscripten/binaryen\\bin\\wasm-opt --strip-dwarf --post-emscripten -Os --low-memory-unused --zero-filled-memory --pass-arg=directize-initial-contents-immutable --strip-debug --strip-producers Library/Bee/artifacts/WebGL/build/debug_WebGL_wasm/build.wasm -o Library/Bee/artifacts/WebGL/build/debug_WebGL_wasm/build.wasm --mvp-features --enable-bulk-memory --enable-exception-handling --enable-mutable-globals --enable-nontrapping-float-to-int --enable-sign-ext --enable-simd' failed (returned 4294967295)\r\n"
+    ]
+}

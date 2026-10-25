@@ -159,6 +159,7 @@ public class PauseController : MonoBehaviour
 
     private void ShowPausePanel()
     {
+        if (GameManager.Instance != null && !GameManager.Instance.IsManuallyPaused) return;
         if (pausePanel != null)
             pausePanel.SetActive(true);
     }
@@ -175,6 +176,7 @@ public class PauseController : MonoBehaviour
 
         if (GameManager.Instance != null)
             GameManager.Instance.Resume();
+        HidePausePanel();
     }
 
     private void OnMainMenuClicked()

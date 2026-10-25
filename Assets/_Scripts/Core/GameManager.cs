@@ -19,6 +19,18 @@ public enum GameState
     Won,
 }
 
+[Flags]
+public enum PauseReason
+{
+    None = 0,
+    Manual = 1,
+    Platform = 2,
+    Advertisement = 4,
+    Focus = 8,
+    Application = 16,
+    Visibility = 32
+}
+
 /// <summary>
 /// Состояния игрового дня внутри GameScene (см. Boomwichi_Development_Plan, раздел 17).
 /// </summary>
@@ -40,6 +52,9 @@ public class GameManager : MonoBehaviour
 
     public GameState CurrentState { get; private set; } = GameState.Menu;
     public DayFlowState CurrentDayState { get; private set; } = DayFlowState.None;
+    public PauseReason PauseReasons { get; private set; }
+    public bool IsPaused => PauseReasons != PauseReason.None;
+    public bool IsManuallyPaused => (PauseReasons & PauseReason.Manual) != 0;
 
     /// <summary> Смена состояния дня для UI и систем заказов. </summary>
     public event Action<DayFlowState> OnDayStateChanged;
@@ -70,6 +85,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        if (PublishingBridgeService.Instance != null && PublishingBridgeService.Instance.AdInProgress) return;
         LoadGameplayScene(SceneNames.GameScene);
     }
 
@@ -86,9 +102,11 @@ public class GameManager : MonoBehaviour
 
     public void GoToMenu()
     {
+        if (PublishingBridgeService.Instance != null && PublishingBridgeService.Instance.AdInProgress) return;
         CurrentState = GameState.Menu;
         SetDayState(DayFlowState.None);
-        Time.timeScale = 1f;
+        PauseReasons &= ~PauseReason.Manual;
+        ApplyExecutionState();
 
         if (SceneLoader.Instance != null)
             SceneLoader.Instance.Load(SceneNames.MainMenu);
@@ -104,26 +122,53 @@ public class GameManager : MonoBehaviour
         if (!CanPause())
             return;
 
-        CurrentState = GameState.Paused;
-        Time.timeScale = 0f;
-
-        if (EventBus.Instance != null)
-            EventBus.Instance.RaiseGamePaused();
+        SetPauseReason(PauseReason.Manual, true);
     }
 
     public void Resume()
     {
-        if (CurrentState != GameState.Paused)
-            return;
+        SetPauseReason(PauseReason.Manual, false);
+    }
 
-        CurrentState = GameState.Playing;
-        Time.timeScale = 1f;
+    public void SetPauseReason(PauseReason reason, bool paused)
+    {
+        PauseReasons = paused ? PauseReasons | reason : PauseReasons & ~reason;
+        ApplyExecutionState();
+    }
 
-        if (EventBus.Instance != null)
-            EventBus.Instance.RaiseGameResumed();
+    private void ApplyExecutionState()
+    {
+        GameState previous = CurrentState;
+        if (CurrentState == GameState.Playing || CurrentState == GameState.Paused)
+            CurrentState = IsPaused ? GameState.Paused : GameState.Playing;
+        bool stopped = IsPaused || CurrentState == GameState.Lost || CurrentState == GameState.Won ||
+            CurrentDayState == DayFlowState.DayFinished;
+        Time.timeScale = stopped ? 0f : 1f;
+        if (InputManager.Instance != null)
+        {
+            if (CurrentState == GameState.Playing && !stopped) InputManager.Instance.EnableGameplayInput();
+            else InputManager.Instance.EnableUIInput();
+        }
+        if (previous != CurrentState && EventBus.Instance != null)
+        {
+            if (CurrentState == GameState.Paused) EventBus.Instance.RaiseGamePaused();
+            else if (previous == GameState.Paused && CurrentState == GameState.Playing) EventBus.Instance.RaiseGameResumed();
+        }
+        PublishingBridgeService.Instance?.RefreshAudio();
     }
 
     public void RestartGameScene()
+    {
+        if (PublishingBridgeService.Instance != null && PublishingBridgeService.Instance.AdInProgress) return;
+        if (CurrentDayState == DayFlowState.DayFinished && PublishingBridgeService.Instance != null)
+        {
+            PublishingBridgeService.Instance.TryShowBetweenShifts(RestartDayAfterAdvertisement);
+            return;
+        }
+        RestartDayAfterAdvertisement();
+    }
+
+    private void RestartDayAfterAdvertisement()
     {
         SetDayState(DayFlowState.None);
         LoadGameplayScene(SceneNames.GameScene);
@@ -201,6 +246,7 @@ public class GameManager : MonoBehaviour
         }
 
         SetDayState(DayFlowState.DayStarting);
+        PublishingSaveService.Instance?.CompleteTutorial();
 
         if (dayTimer != null)
             dayTimer.StartDay();
@@ -226,7 +272,9 @@ public class GameManager : MonoBehaviour
             return;
 
         SetDayState(DayFlowState.DayFinished);
-        Time.timeScale = 0f;
+        ApplyExecutionState();
+        if (ScoreManager.Instance != null)
+            PublishingSaveService.Instance?.RecordShift(ScoreManager.Instance.TotalTips, ScoreManager.Instance.CompletedOrders);
 
         if (InputManager.Instance != null)
             InputManager.Instance.EnableUIInput();
@@ -275,14 +323,14 @@ public class GameManager : MonoBehaviour
     private void LoadGameplayScene(string sceneName)
     {
         CurrentState = GameState.Playing;
-        Time.timeScale = 1f;
+        PauseReasons &= ~PauseReason.Manual;
+        ApplyExecutionState();
 
         if (SceneLoader.Instance != null)
             SceneLoader.Instance.Load(sceneName);
         else
             SceneManager.LoadScene(sceneName);
 
-        if (InputManager.Instance != null)
-            InputManager.Instance.EnableGameplayInput();
+        ApplyExecutionState();
     }
 }

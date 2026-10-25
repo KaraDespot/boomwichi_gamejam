@@ -33,6 +33,16 @@ public class DragController : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.Instance != null && (GameManager.Instance.CurrentState != GameState.Playing ||
+            GameManager.Instance.CurrentDayState == DayFlowState.DayFinished))
+        {
+            if (currentDraggable != null)
+            {
+                currentDraggable.CancelDrag();
+                currentDraggable = null;
+            }
+            return;
+        }
         if (InputManager.Instance == null || inputRaycaster == null)
             return;
 

@@ -5,7 +5,7 @@ using UnityEngine;
  * GameSettings
  * Назначение: единая статическая точка хранения, загрузки и применения настроек sound/music.
  * Роль в игре: обеспечивает одинаковое поведение настроек в MainMenu и в игровых сценах.
- * Связи: PlayerPrefs (сохранение), AudioSource в активной сцене.
+ * Связи: PublishingSaveService (Bridge), PlayerPrefs при миграции/автономном запуске, AudioSource в активной сцене.
  * Как используется:
  * - UI-контроллеры вызывают SetSound/SetMusic при изменении контролов.
  * - SettingsBootstrapper вызывает Load + Apply при старте и после загрузки каждой сцены.
@@ -34,10 +34,12 @@ public static class GameSettings
     }
 
     /// <summary>
-    /// Загружает текущие значения настроек из PlayerPrefs с дефолтами и нормализацией диапазона громкости.
+    /// Возвращает загруженные настройки Bridge; до готовности сервиса читает старые PlayerPrefs для миграции.
     /// </summary>
     public static Data Load()
     {
+        if (PublishingSaveService.Instance != null && PublishingSaveService.Instance.IsLoaded)
+            return PublishingSaveService.Instance.Settings;
         return new Data
         {
             Sound = Mathf.Clamp01(PlayerPrefs.GetFloat(SoundPrefKey, DefaultSound)),
@@ -87,6 +89,11 @@ public static class GameSettings
 
     private static void Save(Data data)
     {
+        if (PublishingSaveService.Instance != null)
+        {
+            PublishingSaveService.Instance.SetSettings(data);
+            return;
+        }
         PlayerPrefs.SetFloat(SoundPrefKey, Mathf.Clamp01(data.Sound));
         PlayerPrefs.SetFloat(MusicPrefKey, Mathf.Clamp01(data.Music));
         PlayerPrefs.Save();

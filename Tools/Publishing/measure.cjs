@@ -11,7 +11,7 @@ function walk(directory) {
   let decodedBytes=data.length, compression='none';
   try {
    if(data[0]===0x1f&&data[1]===0x8b){decodedBytes=zlib.gunzipSync(data).length;compression='gzip';}
-   else if(file.endsWith('.br')){decodedBytes=zlib.brotliDecompressSync(data).length;compression='brotli';}
+   else if(file.endsWith('.br')||file.endsWith('.unityweb')){decodedBytes=zlib.brotliDecompressSync(data).length;compression='brotli';}
   }catch(error){compression='decode-error: '+error.message;decodedBytes=null;}
   return [{file:path.relative(root,file).replaceAll('\\','/'),bytes:data.length,decodedBytes,compression}];
  });

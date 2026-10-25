@@ -1,0 +1,501 @@
+diff --git a/Assets/Settings/Build Profiles/Web - Desktop - Release.asset b/Assets/Settings/Build Profiles/Web - Desktop - Release.asset
+index 10416da..7690895 100644
+--- a/Assets/Settings/Build Profiles/Web - Desktop - Release.asset	
++++ b/Assets/Settings/Build Profiles/Web - Desktop - Release.asset	
+@@ -169,9 +169,7 @@ MonoBehaviour:
+     - line: '|   visionOSBundleVersion: 1.0'
+     - line: '|   tvOSBundleVersion: 1.0'
+     - line: '|   bundleVersion: 0.1.0'
+-    - line: '|   preloadedAssets:'
+-    - line: '|   - {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b,
+-        type: 3}'
++    - line: '|   preloadedAssets: []'
+     - line: '|   metroInputSource: 0'
+     - line: '|   wsaTransparentSwapchain: 0'
+     - line: '|   m_HolographicPauseOnTrackingLoss: 1'
+@@ -838,7 +836,7 @@ MonoBehaviour:
+     - line: '|   webGLDebugSymbols: 0'
+     - line: '|   webGLEmscriptenArgs: '
+     - line: '|   webGLModulesDirectory: '
+-    - line: '|   webGLTemplate: APPLICATION:Default'
++    - line: '|   webGLTemplate: PROJECT:Bridge'
+     - line: '|   webGLAnalyzeBuildSize: 0'
+     - line: '|   webGLUseEmbeddedResources: 0'
+     - line: '|   webGLCompressionFormat: 1'
+diff --git a/Assets/_Scripts/Core/BootstrapManager.cs b/Assets/_Scripts/Core/BootstrapManager.cs
+index 60aa1f6..8d13095 100644
+--- a/Assets/_Scripts/Core/BootstrapManager.cs
++++ b/Assets/_Scripts/Core/BootstrapManager.cs
+@@ -6,6 +6,7 @@
+  * Паттерны: Bootstrapper, псевдо‑Singleton (через флаг _initialized), Service Locator (FindFirstObjectByType).
+  */
+ 
++using System.Collections;
+ using UnityEngine;
+ using UnityEngine.InputSystem;
+ 
+@@ -37,8 +38,14 @@ public class BootstrapManager : MonoBehaviour
+ 
+     }
+ 
+-    private void Start()
++    private IEnumerator Start()
+     {
++        var publishing = new GameObject("PublishingServices");
++        var bridge = publishing.AddComponent<PublishingBridgeService>();
++        bridge.Initialize();
++        var saves = publishing.AddComponent<PublishingSaveService>();
++        saves.Load();
++        while (!saves.IsLoaded) yield return null;
+         SceneLoader.Instance.Load(SceneNames.MainMenu);
+     }
+ 
+diff --git a/Assets/_Scripts/Core/DragController.cs b/Assets/_Scripts/Core/DragController.cs
+index b5c9743..0a5a5d9 100644
+--- a/Assets/_Scripts/Core/DragController.cs
++++ b/Assets/_Scripts/Core/DragController.cs
+@@ -33,6 +33,16 @@ public class DragController : MonoBehaviour
+ 
+     private void Update()
+     {
++        if (GameManager.Instance != null && (GameManager.Instance.CurrentState != GameState.Playing ||
++            GameManager.Instance.CurrentDayState == DayFlowState.DayFinished))
++        {
++            if (currentDraggable != null)
++            {
++                currentDraggable.CancelDrag();
++                currentDraggable = null;
++            }
++            return;
++        }
+         if (InputManager.Instance == null || inputRaycaster == null)
+             return;
+ 
+diff --git a/Assets/_Scripts/Core/GameManager.cs b/Assets/_Scripts/Core/GameManager.cs
+index 59b4e2e..8fb5b03 100644
+--- a/Assets/_Scripts/Core/GameManager.cs
++++ b/Assets/_Scripts/Core/GameManager.cs
+@@ -19,6 +19,18 @@ public enum GameState
+     Won,
+ }
+ 
++[Flags]
++public enum PauseReason
++{
++    None = 0,
++    Manual = 1,
++    Platform = 2,
++    Advertisement = 4,
++    Focus = 8,
++    Application = 16,
++    Visibility = 32
++}
++
+ /// <summary>
+ /// Состояния игрового дня внутри GameScene (см. Boomwichi_Development_Plan, раздел 17).
+ /// </summary>
+@@ -40,6 +52,9 @@ public class GameManager : MonoBehaviour
+ 
+     public GameState CurrentState { get; private set; } = GameState.Menu;
+     public DayFlowState CurrentDayState { get; private set; } = DayFlowState.None;
++    public PauseReason PauseReasons { get; private set; }
++    public bool IsPaused => PauseReasons != PauseReason.None;
++    public bool IsManuallyPaused => (PauseReasons & PauseReason.Manual) != 0;
+ 
+     /// <summary> Смена состояния дня для UI и систем заказов. </summary>
+     public event Action<DayFlowState> OnDayStateChanged;
+@@ -70,6 +85,7 @@ public class GameManager : MonoBehaviour
+ 
+     public void StartGame()
+     {
++        if (PublishingBridgeService.Instance != null && PublishingBridgeService.Instance.AdInProgress) return;
+         LoadGameplayScene(SceneNames.GameScene);
+     }
+ 
+@@ -86,9 +102,11 @@ public class GameManager : MonoBehaviour
+ 
+     public void GoToMenu()
+     {
++        if (PublishingBridgeService.Instance != null && PublishingBridgeService.Instance.AdInProgress) return;
+         CurrentState = GameState.Menu;
+         SetDayState(DayFlowState.None);
+-        Time.timeScale = 1f;
++        PauseReasons &= ~PauseReason.Manual;
++        ApplyExecutionState();
+ 
+         if (SceneLoader.Instance != null)
+             SceneLoader.Instance.Load(SceneNames.MainMenu);
+@@ -104,26 +122,53 @@ public class GameManager : MonoBehaviour
+         if (!CanPause())
+             return;
+ 
+-        CurrentState = GameState.Paused;
+-        Time.timeScale = 0f;
+-
+-        if (EventBus.Instance != null)
+-            EventBus.Instance.RaiseGamePaused();
++        SetPauseReason(PauseReason.Manual, true);
+     }
+ 
+     public void Resume()
+     {
+-        if (CurrentState != GameState.Paused)
+-            return;
++        SetPauseReason(PauseReason.Manual, false);
++    }
+ 
+-        CurrentState = GameState.Playing;
+-        Time.timeScale = 1f;
++    public void SetPauseReason(PauseReason reason, bool paused)
++    {
++        PauseReasons = paused ? PauseReasons | reason : PauseReasons & ~reason;
++        ApplyExecutionState();
++    }
+ 
+-        if (EventBus.Instance != null)
+-            EventBus.Instance.RaiseGameResumed();
++    private void ApplyExecutionState()
++    {
++        GameState previous = CurrentState;
++        if (CurrentState == GameState.Playing || CurrentState == GameState.Paused)
++            CurrentState = IsPaused ? GameState.Paused : GameState.Playing;
++        bool stopped = IsPaused || CurrentState == GameState.Lost || CurrentState == GameState.Won ||
++            CurrentDayState == DayFlowState.DayFinished;
++        Time.timeScale = stopped ? 0f : 1f;
++        if (InputManager.Instance != null)
++        {
++            if (CurrentState == GameState.Playing && !stopped) InputManager.Instance.EnableGameplayInput();
++            else InputManager.Instance.EnableUIInput();
++        }
++        if (previous != CurrentState && EventBus.Instance != null)
++        {
++            if (CurrentState == GameState.Paused) EventBus.Instance.RaiseGamePaused();
++            else if (previous == GameState.Paused && CurrentState == GameState.Playing) EventBus.Instance.RaiseGameResumed();
++        }
++        PublishingBridgeService.Instance?.RefreshAudio();
+     }
+ 
+     public void RestartGameScene()
++    {
++        if (PublishingBridgeService.Instance != null && PublishingBridgeService.Instance.AdInProgress) return;
++        if (CurrentDayState == DayFlowState.DayFinished && PublishingBridgeService.Instance != null)
++        {
++            PublishingBridgeService.Instance.TryShowBetweenShifts(RestartDayAfterAdvertisement);
++            return;
++        }
++        RestartDayAfterAdvertisement();
++    }
++
++    private void RestartDayAfterAdvertisement()
+     {
+         SetDayState(DayFlowState.None);
+         LoadGameplayScene(SceneNames.GameScene);
+@@ -201,6 +246,7 @@ public class GameManager : MonoBehaviour
+         }
+ 
+         SetDayState(DayFlowState.DayStarting);
++        PublishingSaveService.Instance?.CompleteTutorial();
+ 
+         if (dayTimer != null)
+             dayTimer.StartDay();
+@@ -226,7 +272,9 @@ public class GameManager : MonoBehaviour
+             return;
+ 
+         SetDayState(DayFlowState.DayFinished);
+-        Time.timeScale = 0f;
++        ApplyExecutionState();
++        if (ScoreManager.Instance != null)
++            PublishingSaveService.Instance?.RecordShift(ScoreManager.Instance.TotalTips, ScoreManager.Instance.CompletedOrders);
+ 
+         if (InputManager.Instance != null)
+             InputManager.Instance.EnableUIInput();
+@@ -275,14 +323,14 @@ public class GameManager : MonoBehaviour
+     private void LoadGameplayScene(string sceneName)
+     {
+         CurrentState = GameState.Playing;
+-        Time.timeScale = 1f;
++        PauseReasons &= ~PauseReason.Manual;
++        ApplyExecutionState();
+ 
+         if (SceneLoader.Instance != null)
+             SceneLoader.Instance.Load(sceneName);
+         else
+             SceneManager.LoadScene(sceneName);
+ 
+-        if (InputManager.Instance != null)
+-            InputManager.Instance.EnableGameplayInput();
++        ApplyExecutionState();
+     }
+ }
+diff --git a/Assets/_Scripts/Core/InputManager.cs b/Assets/_Scripts/Core/InputManager.cs
+index 9eca554..4bce83e 100644
+--- a/Assets/_Scripts/Core/InputManager.cs
++++ b/Assets/_Scripts/Core/InputManager.cs
+@@ -219,6 +219,12 @@ public class InputManager : MonoBehaviour
+ 
+     public void EnableGameplayInput()
+     {
++        if (GameManager.Instance != null && (GameManager.Instance.CurrentState != GameState.Playing ||
++            GameManager.Instance.CurrentDayState == DayFlowState.DayFinished))
++        {
++            EnableUIInput();
++            return;
++        }
+         if (gameplayActionMap != null)
+             gameplayActionMap.Enable();
+ 
+@@ -233,6 +239,9 @@ public class InputManager : MonoBehaviour
+ 
+         if (uiActionMap != null)
+             uiActionMap.Enable();
++        PrimaryHeld = false;
++        PrimaryPressedThisFrame = false;
++        PrimaryReleasedThisFrame = false;
+     }
+ 
+     public void DisableAllInput()
+diff --git a/Assets/_Scripts/UI/GameSettings.cs b/Assets/_Scripts/UI/GameSettings.cs
+index 2b9a867..690674f 100644
+--- a/Assets/_Scripts/UI/GameSettings.cs
++++ b/Assets/_Scripts/UI/GameSettings.cs
+@@ -5,7 +5,7 @@ using UnityEngine;
+  * GameSettings
+  * Назначение: единая статическая точка хранения, загрузки и применения настроек sound/music.
+  * Роль в игре: обеспечивает одинаковое поведение настроек в MainMenu и в игровых сценах.
+- * Связи: PlayerPrefs (сохранение), AudioSource в активной сцене.
++ * Связи: PublishingSaveService (Bridge), PlayerPrefs при миграции/автономном запуске, AudioSource в активной сцене.
+  * Как используется:
+  * - UI-контроллеры вызывают SetSound/SetMusic при изменении контролов.
+  * - SettingsBootstrapper вызывает Load + Apply при старте и после загрузки каждой сцены.
+@@ -34,10 +34,12 @@ public static class GameSettings
+     }
+ 
+     /// <summary>
+-    /// Загружает текущие значения настроек из PlayerPrefs с дефолтами и нормализацией диапазона громкости.
++    /// Возвращает загруженные настройки Bridge; до готовности сервиса читает старые PlayerPrefs для миграции.
+     /// </summary>
+     public static Data Load()
+     {
++        if (PublishingSaveService.Instance != null && PublishingSaveService.Instance.IsLoaded)
++            return PublishingSaveService.Instance.Settings;
+         return new Data
+         {
+             Sound = Mathf.Clamp01(PlayerPrefs.GetFloat(SoundPrefKey, DefaultSound)),
+@@ -87,6 +89,11 @@ public static class GameSettings
+ 
+     private static void Save(Data data)
+     {
++        if (PublishingSaveService.Instance != null)
++        {
++            PublishingSaveService.Instance.SetSettings(data);
++            return;
++        }
+         PlayerPrefs.SetFloat(SoundPrefKey, Mathf.Clamp01(data.Sound));
+         PlayerPrefs.SetFloat(MusicPrefKey, Mathf.Clamp01(data.Music));
+         PlayerPrefs.Save();
+diff --git a/Assets/_Scripts/UI/PauseController.cs b/Assets/_Scripts/UI/PauseController.cs
+index 79ad11b..26eb84e 100644
+--- a/Assets/_Scripts/UI/PauseController.cs
++++ b/Assets/_Scripts/UI/PauseController.cs
+@@ -159,6 +159,7 @@ public class PauseController : MonoBehaviour
+ 
+     private void ShowPausePanel()
+     {
++        if (GameManager.Instance != null && !GameManager.Instance.IsManuallyPaused) return;
+         if (pausePanel != null)
+             pausePanel.SetActive(true);
+     }
+@@ -175,6 +176,7 @@ public class PauseController : MonoBehaviour
+ 
+         if (GameManager.Instance != null)
+             GameManager.Instance.Resume();
++        HidePausePanel();
+     }
+ 
+     private void OnMainMenuClicked()
+diff --git a/Docs/Publishing_Plan.md b/Docs/Publishing_Plan.md
+index 0b34a10..d61f39c 100644
+--- a/Docs/Publishing_Plan.md
++++ b/Docs/Publishing_Plan.md
+@@ -39,6 +39,8 @@ Rewarded — добровольный обмен на конкретную по
+ 
+ Решение владельца от 2026-10-25: пока без трат; сначала обсудить экономику. Не добавлять магазин, улучшения, денежную награду или продление смены в рамках технической интеграции.
+ 
++Техническая интеграция и локальные браузерные QA-проверки выполнены: [отчёт первого этапа](Publishing_Stage1_Report.md). Исходный DXT-release — 88 836 461 байт; бюджет 30 МБ пока не достигнут. Игровая rewarded-награда и реальная выдача рекламы в Playgama sandbox ещё требуют отдельной проверки и решения об экономике.
++
+ ### Полный план
+ 
+ 1. Базовый release WebGL build и отчёт: активный build profile, сцены, настройки, размер data/wasm/framework, крупнейшие включённые ассеты, холодный старт. Сохранить исходные показатели и восстановимую копию затрагиваемых настроек.
+diff --git a/Reports/Publishing/BaselineDXT/build-report.json b/Reports/Publishing/BaselineDXT/build-report.json
+index 7cce2ed..3e952e0 100644
+--- a/Reports/Publishing/BaselineDXT/build-report.json
++++ b/Reports/Publishing/BaselineDXT/build-report.json
+@@ -1 +1,144 @@
+-{"status":"building"}
+\ No newline at end of file
++{
++    "status": "completed",
++    "result": "Succeeded",
++    "profile": "Assets/Settings/Build Profiles/Web - Desktop - Release.asset",
++    "subtarget": "DXT",
++    "template": "APPLICATION:Default",
++    "development": false,
++    "totalSizeBytes": 88836461,
++    "buildTimeMs": 942611.8378000001,
++    "totalWarnings": 3,
++    "totalErrors": 0,
++    "scenes": [
++        "Assets/_Scenes/Bootstrap.unity",
++        "Assets/_Scenes/MainMenu.unity",
++        "Assets/_Scenes/Levels/GameScene.unity"
++    ],
++    "largestAssets": [
++        {
++            "asset": "Assets/_Art/2D/в движок/New order/Characters/Skater boy/Skater boy normal.png",
++            "bytes": 11276744
++        },
++        {
++            "asset": "Assets/_Art/2D/в движок/New order/Characters/Cosplayer/Cosplayer happy.png",
++            "bytes": 11276720
++        },
++        {
++            "asset": "Assets/_Art/2D/в движок/New order/Characters/Chika/Chika normal.png",
++            "bytes": 11275916
++        },
++        {
++            "asset": "Assets/_Art/2D/в движок/New order/Characters/Businesswoman/Businesswoman happy.png",
++            "bytes": 11275256
++        },
++        {
++            "asset": "Assets/_Art/2D/в движок/New order/Characters/Businesswoman/Businesswoman normal.png",
++            "bytes": 11274424
++        },
++        {
++            "asset": "Assets/_Art/2D/в движок/New order/composition guide new order.png",
++            "bytes": 7047792
++        },
++        {
++            "asset": "Assets/_Art/2D/в движок/Credits/reseipt template under text.png",
++            "bytes": 6141312
++        },
++        {
++            "asset": "Assets/_Art/2D/в движок/New order/dialogue bubble.png",
++            "bytes": 5801760
++        },
++        {
++            "asset": "Assets/_Art/Models/Ingredients/cucumber/cucumber_Tex/q_DefaultMaterial_Normal.png",
++            "bytes": 5592568
++        },
++        {
++            "asset": "Assets/_Art/Textures/final_map_base_color.png",
++            "bytes": 5592564
++        },
++        {
++            "asset": "Assets/_Art/Textures/conteiner_base_color.png",
++            "bytes": 5592564
++        },
++        {
++            "asset": "Assets/_Art/Models/Environment/Room/stena_base_color.png",
++            "bytes": 5592560
++        },
++        {
++            "asset": "Assets/_Art/Textures/dicer_base_color.png",
++            "bytes": 5592560
++        },
++        {
++            "asset": "Assets/_Art/Textures/items_base_color.png",
++            "bytes": 5592560
++        },
++        {
++            "asset": "Assets/_Art/2D/в движок/main menu/start button.png",
++            "bytes": 5519076
++        },
++        {
++            "asset": "Assets/_Art/2D/в движок/main menu/settings button.png",
++            "bytes": 5463620
++        },
++        {
++            "asset": "Assets/_Art/2D/в движок/Pause/restart button.png",
++            "bytes": 5463620
++        },
++        {
++            "asset": "Assets/_Art/2D/в движок/New order/ponyatno button.png",
++            "bytes": 5463620
++        },
++        {
++            "asset": "Assets/_Art/2D/в движок/Pause/resume button.png",
++            "bytes": 5463620
++        },
++        {
++            "asset": "Assets/_Art/2D/в движок/Pause/menu button.png",
++            "bytes": 5463612
++        },
++        {
++            "asset": "Assets/_Art/2D/в движок/Pause/composition guide pause.png",
++            "bytes": 5031252
++        },
++        {
++            "asset": "Assets/Resources/Audio/Music/gameplay_music.mp3",
++            "bytes": 4758803
++        },
++        {
++            "asset": "Assets/_Art/2D/в движок/main menu/background.png",
++            "bytes": 4720648
++        },
++        {
++            "asset": "Assets/_Art/2D/в движок/Settings/composition guide settings.png",
++            "bytes": 4521560
++        },
++        {
++            "asset": "Assets/_Art/2D/в движок/Gameplay/pause button edited.png",
++            "bytes": 4311620
++        },
++        {
++            "asset": "Assets/_Art/2D/в движок/Settings/back button.png",
++            "bytes": 4281780
++        },
++        {
++            "asset": "Assets/_Art/2D/в движок/Settings/settings text.png",
++            "bytes": 3011144
++        },
++        {
++            "asset": "Assets/Resources/Audio/Music/menu_music.mp3",
++            "bytes": 2812133
++        },
++        {
++            "asset": "Built-in Texture2D: Splash Screen Unity Logo",
++            "bytes": 2796376
++        },
++        {
++            "asset": "Assets/_Art/Models/Ingredients/sauce/ketchup_Tex/ketchup_DefaultMaterial_BaseColor.png",
++            "bytes": 2796364
++        }
++    ],
++    "warnings": [
++        "Assets\\_Scripts\\Grill\\GrillZone.cs(43,18): warning CS0414: The field 'GrillZone.isSandwichBeingDragged' is assigned but its value is never used",
++        "Assets\\_Scripts\\Player\\PlayerController.cs(30,36): warning CS0414: The field 'PlayerController.sprintMultiplier' is assigned but its value is never used",
++        "UIController: назначь tutorialBodyText (TextMeshPro) в Inspector."
++    ]
++}
+\ No newline at end of file
+diff --git a/Tools/Publishing/serve.cjs b/Tools/Publishing/serve.cjs
+index 6450458..d157b46 100644
+--- a/Tools/Publishing/serve.cjs
++++ b/Tools/Publishing/serve.cjs
+@@ -4,7 +4,7 @@ const fs = require('node:fs');
+ const path = require('node:path');
+ const root = path.resolve(process.argv[2] || 'Builds/PublishingBaseline');
+ const port = Number(process.argv[3] || 8080);
+-const instrumentation = `<script>
++let instrumentation = `<script>
+ performance.setResourceTimingBufferSize(2000);
+ window.__publishingMessages=[];
+ for(const level of ['log','warn','error']) {
+@@ -42,6 +42,7 @@ addEventListener('DOMContentLoaded',()=>{
+  },1000);
+ });
+ </script>`;
++instrumentation += '<script>' + fs.readFileSync(path.join(__dirname, 'local-qa.js'), 'utf8') + '</script>';
+ http.createServer((req,res)=>{
+  let url;
+  try { url=decodeURIComponent(new URL(req.url,'http://localhost').pathname); } catch {res.writeHead(400).end();return;}

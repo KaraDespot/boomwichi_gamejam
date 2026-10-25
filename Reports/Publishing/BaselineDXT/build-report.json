@@ -1,1 +1,144 @@
-{"status":"building"}
+{
+    "status": "completed",
+    "result": "Succeeded",
+    "profile": "Assets/Settings/Build Profiles/Web - Desktop - Release.asset",
+    "subtarget": "DXT",
+    "template": "APPLICATION:Default",
+    "development": false,
+    "totalSizeBytes": 88836461,
+    "buildTimeMs": 942611.8378000001,
+    "totalWarnings": 3,
+    "totalErrors": 0,
+    "scenes": [
+        "Assets/_Scenes/Bootstrap.unity",
+        "Assets/_Scenes/MainMenu.unity",
+        "Assets/_Scenes/Levels/GameScene.unity"
+    ],
+    "largestAssets": [
+        {
+            "asset": "Assets/_Art/2D/в движок/New order/Characters/Skater boy/Skater boy normal.png",
+            "bytes": 11276744
+        },
+        {
+            "asset": "Assets/_Art/2D/в движок/New order/Characters/Cosplayer/Cosplayer happy.png",
+            "bytes": 11276720
+        },
+        {
+            "asset": "Assets/_Art/2D/в движок/New order/Characters/Chika/Chika normal.png",
+            "bytes": 11275916
+        },
+        {
+            "asset": "Assets/_Art/2D/в движок/New order/Characters/Businesswoman/Businesswoman happy.png",
+            "bytes": 11275256
+        },
+        {
+            "asset": "Assets/_Art/2D/в движок/New order/Characters/Businesswoman/Businesswoman normal.png",
+            "bytes": 11274424
+        },
+        {
+            "asset": "Assets/_Art/2D/в движок/New order/composition guide new order.png",
+            "bytes": 7047792
+        },
+        {
+            "asset": "Assets/_Art/2D/в движок/Credits/reseipt template under text.png",
+            "bytes": 6141312
+        },
+        {
+            "asset": "Assets/_Art/2D/в движок/New order/dialogue bubble.png",
+            "bytes": 5801760
+        },
+        {
+            "asset": "Assets/_Art/Models/Ingredients/cucumber/cucumber_Tex/q_DefaultMaterial_Normal.png",
+            "bytes": 5592568
+        },
+        {
+            "asset": "Assets/_Art/Textures/final_map_base_color.png",
+            "bytes": 5592564
+        },
+        {
+            "asset": "Assets/_Art/Textures/conteiner_base_color.png",
+            "bytes": 5592564
+        },
+        {
+            "asset": "Assets/_Art/Models/Environment/Room/stena_base_color.png",
+            "bytes": 5592560
+        },
+        {
+            "asset": "Assets/_Art/Textures/dicer_base_color.png",
+            "bytes": 5592560
+        },
+        {
+            "asset": "Assets/_Art/Textures/items_base_color.png",
+            "bytes": 5592560
+        },
+        {
+            "asset": "Assets/_Art/2D/в движок/main menu/start button.png",
+            "bytes": 5519076
+        },
+        {
+            "asset": "Assets/_Art/2D/в движок/main menu/settings button.png",
+            "bytes": 5463620
+        },
+        {
+            "asset": "Assets/_Art/2D/в движок/Pause/restart button.png",
+            "bytes": 5463620
+        },
+        {
+            "asset": "Assets/_Art/2D/в движок/New order/ponyatno button.png",
+            "bytes": 5463620
+        },
+        {
+            "asset": "Assets/_Art/2D/в движок/Pause/resume button.png",
+            "bytes": 5463620
+        },
+        {
+            "asset": "Assets/_Art/2D/в движок/Pause/menu button.png",
+            "bytes": 5463612
+        },
+        {
+            "asset": "Assets/_Art/2D/в движок/Pause/composition guide pause.png",
+            "bytes": 5031252
+        },
+        {
+            "asset": "Assets/Resources/Audio/Music/gameplay_music.mp3",
+            "bytes": 4758803
+        },
+        {
+            "asset": "Assets/_Art/2D/в движок/main menu/background.png",
+            "bytes": 4720648
+        },
+        {
+            "asset": "Assets/_Art/2D/в движок/Settings/composition guide settings.png",
+            "bytes": 4521560
+        },
+        {
+            "asset": "Assets/_Art/2D/в движок/Gameplay/pause button edited.png",
+            "bytes": 4311620
+        },
+        {
+            "asset": "Assets/_Art/2D/в движок/Settings/back button.png",
+            "bytes": 4281780
+        },
+        {
+            "asset": "Assets/_Art/2D/в движок/Settings/settings text.png",
+            "bytes": 3011144
+        },
+        {
+            "asset": "Assets/Resources/Audio/Music/menu_music.mp3",
+            "bytes": 2812133
+        },
+        {
+            "asset": "Built-in Texture2D: Splash Screen Unity Logo",
+            "bytes": 2796376
+        },
+        {
+            "asset": "Assets/_Art/Models/Ingredients/sauce/ketchup_Tex/ketchup_DefaultMaterial_BaseColor.png",
+            "bytes": 2796364
+        }
+    ],
+    "warnings": [
+        "Assets\\_Scripts\\Grill\\GrillZone.cs(43,18): warning CS0414: The field 'GrillZone.isSandwichBeingDragged' is assigned but its value is never used",
+        "Assets\\_Scripts\\Player\\PlayerController.cs(30,36): warning CS0414: The field 'PlayerController.sprintMultiplier' is assigned but its value is never used",
+        "UIController: назначь tutorialBodyText (TextMeshPro) в Inspector."
+    ]
+}
